@@ -2,6 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
+	utils "forum/utils"
 	"os"
 )
 
@@ -9,7 +10,7 @@ import (
 func InitializeDB() *sql.DB {
 	// Check if the database doesn't exist
 	db, err := sql.Open("sqlite3", "db/forum.db")
-	fatalErr(err)
+	utils.FatalErr(err)
 	CreateTables(db)
 	return db
 }
@@ -17,7 +18,7 @@ func InitializeDB() *sql.DB {
 // Create the initial tables
 func CreateTables(db *sql.DB) {
 	sqlfile, err := os.ReadFile("db/tables.sql")
-	fatalErr(err)
+	utils.FatalErr(err)
 	commands := string(sqlfile)
 	db.Exec(commands)
 }

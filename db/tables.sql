@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `users` (
+		`uid` INTEGER PRIMARY KEY AUTOINCREMENT,
+		`name` TEXT UNIQUE NOT NULL,
+		`email` TEXT UNIQUE NOT NULL,
+		`password` TEXT NOT NULL,
+		`created` DATE
+        );

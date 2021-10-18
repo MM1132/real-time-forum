@@ -23,6 +23,7 @@ func main() {
 	// Create templates for page handlers
 	templates := pages.CreateTemplates("./server/templates")
 	http.Handle("/index", pages.IndexHandler(db, templates))
+	http.Handle("/register", pages.RegisterHandler(db, templates))
 
 	http.HandleFunc("/", handleOther)
 

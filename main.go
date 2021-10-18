@@ -3,28 +3,42 @@ package main
 import (
 	"fmt"
 	fdb "forum/forumDB"
-	utils "forum/utils"
+	"forum/pages"
+	"log"
+	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	fmt.Println("I am running")
 	// Initialize sql.DB struct
 	db := fdb.InitializeDB()
+	defer db.Close()
 
-	// Example on inserting a new user into the DB...
-	newUser := fdb.User{Name: "Raigo", Email: "krisimegaemail@gmail.com", Password: "securepassword"}
-	uid, err := fdb.InsertUser(db, &newUser)
-	utils.CheckErr(err)
+	// Set up handlers
+	// Serve static stuff like stylesheets and js on /static/
+	staticServer := http.FileServer(http.Dir("./server/static"))
+	http.Handle("/static/", http.StripPrefix("/static/", staticServer))
 
-	// ...and then getting that same user from the DB
-	foundUser, err := fdb.GetUser(db, uid)
-	utils.CheckErr(err)
+	// Create templates for page handlers
+	templates := pages.CreateTemplates("./server/templates")
+	http.Handle("/index", pages.IndexHandler(db, templates))
 
-	fmt.Printf("%+v\n", foundUser)
+	http.HandleFunc("/", handleOther)
 
-	db.Close()
+	// Start the server
+	port := 8080
+	log.Printf("Listening on port %v", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
+}
+
+func handleOther(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		http.Redirect(w, r, "/index", http.StatusSeeOther)
+		return
+	}
+
+	http.NotFound(w, r)
 }
 
 // Helper function to print errors

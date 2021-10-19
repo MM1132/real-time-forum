@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	UID      int
+	UserID   int
 	Name     string
 	Email    string
 	Password string
@@ -28,19 +28,19 @@ func InsertUser(db *sql.DB, newUser *User) (int, error) {
 	uid, err := res.LastInsertId()
 	fatalErr(err)
 
-	return int(uid), err
+	return int(uid), nil
 }
 
 // Get a user by UID, returns sql.ErrNoRows if not found
 func GetUser(db *sql.DB, UID int) (*User, error) {
 	stmt, err := db.Prepare(
-		"SELECT * FROM users WHERE uid=?",
+		"SELECT * FROM users WHERE userID=?",
 	)
 	fatalErr(err)
 
 	row := stmt.QueryRow(UID)
 	user := &User{}
-	err = row.Scan(&user.UID, &user.Name, &user.Email, &user.Password, &user.Creation)
+	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
 	if err != nil {
 		return nil, err
 	}

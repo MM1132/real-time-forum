@@ -19,5 +19,6 @@ func CreateTables(db *sql.DB) {
 	sqlfile, err := os.ReadFile("db/tables.sql")
 	fatalErr(err)
 	commands := string(sqlfile)
-	db.Exec(commands)
+	_, err = db.Exec(commands)
+	fatalErr(err)
 }

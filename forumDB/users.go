@@ -47,3 +47,19 @@ func GetUser(db *sql.DB, UID int) (*User, error) {
 
 	return user, nil
 }
+
+func GetUserByName(db *sql.DB, name string) (*User, error) {
+	stmt, err := db.Prepare(
+		"SELECT * FROM users WHERE name=?",
+	)
+	fatalErr(err)
+
+	row := stmt.QueryRow(name)
+	user := &User{}
+	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

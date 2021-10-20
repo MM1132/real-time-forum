@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    options { buildDiscarder(logRotator(numToKeepStr: '5')) }
+
+    environment {
+        PATH="${HOME}/go/bin:/usr/local/go/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Linting') {
+            steps {
+                echo 'Linting...'
+                catchError(buildResult: 'SUCCESS') {
+                    sh 'mkdir reports || true'
+                    sh 'command -v golangci-lint || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.42.1'
+                    sh "golangci-lint run -v -c ${HOME}/go/conf/golangci-lint/errors.yml --out-format checkstyle > reports/errors-lint.xml"
+                    sh "golangci-lint run -v -c ${HOME}/go/conf/golangci-lint/warnings.yml --out-format checkstyle > reports/warnings-lint.xml"
+                    sh "golangci-lint run -v -c ${HOME}/go/conf/golangci-lint/info.yml --out-format checkstyle > reports/info-lint.xml"
+                    recordIssues name: 'GoLint', aggregatingResults: true, enabledForFailure: true, tools: [ checkStyle(name: 'GoLint', pattern: 'reports/*-lint.xml')]
+                }
+            }
+        }
+        stage('Testing') {
+            steps {
+                echo 'Testing...'
+                sh 'command -v go-junit-report || go install github.com/jstemmer/go-junit-report@latest'
+
+                sh 'go clean -cache'
+                sh 'go test -coverprofile reports/coverage.txt -v 2>&1 | go-junit-report > reports/gotest-junit.xml'
+                junit ( allowEmptyResults: true, testResults: 'reports/*-junit.xml' )
+            }
+        }
+        stage('Coverage') {
+            steps {
+                echo 'Coverage...'
+                catchError(buildResult: 'SUCCESS') {
+                    sh 'command -v gocover-cobertura || go install github.com/boumenot/gocover-cobertura@v1.2.0'
+                    sh 'gocover-cobertura < reports/coverage.txt > reports/coverage.xml'
+                    step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'reports/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+                }
+            }
+        }
+    }
+    // post {
+    //     always {
+    //         deleteDir()
+    //     }
+    // }
+}

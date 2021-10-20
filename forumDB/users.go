@@ -56,7 +56,7 @@ func GetUserByName(db *sql.DB, name string) (*User, error) {
 
 	row := stmt.QueryRow(name)
 	user := &User{}
-	err = row.Scan(&user.UID, &user.Name, &user.Email, &user.Password, &user.Creation)
+	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
 	if err != nil {
 		return nil, err
 	}

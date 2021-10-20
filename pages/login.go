@@ -18,8 +18,7 @@ type Login struct {
 
 // Contains things that are generated per request
 type loginData struct {
-	Title     string // Title should be on every page
-	UserCount int
+	Title string // Title should be on every page
 }
 
 // Initializes a page handler with db and template values, and returns a ready to use http.Handler
@@ -40,11 +39,6 @@ func LoginHandler(db *sql.DB, templates map[string]*template.Template) http.Hand
 func (p Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// We must create a new loginData struct because it can't be shared between requests
 	data := &loginData{Title: "Forum Login"}
-	// Fill the new data struct with a value we'll use in the template
-	if err := data.getUserRowCount(p.db); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
-		return
-	}
 
 	// Finally execute the template with the data we got
 	if err := p.tmpl.ExecuteTemplate(w, "layout", data); err != nil {
@@ -60,19 +54,6 @@ func (p Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		login(p.db, w, r)
 
 	}
-}
-
-func (d *loginData) getUserRowCount(db *sql.DB) error {
-	row := db.QueryRow("SELECT COUNT(*) FROM users")
-
-	var count int
-	err := row.Scan(&count)
-	if err != nil {
-		return err
-	}
-
-	d.UserCount = count
-	return nil
 }
 
 func login(db *sql.DB, w http.ResponseWriter, r *http.Request) bool {

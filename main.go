@@ -24,6 +24,7 @@ func main() {
 	templates := pages.CreateTemplates("./server/templates")
 	http.Handle("/index", pages.IndexHandler(db, templates))
 	http.Handle("/register", pages.RegisterHandler(db, templates))
+	http.Handle("/login", pages.LoginHandler(db, templates))
 
 	http.HandleFunc("/", handleOther)
 

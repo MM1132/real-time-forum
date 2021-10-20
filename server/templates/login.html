@@ -1,0 +1,12 @@
+{{ define "content" }}
+<hr>
+<h3> Register </h3>
+<p> You have reached the register page, this bit of the page comes from <code>./server/register.html</code> . The user database currently has {{ .UserCount }} rows </p>
+<hr>
+<form method="POST" action="/login">
+    <label>Username</label>: <input name="name" type="text" id="name"/><br>
+    <label>Password</label>: <input name="pass" type="text" id="pass"/><br>
+    <input type="submit" value="submit"/> 
+    </form>
+<hr>
+{{ end }}

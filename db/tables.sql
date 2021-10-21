@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS `posts` (
 
 CREATE TABLE IF NOT EXISTS `categories` (
     `categoryID` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `name` TEXT NOT NULL
+    `parentID` INTEGER,
+    `name` TEXT NOT NULL,
+    `description` TEXT,
+    FOREIGN KEY(parentID) REFERENCES categories(categoryID)
 );
-
-INSERT INTO categories(name) VALUES("Random");

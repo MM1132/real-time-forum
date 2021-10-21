@@ -22,7 +22,7 @@ func InitializeDB() *sql.DB {
 
 		execSqlFile(db, "db/tables.sql")
 		execSqlFile(db, "db/init.sql")
-		execSqlFile(db, "db/initTestData.sql")
+		execSqlFile(db, "db/initTestData.sql") //! Delete this before submitting the project
 
 		log.Println("Database initialized!")
 	}

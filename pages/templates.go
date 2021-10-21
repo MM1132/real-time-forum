@@ -30,17 +30,15 @@ func CreateTemplates(rootPath string) map[string]*template.Template {
 }
 
 func createTemplate(fileSystem fs.FS, templPath, name string) *template.Template {
-	var newTemplate *template.Template
-	patterns := []string{templPath, "universal/*.html"}
-
-	// Check if there are any template-specific files...
+	// Add all the HTLM files in the specific folder into the slice as patterns
 	specificFiles, _ := fs.Glob(fileSystem, path.Join("specific", name, "*.html"))
-	if len(specificFiles) > 0 {
-		// ...and only add it if there are, to avoid erroring
-		patterns = append(patterns, path.Join("specific", name, "*.html"))
-	}
+	patterns := append(
+		[]string{templPath, "universal/*.html"},
+		specificFiles...,
+	)
 
-	newTemplate = template.Must(template.ParseFS(fileSystem, patterns...))
+	// Put all the files that match the patterns into the template
+	newTemplate := template.Must(template.ParseFS(fileSystem, patterns...))
 
 	return newTemplate
 }

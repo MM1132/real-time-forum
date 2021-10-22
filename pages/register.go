@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/forumDB"
+	"forum/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -42,13 +43,13 @@ func (p Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := &registerData{Title: "Forum Register"}
 	// Fill the new data struct with a value we'll use in the template
 	if err := data.getUserRowCount(p.db); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
+		utils.SendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 
 	// Finally execute the template with the data we got
 	if err := p.tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
+		utils.SendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 

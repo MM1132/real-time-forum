@@ -28,7 +28,7 @@ func LoginHandler(db *sql.DB, templates map[string]*template.Template) http.Hand
 	// Get the right template
 	tmpl, ok := templates[name]
 	if !ok {
-		log.Fatalf("Could not find the template for %v.html\n", name)
+		templateNotFound(name)
 	}
 
 	// Define a new Login handler with the db and template set

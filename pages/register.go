@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/forumDB"
+	"forum/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -29,7 +30,7 @@ func RegisterHandler(db *sql.DB, templates map[string]*template.Template) http.H
 	// Get the right template
 	tmpl, ok := templates[name]
 	if !ok {
-		log.Fatalf("Could not find the template for %v.html\n", name)
+		utils.FatalErr(noTemplateError(name))
 	}
 
 	// Define a new Index handler with the db and template set

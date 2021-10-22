@@ -28,7 +28,7 @@ func IndexHandler(db *sql.DB, templates map[string]*template.Template) http.Hand
 	// Get the right template
 	tmpl, ok := templates[name]
 	if !ok {
-		utils.FatalErr(noTemplateError(name))
+		utils.FatalErr(noTemplateError{name})
 	}
 
 	// Define a new Index handler with the db and template set

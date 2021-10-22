@@ -42,5 +42,3 @@ func handleOther(w http.ResponseWriter, r *http.Request) {
 
 	http.NotFound(w, r)
 }
-
-// Helper function to print errors

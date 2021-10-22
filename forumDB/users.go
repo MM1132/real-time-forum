@@ -2,6 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
+	utils "forum/utils"
 	"time"
 )
 
@@ -18,7 +19,7 @@ func InsertUser(db *sql.DB, newUser *User) (int, error) {
 	stmt, err := db.Prepare(
 		"INSERT INTO users(name, email, password, created) values(?,?,?,?)",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	res, err := stmt.Exec(newUser.Name, newUser.Email, newUser.Password, time.Now())
 	if err != nil {
@@ -26,7 +27,7 @@ func InsertUser(db *sql.DB, newUser *User) (int, error) {
 	}
 
 	uid, err := res.LastInsertId()
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	return int(uid), nil
 }
@@ -36,7 +37,7 @@ func GetUser(db *sql.DB, UID int) (*User, error) {
 	stmt, err := db.Prepare(
 		"SELECT * FROM users WHERE userID=?",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	row := stmt.QueryRow(UID)
 	user := &User{}
@@ -52,7 +53,7 @@ func GetUserByName(db *sql.DB, name string) (*User, error) {
 	stmt, err := db.Prepare(
 		"SELECT * FROM users WHERE name=?",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	row := stmt.QueryRow(name)
 	user := &User{}

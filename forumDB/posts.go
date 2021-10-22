@@ -2,6 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
+	"forum/utils"
 	"time"
 )
 
@@ -23,13 +24,13 @@ func InsertThread(db *sql.DB, newThread *Thread, newPost *Post) (int, int, error
 	stmt, err := db.Prepare(
 		"INSERT INTO threads(title, categoryID) values(?,?)",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	res, err := stmt.Exec(
 		newThread.Title,
 		newThread.CategoryID,
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 	threadID, _ := res.LastInsertId()
 	newPost.ThreadID = int(threadID)
 	postID, err := InsertPost(db, newPost)
@@ -43,7 +44,7 @@ func InsertPost(db *sql.DB, newPost *Post) (int, error) {
 	stmt, err := db.Prepare(
 		"INSERT INTO posts(content, userID, threadID, date) values(?,?,?,?)",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	res, err := stmt.Exec(
 		newPost.Content,
@@ -51,7 +52,7 @@ func InsertPost(db *sql.DB, newPost *Post) (int, error) {
 		newPost.ThreadID,
 		time.Now(),
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	id, _ := res.LastInsertId()
 	return int(id), err
@@ -61,7 +62,7 @@ func GetPost(db *sql.DB, postID int) (*Post, error) {
 	stmt, err := db.Prepare(
 		"SELECT * FROM posts WHERE postID=?",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	row := stmt.QueryRow(postID)
 	post := &Post{}
@@ -83,7 +84,7 @@ func GetThread(db *sql.DB, threadID int) (*Thread, error) {
 	stmt, err := db.Prepare(
 		"SELECT * FROM threads WHERE threadID=?",
 	)
-	fatalErr(err)
+	utils.FatalErr(err)
 
 	row := stmt.QueryRow(threadID)
 	thread := &Thread{}

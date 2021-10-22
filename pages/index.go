@@ -2,7 +2,6 @@ package pages
 
 import (
 	"database/sql"
-	"forum/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -41,13 +40,13 @@ func (p Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := &indexData{Title: "Forum Index"}
 	// Fill the new data struct with a value we'll use in the template
 	if err := data.getUserRowCount(p.db); err != nil {
-		utils.SendErr(err, w, http.StatusInternalServerError)
+		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 
 	// Finally execute the template with the data we got
 	if err := p.tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		utils.SendErr(err, w, http.StatusInternalServerError)
+		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 

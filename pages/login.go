@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/forumDB"
-	"forum/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -43,7 +42,7 @@ func (p Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Finally execute the template with the data we got
 	if err := p.tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		utils.SendErr(err, w, http.StatusInternalServerError)
+		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 

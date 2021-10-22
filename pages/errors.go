@@ -1,11 +1,9 @@
 package pages
 
-import (
-	"fmt"
-	"forum/utils"
-)
+import "fmt"
 
-func templateNotFound(name string) {
-	err := fmt.Errorf("could not find the template for %v.html", name)
-	utils.FatalErr(err)
+type noTemplateError string
+
+func (err noTemplateError) Error() string {
+	return fmt.Sprintf("Could not find the template \"%v\"", err)
 }

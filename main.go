@@ -13,7 +13,6 @@ import (
 func main() {
 	// Initialize sql.DB struct
 	db := fdb.InitializeDB()
-	defer db.Close()
 
 	// Set up handlers
 	// Serve static stuff like stylesheets and js on /static/
@@ -25,13 +24,14 @@ func main() {
 	http.Handle("/index", pages.IndexHandler(db, templates))
 	http.Handle("/register", pages.RegisterHandler(db, templates))
 	http.Handle("/login", pages.LoginHandler(db, templates))
+	http.Handle("/forum", pages.ForumHandler(db, templates))
 
 	http.HandleFunc("/", handleOther)
 
 	// Start the server
 	port := 8080
 	log.Printf("Listening on port %v", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%v", port), nil))
 }
 
 func handleOther(w http.ResponseWriter, r *http.Request) {

@@ -10,14 +10,14 @@ import (
 
 type Register forumEnv.Env
 
-// Contains things that are generated per request
+// Contains things that are generated for every request and passed on to the template
 type registerData struct {
 	Title     string // Title should be on every page
 	UserCount int
 }
 
 func (e Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := e.Templates["Register"]
+	tmpl := e.Templates["register"]
 
 	// We must create a new indexData struct because it can't be shared between requests
 	data := &registerData{Title: "Forum Register"}

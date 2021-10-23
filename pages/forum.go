@@ -10,7 +10,7 @@ import (
 
 type Forum forumEnv.Env
 
-// Contains things that are generated per request
+// Contains things that are generated for every request and passed on to the template
 type forumData struct {
 	Title       string // Title should be on every page
 	ThisCat     fdb.Category
@@ -20,6 +20,7 @@ type forumData struct {
 	Threads []fdb.Thread
 }
 
+// ServeHTTP is called with every request this page receives.
 func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tmpl := e.Templates["forum"]
 
@@ -28,7 +29,7 @@ func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	queryString := query.Get("id")
 
-	// Then turn it into the category id
+	// Then turn it into an int (0 if no query)
 	thisCatID := 0
 	if queryString != "" {
 		var err error

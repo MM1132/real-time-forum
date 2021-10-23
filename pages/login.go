@@ -9,7 +9,7 @@ import (
 
 type Login forumEnv.Env
 
-// Contains things that are generated per request
+// Contains things that are generated for every request and passed on to the template
 type loginData struct {
 	Title string // Title should be on every page
 }

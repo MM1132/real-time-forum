@@ -20,10 +20,12 @@ func main() {
 	staticServer := http.FileServer(http.Dir("./server/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", staticServer))
 
-	// Create templates for page handlers
+	// Get templates for page handlers
 	templates := forumEnv.CreateTemplates("./server/templates")
+	// And create an Env for page DB and Template access
 	env := forumEnv.NewEnv(db, templates)
 
+	// Then convert the Env into page-specific versions, so they act as handlers
 	http.Handle("/forum", pages.Forum(env))
 	http.Handle("/register", pages.Register(env))
 	http.Handle("/login", pages.Login(env))

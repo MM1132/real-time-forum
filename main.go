@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	fdb "forum/forumDB"
+	"forum/forumEnv"
 	"forum/pages"
 	"log"
 	"net/http"
@@ -20,11 +21,12 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", staticServer))
 
 	// Create templates for page handlers
-	templates := pages.CreateTemplates("./server/templates")
-	http.Handle("/index", pages.IndexHandler(db, templates))
-	http.Handle("/register", pages.RegisterHandler(db, templates))
-	http.Handle("/login", pages.LoginHandler(db, templates))
-	http.Handle("/forum", pages.ForumHandler(db, templates))
+	templates := forumEnv.CreateTemplates("./server/templates")
+	env := forumEnv.NewEnv(db, templates)
+
+	http.Handle("/forum", pages.Forum(env))
+	http.Handle("/register", pages.Register(env))
+	http.Handle("/login", pages.Login(env))
 
 	http.HandleFunc("/", handleOther)
 

@@ -36,7 +36,7 @@ func main() {
 
 func handleOther(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/index", http.StatusSeeOther)
+		http.Redirect(w, r, "/forum", http.StatusFound)
 		return
 	}
 

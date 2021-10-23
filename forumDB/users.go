@@ -2,7 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
-	utils "forum/utils"
+	"forum/utils"
 	"time"
 )
 
@@ -14,9 +14,19 @@ type User struct {
 	Creation time.Time
 }
 
+type UserInterface interface {
+	Insert(newUser User) (int, error)
+	Get(UID int) (User, error)
+	ByName(name string) (User, error)
+}
+
+type UserModel struct {
+	DB *sql.DB
+}
+
 // Insert a user into db, returns the UID of the newly inserted user
-func InsertUser(db *sql.DB, newUser *User) (int, error) {
-	stmt, err := db.Prepare(
+func (m UserModel) Insert(newUser User) (int, error) {
+	stmt, err := m.DB.Prepare(
 		"INSERT INTO users(name, email, password, created) values(?,?,?,?)",
 	)
 	utils.FatalErr(err)
@@ -33,33 +43,33 @@ func InsertUser(db *sql.DB, newUser *User) (int, error) {
 }
 
 // Get a user by UID, returns sql.ErrNoRows if not found
-func GetUser(db *sql.DB, UID int) (*User, error) {
-	stmt, err := db.Prepare(
+func (m UserModel) Get(UID int) (User, error) {
+	stmt, err := m.DB.Prepare(
 		"SELECT * FROM users WHERE userID=?",
 	)
 	utils.FatalErr(err)
 
 	row := stmt.QueryRow(UID)
-	user := &User{}
+	user := User{}
 	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
 	return user, nil
 }
 
-func GetUserByName(db *sql.DB, name string) (*User, error) {
-	stmt, err := db.Prepare(
+func (m UserModel) ByName(name string) (User, error) {
+	stmt, err := m.DB.Prepare(
 		"SELECT * FROM users WHERE name=?",
 	)
 	utils.FatalErr(err)
 
 	row := stmt.QueryRow(name)
-	user := &User{}
+	user := User{}
 	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
 	return user, nil

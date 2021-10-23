@@ -1,4 +1,4 @@
-package pages
+package forumEnv
 
 import (
 	"html/template"
@@ -30,7 +30,7 @@ func CreateTemplates(rootPath string) map[string]*template.Template {
 }
 
 func createTemplate(fileSystem fs.FS, templPath, name string) *template.Template {
-	// Add all the HTLM files in the specific folder into the slice as patterns
+	// Add all the HTML files in the specific folder into the slice as patterns
 	specificFiles, _ := fs.Glob(fileSystem, path.Join("specific", name, "*.html"))
 	patterns := append(
 		[]string{templPath, "universal/*.html"},

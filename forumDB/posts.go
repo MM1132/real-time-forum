@@ -14,8 +14,17 @@ type Post struct {
 	Date     time.Time
 }
 
-func InsertPost(db *sql.DB, newPost *Post) (int, error) {
-	stmt, err := db.Prepare(
+type PostInterface interface {
+	Insert(newPost Post) (int, error)
+	Get(postID int) (Post, error)
+}
+
+type PostModel struct {
+	DB *sql.DB
+}
+
+func (m PostModel) Insert(newPost Post) (int, error) {
+	stmt, err := m.DB.Prepare(
 		"INSERT INTO posts(content, userID, threadID, date) values(?,?,?,?)",
 	)
 	utils.FatalErr(err)
@@ -26,20 +35,22 @@ func InsertPost(db *sql.DB, newPost *Post) (int, error) {
 		newPost.ThreadID,
 		time.Now(),
 	)
-	utils.FatalErr(err)
+	if err != nil {
+		return 0, err
+	}
 
 	id, _ := res.LastInsertId()
 	return int(id), err
 }
 
-func GetPost(db *sql.DB, postID int) (*Post, error) {
-	stmt, err := db.Prepare(
+func (m PostModel) Get(postID int) (Post, error) {
+	stmt, err := m.DB.Prepare(
 		"SELECT * FROM posts WHERE postID=?",
 	)
 	utils.FatalErr(err)
 
 	row := stmt.QueryRow(postID)
-	post := &Post{}
+	post := Post{}
 	err = row.Scan(
 		&post.PostID,
 		&post.ThreadID,
@@ -48,7 +59,7 @@ func GetPost(db *sql.DB, postID int) (*Post, error) {
 		&post.Date,
 	)
 	if err != nil {
-		return nil, err
+		return Post{}, err
 	}
 
 	return post, nil

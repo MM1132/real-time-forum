@@ -11,8 +11,18 @@ type Thread struct {
 	CategoryID int
 }
 
-func InsertThread(db *sql.DB, newThread *Thread, newPost *Post) (int, int, error) {
-	stmt, err := db.Prepare(
+type ThreadInterface interface {
+	Insert(newThread Thread) (int, error)
+	Get(threadID int) (Thread, error)
+	ByCategory(categoryID int) ([]Thread, error)
+}
+
+type ThreadModel struct {
+	DB *sql.DB
+}
+
+func (m ThreadModel) Insert(newThread Thread) (int, error) {
+	stmt, err := m.DB.Prepare(
 		"INSERT INTO threads(title, categoryID) values(?,?)",
 	)
 	utils.FatalErr(err)
@@ -21,38 +31,36 @@ func InsertThread(db *sql.DB, newThread *Thread, newPost *Post) (int, int, error
 		newThread.Title,
 		newThread.CategoryID,
 	)
-	utils.FatalErr(err)
-	threadID, _ := res.LastInsertId()
-	newPost.ThreadID = int(threadID)
-	postID, err := InsertPost(db, newPost)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
-	return int(threadID), postID, err
+
+	threadID, _ := res.LastInsertId()
+	return int(threadID), err
 }
 
-func GetThread(db *sql.DB, threadID int) (*Thread, error) {
-	stmt, err := db.Prepare(
+func (m ThreadModel) Get(threadID int) (Thread, error) {
+	stmt, err := m.DB.Prepare(
 		"SELECT * FROM threads WHERE threadID=?",
 	)
 	utils.FatalErr(err)
 
 	row := stmt.QueryRow(threadID)
-	thread := &Thread{}
+	thread := Thread{}
 	err = row.Scan(
 		&thread.ThreadID,
 		&thread.Title,
 		&thread.CategoryID,
 	)
 	if err != nil {
-		return nil, err
+		return Thread{}, err
 	}
 
 	return thread, nil
 }
 
-func GetThreadsByCategoryID(db *sql.DB, categoryID int) ([]Thread, error) {
-	stmt, err := db.Prepare(
+func (m ThreadModel) ByCategory(categoryID int) ([]Thread, error) {
+	stmt, err := m.DB.Prepare(
 		"SELECT * FROM threads WHERE categoryID=?",
 	)
 	utils.FatalErr(err)

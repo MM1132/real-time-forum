@@ -3,7 +3,7 @@
     <hr>
     <span>
         {{ range .Breadcrumbs}}
-            <a {{ template "href" .CategoryID }}>{{ .Name }}</a> <-
+            <a {{ template "href" .CategoryID }}>{{ .Name }}</a> >
         {{ end }}
         <a {{ template "href" .ThisCat.CategoryID }}>{{ .ThisCat.Name }}</a>
     </span>

@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Initialize sql.DB struct
-	db := fdb.InitializeDB()
+	db := fdb.OpenDB("db/forum.db")
 
 	// Set up handlers
 	// Serve static stuff like stylesheets and js on /static/

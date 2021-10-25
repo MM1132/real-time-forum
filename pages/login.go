@@ -14,8 +14,8 @@ type loginData struct {
 	Title string // Title should be on every page
 }
 
-func (e Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := e.Templates["login"]
+func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	tmpl := env.Templates["login"]
 
 	// We must create a new loginData struct because it can't be shared between requests
 	data := &loginData{Title: "Forum Login"}
@@ -31,17 +31,17 @@ func (e Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 	//
 	case "POST":
-		e.login(w, r)
+		env.login(w, r)
 
 	}
 }
 
-func (e Login) login(w http.ResponseWriter, r *http.Request) bool {
+func (env Login) login(w http.ResponseWriter, r *http.Request) bool {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return false
 	}
-	user, err := e.Users.ByName(r.FormValue("name"))
+	user, err := env.Users.ByName(r.FormValue("name"))
 	if err != nil {
 		log.Print(err)
 	}

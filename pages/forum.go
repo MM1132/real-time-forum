@@ -21,8 +21,8 @@ type forumData struct {
 }
 
 // ServeHTTP is called with every request this page receives.
-func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := e.Templates["forum"]
+func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	tmpl := env.Templates["forum"]
 
 	data := forumData{}
 	// Read query with key "id"
@@ -41,7 +41,7 @@ func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get our current category
-	thisCat, err := e.Categories.Get(thisCatID)
+	thisCat, err := env.Categories.Get(thisCatID)
 	if err != nil {
 		http.NotFound(w, r)
 		return
@@ -50,7 +50,7 @@ func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.ThisCat = thisCat
 
 	// And then its children
-	childCats, err := e.Categories.GetChildern(thisCat.CategoryID)
+	childCats, err := env.Categories.GetChildern(thisCat.CategoryID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 	}
@@ -60,7 +60,7 @@ func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tempCat := thisCat
 	for tempCat.ParentID.Valid {
 		var err error
-		tempCat, err = e.Categories.Get(int(tempCat.ParentID.Int64))
+		tempCat, err = env.Categories.Get(int(tempCat.ParentID.Int64))
 		if err != nil {
 			sendErr(err, w, http.StatusInternalServerError)
 		}
@@ -68,7 +68,7 @@ func (e Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get a list of threads in this category
-	threads, err := e.Threads.ByCategory(thisCat.CategoryID)
+	threads, err := env.Threads.ByCategory(thisCat.CategoryID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 	}

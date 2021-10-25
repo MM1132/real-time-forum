@@ -16,8 +16,8 @@ type registerData struct {
 	UserCount int
 }
 
-func (e Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := e.Templates["register"]
+func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	tmpl := env.Templates["register"]
 
 	// We must create a new indexData struct because it can't be shared between requests
 	data := &registerData{Title: "Forum Register"}
@@ -33,19 +33,19 @@ func (e Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 	//
 	case "POST":
-		e.register(w, r)
+		env.register(w, r)
 
 	}
 }
 
-func (e Register) register(w http.ResponseWriter, r *http.Request) {
+func (env Register) register(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
 		return
 	}
 	newUser := forumDB.User{Name: r.FormValue("username"), Email: r.FormValue("email"), Password: r.FormValue("password")}
 
-	_, err := e.Users.Insert(newUser)
+	_, err := env.Users.Insert(newUser)
 	if err != nil {
 		log.Println(err)
 	}

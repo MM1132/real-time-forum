@@ -3,7 +3,6 @@ package pages
 import (
 	fdb "forum/forumDB"
 	"forum/forumEnv"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -79,6 +78,4 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	log.Printf("Served %v to %v\n", data.Title, r.RemoteAddr)
 }

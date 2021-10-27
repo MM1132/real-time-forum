@@ -26,7 +26,6 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Served %v to %v\n", data.Title, r.RemoteAddr)
 	switch r.Method {
 	case "GET":
 	//

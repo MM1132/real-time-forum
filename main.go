@@ -15,10 +15,8 @@ func main() {
 	// Initialize sql.DB struct
 	db := fdb.OpenDB("db/forum.db")
 
-	// Set up handlers
-	// Serve static stuff like stylesheets and js on /static/
-	staticServer := http.FileServer(http.Dir("./server/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", staticServer))
+	// Create a custom mux
+	mux := http.NewServeMux()
 
 	// Get templates for page handlers
 	templates := forumEnv.CreateTemplates("./server/templates")
@@ -26,23 +24,15 @@ func main() {
 	env := forumEnv.NewEnv(db, templates)
 
 	// Then convert the Env into page-specific versions, so they act as handlers
-	http.Handle("/forum", pages.Forum(env))
-	http.Handle("/register", pages.Register(env))
-	http.Handle("/login", pages.Login(env))
+	mux.Handle("/forum", pages.Forum(env))
+	mux.Handle("/register", pages.Register(env))
+	mux.Handle("/login", pages.Login(env))
 
-	http.HandleFunc("/", handleOther)
+	staticFS := http.FileServer(http.Dir("./server/static"))
+	mux.Handle("/", forumEnv.RedirectEmpty("/forum", staticFS))
 
 	// Start the server
 	port := 8080
 	log.Printf("Listening on port %v", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%v", port), nil))
-}
-
-func handleOther(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/forum", http.StatusFound)
-		return
-	}
-
-	http.NotFound(w, r)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%v", port), forumEnv.Log(mux)))
 }

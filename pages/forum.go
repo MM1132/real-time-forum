@@ -55,6 +55,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	data.ChildCats = childCats
 
+	// BREAD-CRUMBS!!!!
 	// Get a list of this category's parents. Outermost first
 	tempCat := thisCat
 	for tempCat.ParentID.Valid {

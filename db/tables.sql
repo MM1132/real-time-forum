@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `posts`
     `postID`   INTEGER PRIMARY KEY AUTOINCREMENT,
     `threadID` INTEGER,
     `userID`   INTEGER NOT NULL,
-    `content`  BLOB    NOT NULL,
+    `content`  TEXT    NOT NULL,
     `date`     DATE    NOT NULL,
     FOREIGN KEY (userID) REFERENCES users (userID),
     FOREIGN KEY (threadID) REFERENCES threads (threadID)

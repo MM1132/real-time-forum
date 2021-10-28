@@ -39,6 +39,7 @@ func (m ThreadModel) Insert(newThread Thread) (int, error) {
 	return int(threadID), err
 }
 
+// Get the thread by its ID
 func (m ThreadModel) Get(threadID int) (Thread, error) {
 	stmt, err := m.DB.Prepare(
 		"SELECT * FROM threads WHERE threadID=?",

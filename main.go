@@ -25,6 +25,7 @@ func main() {
 
 	// Then convert the Env into page-specific versions, so they act as handlers
 	mux.Handle("/forum", pages.Forum(env))
+	mux.Handle("/thread", pages.Thread{env})
 	mux.Handle("/register", pages.Register(env))
 	mux.Handle("/login", pages.Login(env))
 

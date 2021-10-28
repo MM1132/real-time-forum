@@ -1,0 +1,22 @@
+{{ define "content" }}
+    <hr>
+    <span>
+        {{ range .Breadcrumbs}}
+            <a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a> >
+        {{ end }}
+        <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Title }}</a>
+    </span>
+    <h3>Posts</h3>
+    {{ range .Posts }}
+    <hr>
+    <div>
+        <div>
+            <span>{{ .Date.Format "2 Jan 2006, 15:04" }}</span>
+            <br>
+            <span>{{ .UserID }}</span>
+        </div>
+        <p>{{ .Content }}</p>
+    </div>
+    {{ end }}
+    <hr>
+{{ end }}

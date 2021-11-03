@@ -7,6 +7,14 @@ CREATE TABLE IF NOT EXISTS `users`
     `created`  DATE        NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS `sessions`
+(
+    `token`   TEXT PRIMARY KEY,
+    `userID`  INTEGER NOT NULL,
+    `created` DATE    NOT NULL,
+    FOREIGN KEY (userID) REFERENCES users (userID)
+);
+
 CREATE TABLE IF NOT EXISTS `threads`
 (
     `threadID`   INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -4,7 +4,7 @@
         {{ range .Breadcrumbs}}
             <a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a> >
         {{ end }}
-        <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Title }}</a>
+        <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a>
     </span>
     <h3>Posts</h3>
     {{ range .Posts }}

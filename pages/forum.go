@@ -7,11 +7,13 @@ import (
 	"strconv"
 )
 
-type Forum forumEnv.Env
+type Forum struct {
+	forumEnv.Env
+}
 
 // Contains things that are generated for every request and passed on to the template
 type forumData struct {
-	Title       string // Title should be on every page
+	forumEnv.GenericData
 	ThisCat     fdb.Category
 	ChildCats   []fdb.Category
 	Breadcrumbs []fdb.Category
@@ -21,9 +23,11 @@ type forumData struct {
 
 // ServeHTTP is called with every request this page receives.
 func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := env.Templates["forum"]
-
 	data := forumData{}
+	if err := data.InitData(env.Env, r); err != nil {
+		return
+	}
+
 	// Read query with key "id"
 	query := r.URL.Query()
 	queryString := query.Get("id")
@@ -45,7 +49,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	data.Title = thisCat.Name
+	data.AddTitle(thisCat.Name)
 	data.ThisCat = thisCat
 
 	// And then its children
@@ -75,6 +79,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.Threads = threads
 
 	// Finally, execute the template with the data we got
+	tmpl := env.Templates["forum"]
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return

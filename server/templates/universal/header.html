@@ -1,4 +1,6 @@
+{{- /*gotype: forum/forumEnv.GenericData*/ -}}
 {{ define "header" }}
 <h1>I am the header</h1>
+<span>Hello, {{ if .User.Name }}{{ .User.Name }}{{ else }}guest{{ end }}!</span><br>
 <span>I am included on every page, and I come from <code>./server/universal/header.html</code></span>
 {{ end }}

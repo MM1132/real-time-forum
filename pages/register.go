@@ -8,21 +8,25 @@ import (
 	"net/http"
 )
 
-type Register forumEnv.Env
+type Register struct {
+	forumEnv.Env
+}
 
 // Contains things that are generated for every request and passed on to the template
 type registerData struct {
-	Title     string // Title should be on every page
-	UserCount int
+	forumEnv.GenericData
 }
 
 func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	tmpl := env.Templates["register"]
-
 	// We must create a new indexData struct because it can't be shared between requests
-	data := &registerData{Title: "Forum Register"}
+	data := &registerData{}
+	if err := data.InitData(env.Env, r); err != nil {
+		return
+	}
+	data.AddTitle("Register")
 
 	// Finally execute the template with the data we got
+	tmpl := env.Templates["register"]
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
@@ -48,7 +52,7 @@ func (env Register) register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Print("New user registered: ")
-	fmt.Println(newUser)
+	log.Print("New user registered: ")
+	log.Println(newUser)
 	// forumDB.InsertUser(p.db, &newUser)
 }

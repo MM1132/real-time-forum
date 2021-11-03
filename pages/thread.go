@@ -12,13 +12,18 @@ type Thread struct {
 }
 
 type ThreadData struct {
-	Title       string
+	forumEnv.GenericData
 	Thread      fdb.Thread
 	Posts       []fdb.Post
 	Breadcrumbs []fdb.Category
 }
 
 func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	data := ThreadData{}
+	if err := data.InitData(env.Env, r); err != nil {
+		return
+	}
+
 	// Check for if the request is of the right type
 	if r.Method != "GET" {
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
@@ -45,10 +50,8 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create the empty struct for storing the data for the thread page
-	data := ThreadData{
-		Thread: thread,
-		Title:  thread.Title,
-	}
+	data.Thread = thread
+	data.AddTitle(thread.Title)
 
 	// Get all the posts that match this thread's ID
 	if data.Posts, err = env.Posts.GetByThreadID(threadIdInt); err != nil {

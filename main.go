@@ -29,6 +29,7 @@ func main() {
 	mux.Handle("/thread", pages.Thread{env})
 	mux.Handle("/register", pages.Register{env})
 	mux.Handle("/login", pages.Login{env})
+	mux.Handle("/user", pages.User{env})
 
 	staticFS := http.FileServer(http.Dir("./server/static"))
 	mux.Handle("/", forumEnv.RedirectEmpty("/forum", staticFS))

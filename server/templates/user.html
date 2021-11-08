@@ -1,0 +1,11 @@
+{{ define "content" }}
+    <hr>
+    <h3>Welcome to the profile of <u>{{.User.Name}}</u>!</h3>
+    <div>
+        <span>ID: {{.User.UserID}}</span><br>
+        <span>Email: {{.User.Email}}</span><br>
+        <span>Password: {{.User.Password}}</span><br>
+        <span>Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</span>
+    </div>
+    <hr>
+{{ end }}

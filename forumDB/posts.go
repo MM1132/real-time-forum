@@ -12,6 +12,7 @@ type Post struct {
 	UserID   int
 	ThreadID int
 	Date     time.Time
+	User     User
 }
 
 type PostInterface interface {
@@ -47,20 +48,24 @@ func (m PostModel) Insert(newPost Post) (int, error) {
 // Return the post by its id
 func (m PostModel) Get(postID int) (Post, error) {
 	stmt, err := m.DB.Prepare(
-		"SELECT * FROM posts WHERE postID=?",
+		"SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE postID=?",
 	)
 	utils.FatalErr(err)
 
 	row := stmt.QueryRow(postID)
 	post := Post{}
-	err = row.Scan(
+	if err = row.Scan(
 		&post.PostID,
 		&post.ThreadID,
 		&post.UserID,
 		&post.Content,
 		&post.Date,
-	)
-	if err != nil {
+		&post.User.UserID,
+		&post.User.Name,
+		&post.User.Email,
+		&post.User.Password,
+		&post.User.Creation,
+	); err != nil {
 		return Post{}, err
 	}
 
@@ -71,7 +76,7 @@ func (m PostModel) Get(postID int) (Post, error) {
 func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 	// Prepare the statement
 	statement, err := m.DB.Prepare(
-		"SELECT * FROM posts WHERE threadID=? ORDER BY date",
+		"SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE threadID=? ORDER BY date",
 	)
 	utils.FatalErr(err)
 
@@ -90,6 +95,11 @@ func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 			&post.UserID,
 			&post.Content,
 			&post.Date,
+			&post.User.UserID,
+			&post.User.Name,
+			&post.User.Email,
+			&post.User.Password,
+			&post.User.Creation,
 		)
 		if err != nil {
 			return nil, err

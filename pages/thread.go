@@ -49,7 +49,7 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 	}
 
-	// Create the empty struct for storing the data for the thread page
+	// Set the thread of the empty date struct
 	data.Thread = thread
 	data.AddTitle(thread.Title)
 

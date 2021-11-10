@@ -1,5 +1,4 @@
 {{ define "content" }}
-    <hr>
     <span>
         {{ range .Breadcrumbs}}
             <a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a> >
@@ -8,15 +7,14 @@
     </span>
     <h3>Posts</h3>
     {{ range .Posts }}
-    <hr>
-    <div>
+        <hr>
         <div>
-            <span>{{ .Date.Format "2 Jan 2006, 15:04" }}</span>
-            <br>
-            <a href="/user?id={{.User.UserID}}">{{ .User.Name }}</a>
+            <div>
+                <span>{{ .Date.Format "2 Jan 2006, 15:04" }}</span>
+                <br>
+                <a href="/user?id={{.User.UserID}}">{{ .User.Name }}</a>
+            </div>
+            <p>{{ .Content }}</p>
         </div>
-        <p>{{ .Content }}</p>
-    </div>
     {{ end }}
-    <hr>
 {{ end }}

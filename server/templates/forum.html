@@ -1,6 +1,5 @@
 {{- /*gotype: forum/pages.forumData*/ -}}
 {{ define "content" }}
-    <hr>
     <span>
         {{ range .Breadcrumbs}}
             <a {{ template "href" .CategoryID }}>{{ .Name }}</a> >
@@ -19,7 +18,6 @@
             <li><a href="/thread?id={{ .ThreadID }}">{{ .Title }}</a></li>
         {{ end }}
     </ul>
-    <hr>
 {{ end }}
 
 {{ define "href"}}

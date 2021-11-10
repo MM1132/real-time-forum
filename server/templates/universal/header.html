@@ -1,6 +1,28 @@
 {{- /*gotype: forum/forumEnv.GenericData*/ -}}
 {{ define "header" }}
-<h1>I am the header</h1>
-<span>Hello, {{ if .User.Name }}{{ .User.Name }}{{ else }}guest{{ end }}!</span><br>
-<span>I am included on every page, and I come from <code>./server/universal/header.html</code></span>
+    <header class="wrapper" id="header">
+        <div id="header-logo">
+            <a href="/">
+                <img src="/logo.png" alt="Home">
+                <img src="/logo-hover.png" alt="Home" style="display: none;">
+            </a>
+        </div>
+
+        <nav id="header-nav">
+            <a href="/page1" class="flex-center">Page 1</a>
+            <a href="/page2" class="flex-center">Page 2</a>
+            <a href="/page3" class="flex-center">Page 3</a>
+        </nav>
+
+        <div class="expander"></div>
+        {{ if eq .User.UserID 0 }}
+            <form action="/login" method="post" class="flex-center">
+                <label>Username: <input name="name" type="text"></label>
+                <label>Password: <input name="pass" type="password"></label>
+                <input type="submit" style="display: none;" />
+            </form>
+        {{ else }}
+            <span>Welcome {{ .User.Name }}!</span>
+        {{ end }}
+    </header>
 {{ end }}

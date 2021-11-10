@@ -10,6 +10,8 @@ type GenericData struct {
 	Title   string
 	Session fdb.Session
 	User    fdb.User
+
+	Theme string
 }
 
 func (data *GenericData) InitData(env Env, r *http.Request) error {

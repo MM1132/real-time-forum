@@ -1,0 +1,45 @@
+:root {
+  --color-text: #e6e6e6;
+  --color-text-inverted: #1a1a1a;
+
+  --color-link: var(--color-secondary-light-4);
+  --color-link-visited: var(--color-secondary-light-3);
+  --color-link-hover: var(--color-secondary-light-5);
+
+  --color-border-dark: rgba(0, 0, 0, 0.3);
+  --color-border-light: rgba(255, 255, 255, 0.3);
+
+  --color-darken-10: rgba(0, 0, 0, 0.1);
+  --color-darken-20: rgba(0, 0, 0, 0.2);
+  --color-darken-30: rgba(0, 0, 0, 0.3);
+
+  --color-lighten-10: rgba(255, 255, 255, 0.1);
+  --color-lighten-20: rgba(255, 255, 255, 0.2);
+  --color-lighten-30: rgba(255, 255, 255, 0.3);
+
+  @primary: #454851;
+  .mix-color(primary, @primary);
+
+  @secondary: #7BAE7F;
+  .mix-color(secondary, @secondary);
+}
+
+.mix-color(@name, @color) {
+  --color-@{name}: @color;
+
+  --color-@{name}-dark-1: shade(@color, 10%);
+  --color-@{name}-dark-2: shade(@color, 20%);
+  --color-@{name}-dark-3: shade(@color, 30%);
+  --color-@{name}-dark-4: shade(@color, 40%);
+  --color-@{name}-dark-5: shade(@color, 50%);
+  --color-@{name}-dark-6: shade(@color, 60%);
+  --color-@{name}-dark-7: shade(@color, 70%);
+
+  --color-@{name}-light-1: tint(@color, 10%);
+  --color-@{name}-light-2: tint(@color, 20%);
+  --color-@{name}-light-3: tint(@color, 30%);
+  --color-@{name}-light-4: tint(@color, 40%);
+  --color-@{name}-light-5: tint(@color, 50%);
+  --color-@{name}-light-6: tint(@color, 60%);
+  --color-@{name}-light-7: tint(@color, 70%);
+}

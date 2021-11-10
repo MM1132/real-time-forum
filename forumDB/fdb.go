@@ -31,7 +31,11 @@ func initDB(db *sql.DB, dbPath string) {
 	err := execSqlFiles(db,
 		"db/tables.sql",
 		"db/init.sql",
-		"db/initTestData.sql", // ! Delete this before submitting the project
+		// ! Delete these before submitting the project
+		"db/initTestUsers.sql",
+		"db/initTestCats.sql",
+		"db/initTestThreads.sql",
+		"db/initTestPosts.sql",
 	)
 	if err != nil {
 		log.Println(err)

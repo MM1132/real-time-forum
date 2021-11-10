@@ -2,8 +2,8 @@ package pages
 
 import (
 	"fmt"
-	"forum/forumDB"
-	"forum/forumEnv"
+	"forum/internal/forumDB"
+	"forum/internal/forumEnv"
 	"log"
 	"net/http"
 	"strings"

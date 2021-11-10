@@ -1,8 +1,8 @@
 package pages
 
 import (
-	fdb "forum/forumDB"
-	"forum/forumEnv"
+	"forum/internal/forumDB"
+	"forum/internal/forumEnv"
 	"net/http"
 )
 
@@ -12,9 +12,9 @@ type Thread struct {
 
 type ThreadData struct {
 	forumEnv.GenericData
-	Thread      fdb.Thread
-	Posts       []fdb.Post
-	Breadcrumbs []fdb.Category
+	Thread      forumDB.Thread
+	Posts       []forumDB.Post
+	Breadcrumbs []forumDB.Category
 }
 
 func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +60,7 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-	data.Breadcrumbs = []fdb.Category{tempCategory}
+	data.Breadcrumbs = []forumDB.Category{tempCategory}
 	// Now loop through all the categories and add them all to the amazing breadcrumbs
 	for tempCategory.ParentID.Valid {
 		tempCategory, err = env.Categories.Get(int(tempCategory.ParentID.Int64))
@@ -69,7 +69,7 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		// And of course, append the category to the end of breadcrumbs
-		data.Breadcrumbs = append([]fdb.Category{tempCategory}, data.Breadcrumbs...)
+		data.Breadcrumbs = append([]forumDB.Category{tempCategory}, data.Breadcrumbs...)
 	}
 
 	// And finally we are executing the template with the data we got

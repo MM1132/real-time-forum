@@ -1,7 +1,7 @@
 package pages
 
 import (
-	"forum/forumEnv"
+	"forum/internal/forumEnv"
 	"net/http"
 )
 

@@ -2,7 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
-	"forum/utils"
+	"forum/internal/utils"
 	"time"
 )
 

@@ -2,7 +2,7 @@ package forumEnv
 
 import (
 	"database/sql"
-	fdb "forum/forumDB"
+	"forum/internal/forumDB"
 	"html/template"
 )
 
@@ -14,11 +14,11 @@ type Env struct {
 	DB        *sql.DB
 	Templates map[string]*template.Template
 
-	Users      fdb.UserInterface
-	Posts      fdb.PostInterface
-	Threads    fdb.ThreadInterface
-	Categories fdb.CategoryInterface
-	Sessions   fdb.SessionInterface
+	Users      forumDB.UserInterface
+	Posts      forumDB.PostInterface
+	Threads    forumDB.ThreadInterface
+	Categories forumDB.CategoryInterface
+	Sessions   forumDB.SessionInterface
 }
 
 // NewEnv creates a new Env for use in http handlers
@@ -27,10 +27,10 @@ func NewEnv(db *sql.DB, templates map[string]*template.Template) Env {
 		DB:        db,
 		Templates: templates,
 
-		Users:      fdb.UserModel{DB: db},
-		Posts:      fdb.PostModel{DB: db},
-		Threads:    fdb.ThreadModel{DB: db},
-		Categories: fdb.CategoryModel{DB: db},
-		Sessions:   fdb.SessionModel{DB: db},
+		Users:      forumDB.UserModel{DB: db},
+		Posts:      forumDB.PostModel{DB: db},
+		Threads:    forumDB.ThreadModel{DB: db},
+		Categories: forumDB.CategoryModel{DB: db},
+		Sessions:   forumDB.SessionModel{DB: db},
 	}
 }

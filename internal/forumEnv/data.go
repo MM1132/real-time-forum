@@ -2,14 +2,14 @@ package forumEnv
 
 import (
 	"fmt"
-	fdb "forum/forumDB"
+	"forum/internal/forumDB"
 	"net/http"
 )
 
 type GenericData struct {
 	Title   string
-	Session fdb.Session
-	User    fdb.User
+	Session forumDB.Session
+	User    forumDB.User
 
 	Theme string
 }

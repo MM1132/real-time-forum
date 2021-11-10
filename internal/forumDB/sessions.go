@@ -3,7 +3,7 @@ package forumDB
 import (
 	"database/sql"
 	"fmt"
-	"forum/utils"
+	"forum/internal/utils"
 	"time"
 
 	uuid "github.com/satori/go.uuid"

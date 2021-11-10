@@ -2,7 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
-	util "forum/utils"
+	util "forum/internal/utils"
 	"log"
 	"os"
 )
@@ -11,7 +11,7 @@ import (
 func OpenDB(dbPath string) *sql.DB {
 	// Check if the database exists
 	exists := true
-	if _, err := os.Stat("db/forum.db"); os.IsNotExist(err) {
+	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		exists = false
 	}
 

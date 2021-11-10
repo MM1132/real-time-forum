@@ -1,8 +1,8 @@
 package pages
 
 import (
-	fdb "forum/forumDB"
-	"forum/forumEnv"
+	"forum/internal/forumDB"
+	"forum/internal/forumEnv"
 	"net/http"
 	"strconv"
 )
@@ -14,11 +14,11 @@ type Forum struct {
 // Contains things that are generated for every request and passed on to the template
 type forumData struct {
 	forumEnv.GenericData
-	ThisCat     fdb.Category
-	ChildCats   []fdb.Category
-	Breadcrumbs []fdb.Category
+	ThisCat     forumDB.Category
+	ChildCats   []forumDB.Category
+	Breadcrumbs []forumDB.Category
 
-	Threads []fdb.Thread
+	Threads []forumDB.Thread
 }
 
 // ServeHTTP is called with every request this page receives.
@@ -68,7 +68,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			sendErr(err, w, http.StatusInternalServerError)
 		}
-		data.Breadcrumbs = append([]fdb.Category{tempCat}, data.Breadcrumbs...)
+		data.Breadcrumbs = append([]forumDB.Category{tempCat}, data.Breadcrumbs...)
 	}
 
 	// Get a list of threads in this category

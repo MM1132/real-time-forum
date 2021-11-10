@@ -1,9 +1,9 @@
 package main
 
 import (
-	fdb "forum/forumDB"
-	"forum/forumEnv"
-	"forum/pages"
+	fdb "forum/internal/forumDB"
+	"forum/internal/forumEnv"
+	"forum/internal/pages"
 	"log"
 	"net/http"
 	"os"
@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Initialize sql.DB struct
-	db := fdb.OpenDB("db/forum.db")
+	db := fdb.OpenDB("server/db/forum.db")
 
 	// Create a custom mux
 	mux := http.NewServeMux()

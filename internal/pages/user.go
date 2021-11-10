@@ -1,8 +1,8 @@
 package pages
 
 import (
-	fdb "forum/forumDB"
-	"forum/forumEnv"
+	fdb "forum/internal/forumDB"
+	"forum/internal/forumEnv"
 	"net/http"
 	"strconv"
 )

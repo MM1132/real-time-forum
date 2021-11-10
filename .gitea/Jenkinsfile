@@ -34,6 +34,7 @@ pipeline {
                 echo 'Testing...'
                 sh 'command -v go-junit-report || go install github.com/jstemmer/go-junit-report@latest'
 
+                sh 'go build -o forum'
                 sh 'go test -coverprofile reports/coverage.txt -v ./... 2>&1 | go-junit-report > reports/gotest-junit.xml'
                 junit ( allowEmptyResults: true, testResults: 'reports/*-junit.xml' )
             }
@@ -46,6 +47,20 @@ pipeline {
 
                     sh 'gocover-cobertura < reports/coverage.txt > reports/coverage.xml'
                     step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'reports/coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+                }
+            }
+        }
+        stage('Deployment') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Deployment...'
+                catchError(buildResult: 'SUCCESS') {
+                    sh 'systemctl --user stop forum.olari.ee.service || true'
+                    sh 'rm -fr /var/www/forum.olari.ee/*'
+                    sh 'cp -fr -t /var/www/forum.olari.ee/ ./forum ./server/ ./db/'
+                    sh 'systemctl --user start forum.olari.ee.service'
                 }
             }
         }

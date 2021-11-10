@@ -29,13 +29,13 @@ func OpenDB(dbPath string) *sql.DB {
 
 func initDB(db *sql.DB, dbPath string) {
 	err := execSqlFiles(db,
-		"db/tables.sql",
-		"db/init.sql",
+		"server/db/sql/tables.sql",
+		"server/db/sql/init.sql",
 		// ! Delete these before submitting the project
-		"db/initTestUsers.sql",
-		"db/initTestCats.sql",
-		"db/initTestThreads.sql",
-		"db/initTestPosts.sql",
+		"server/db/sql/initTestUsers.sql",
+		"server/db/sql/initTestCats.sql",
+		"server/db/sql/initTestThreads.sql",
+		"server/db/sql/initTestPosts.sql",
 	)
 	if err != nil {
 		log.Println(err)

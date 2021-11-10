@@ -22,7 +22,10 @@
                 <input type="submit" style="display: none;" />
             </form>
         {{ else }}
-            <span>Welcome {{ .User.Name }}!</span>
+            <div class="remove-me-later flex-center"><span>Welcome {{ .User.Name }}!</span></div>
+            <form action="/logout" method="post" class="flex-center">
+                <button type="submit">Logout</button>
+            </form>
         {{ end }}
     </header>
 {{ end }}

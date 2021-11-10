@@ -1,10 +1,11 @@
 {{ define "content" }}
-    <h3> Register </h3>
+    <h3> Login </h3>
+    {{/*{{ if .User.Name }}<meta http-equiv="refresh" content="0; URL=/forum"/>{{ end }}*/}}
     <p> You have reached the login page, this bit of the page comes from <code>./server/login.html</code> . </p>
     <hr>
-    <form method="POST" action="/login">
-        <label>Username</label>: <input name="name" type="text" id="name"/><br>
-        <label>Password</label>: <input name="pass" type="text" id="pass"/><br>
+    <form method="POST">
+        <label>Username: <input name="name" type="text" id="name"/></label><br>
+        <label>Password: <input name="pass" type="password" id="pass"/></label><br>
         <input type="submit" value="submit"/>
     </form>
 {{ end }}

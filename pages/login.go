@@ -6,6 +6,7 @@ import (
 	"forum/forumEnv"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Login struct {
@@ -18,6 +19,11 @@ type loginData struct {
 }
 
 func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if !strings.Contains(r.Referer(), "localhost") && !strings.Contains(r.Referer(), "127.0.0.1") {
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		fmt.Println(r.Referer())
+		return
+	}
 	// We must create a new loginData struct because it can't be shared between requests
 	data := &loginData{}
 	if err := data.InitData(env.Env, r); err != nil {
@@ -50,30 +56,27 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User {
 	}
 	user, err := env.Users.ByName(r.FormValue("name"))
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		log.Print(err)
+		w.WriteHeader(http.StatusUnauthorized)
+		log.Println("Incorrect username or password.")
 		return nil
-	}
-	if r.FormValue("pass") == user.Password {
-		cookie, err := r.Cookie("session")
+	} else if r.FormValue("pass") == user.Password {
+		token, err := env.Sessions.New(&user)
 		if err != nil {
-			sessionID, err := env.Sessions.New(&user)
-			if err != nil {
-				log.Panic()
-			} else {
-				cookie = &http.Cookie{
-					Name:   "session",
-					Value:  sessionID,
-					Path:   "/", // Otherwise it defaults to /login
-					Secure: true,
-					MaxAge: 86400, // One day
-				}
-			}
+			log.Panic()
 		}
+		cookie := &http.Cookie{
+			Name:   "session",
+			Value:  token,
+			Path:   "/", // Otherwise it defaults to /login
+			Secure: true,
+			MaxAge: 86400, // One day
+		}
+
 		http.SetCookie(w, cookie)
 
 		log.Printf("%v has logged in.", user.Name)
 		log.Println()
+		http.Redirect(w, r, "/forum", http.StatusFound)
 
 		return &user
 	}

@@ -23,6 +23,13 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := data.InitData(env.Env, r); err != nil {
 		return
 	}
+	switch r.Method {
+	case "GET":
+	//
+	case "POST":
+		env.register(w, r)
+
+	}
 	data.AddTitle("Register")
 
 	// Finally execute the template with the data we got
@@ -30,14 +37,6 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
-	}
-
-	switch r.Method {
-	case "GET":
-	//
-	case "POST":
-		env.register(w, r)
-
 	}
 }
 
@@ -54,5 +53,7 @@ func (env Register) register(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Print("New user registered: ")
 	log.Println(newUser)
+	http.Redirect(w, r, "/login", http.StatusFound)
+
 	// forumDB.InsertUser(p.db, &newUser)
 }

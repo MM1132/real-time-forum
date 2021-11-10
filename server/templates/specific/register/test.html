@@ -1,8 +1,9 @@
 {{ define "test" }}
+{{ if .User.Name }}<meta http-equiv="refresh" content="0; URL=/forum" />{{ end }}
 <form method="POST" action="/register">
 <label>Username</label>: <input name="username" type="text" id="username"/><br>
-<label>Password</label>: <input name="password" type="text" id="password"/><br>
-<label>E-mail</label>: <input name="email" type="text" id="email"><br>
+<label>Password</label>: <input name="password" type="password" id="password"/><br>
+<label>E-mail</label>: <input name="email" type="email" id="email"><br>
 <input type="submit" value="submit"/> 
 </form>
 {{ end }}

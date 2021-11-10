@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	fdb "forum/forumDB"
 	"forum/forumEnv"
 	"forum/pages"
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -34,7 +34,13 @@ func main() {
 	mux.Handle("/", forumEnv.RedirectEmpty("/forum", staticFS))
 
 	// Start the server
-	port := 8080
-	log.Printf("Listening on port %v", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%v", port), forumEnv.Log(mux)))
+	log.Fatal(http.ListenAndServe("localhost:"+getPort(), forumEnv.Log(mux)))
+}
+
+func getPort() string {
+	port := "8080"
+	if len(os.Args) > 1 {
+		port = os.Args[1]
+	}
+	return port
 }

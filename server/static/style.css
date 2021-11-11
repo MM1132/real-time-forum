@@ -143,7 +143,7 @@ a:hover {
     
     height: 1.2em;
     aspect-ratio: 1;
-    vertical-align: sub;
+    vertical-align: middle;
 
     background-repeat: no-repeat;
     background-size: contain;

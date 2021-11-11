@@ -14,23 +14,32 @@ type User struct {
 	Creation time.Time
 }
 
-type UserInterface interface {
-	Insert(newUser User) (int, error)
-	Get(UID int) (User, error)
-	ByName(name string) (User, error)
+type UserModel struct {
+	db         *sql.DB
+	statements map[string]*sql.Stmt
 }
 
-type UserModel struct {
-	DB *sql.DB
+func NewUserModel(db *sql.DB) UserModel {
+	statements := make(map[string]*sql.Stmt)
+	model := UserModel{db: db}
+
+	var err error
+	statements["Insert"], err = db.Prepare("INSERT INTO users(name, email, password, created) values(?,?,?,?)")
+	utils.FatalErr(err)
+
+	statements["Get"], err = db.Prepare("SELECT * FROM users WHERE userID=?")
+	utils.FatalErr(err)
+
+	statements["ByName"], err = db.Prepare("SELECT * FROM users WHERE name=?")
+	utils.FatalErr(err)
+
+	model.statements = statements
+	return model
 }
 
 // Insert a user into db, returns the UID of the newly inserted user
 func (m UserModel) Insert(newUser User) (int, error) {
-	stmt, err := m.DB.Prepare(
-		"INSERT INTO users(name, email, password, created) values(?,?,?,?)",
-	)
-	utils.FatalErr(err)
-
+	stmt := m.statements["Insert"]
 	res, err := stmt.Exec(newUser.Name, newUser.Email, newUser.Password, time.Now())
 	if err != nil {
 		return 0, err
@@ -44,15 +53,13 @@ func (m UserModel) Insert(newUser User) (int, error) {
 
 // Get a user by UID, returns sql.ErrNoRows if not found
 func (m UserModel) Get(UID int) (User, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM users WHERE userID=?",
-	)
-	utils.FatalErr(err)
-
+	stmt := m.statements["Get"]
 	row := stmt.QueryRow(UID)
+
 	user := User{}
-	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
-	if err != nil {
+	if err := row.Scan(
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+	); err != nil {
 		return User{}, err
 	}
 
@@ -60,15 +67,13 @@ func (m UserModel) Get(UID int) (User, error) {
 }
 
 func (m UserModel) ByName(name string) (User, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM users WHERE name=?",
-	)
-	utils.FatalErr(err)
-
+	stmt := m.statements["ByName"]
 	row := stmt.QueryRow(name)
+
 	user := User{}
-	err = row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation)
-	if err != nil {
+	if err := row.Scan(
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+	); err != nil {
 		return User{}, err
 	}
 

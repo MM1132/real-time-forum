@@ -15,22 +15,34 @@ type Post struct {
 	User     User
 }
 
-type PostInterface interface {
-	Insert(newPost Post) (int, error)
-	Get(postID int) (Post, error)
-	GetByThreadID(threadID int) ([]Post, error)
-	GetByUserID(userID int) ([]Post, error)
+type PostModel struct {
+	db         *sql.DB
+	statements map[string]*sql.Stmt
 }
 
-type PostModel struct {
-	DB *sql.DB
+func NewPostModel(db *sql.DB) PostModel {
+	statements := make(map[string]*sql.Stmt)
+	model := PostModel{db: db}
+
+	var err error
+	statements["Insert"], err = db.Prepare("INSERT INTO posts(content, userID, threadID, date) values(?,?,?,?)")
+	utils.FatalErr(err)
+
+	statements["Get"], err = db.Prepare("SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE postID=?")
+	utils.FatalErr(err)
+
+	statements["GetByThreadID"], err = db.Prepare("SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE threadID=? ORDER BY date")
+	utils.FatalErr(err)
+
+	statements["GetByUserID"], err = db.Prepare("SELECT * FROM posts WHERE userID=? ORDER BY date DESC")
+	utils.FatalErr(err)
+
+	model.statements = statements
+	return model
 }
 
 func (m PostModel) Insert(newPost Post) (int, error) {
-	stmt, err := m.DB.Prepare(
-		"INSERT INTO posts(content, userID, threadID, date) values(?,?,?,?)",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["Insert"]
 
 	res, err := stmt.Exec(
 		newPost.Content,
@@ -48,14 +60,11 @@ func (m PostModel) Insert(newPost Post) (int, error) {
 
 // Return the post by its id
 func (m PostModel) Get(postID int) (Post, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE postID=?",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["Get"]
 
 	row := stmt.QueryRow(postID)
 	post := Post{}
-	if err = row.Scan(
+	if err := row.Scan(
 		&post.PostID,
 		&post.ThreadID,
 		&post.UserID,
@@ -75,14 +84,10 @@ func (m PostModel) Get(postID int) (Post, error) {
 
 // Get all the posts with the threadID
 func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
-	// Prepare the statement
-	statement, err := m.DB.Prepare(
-		"SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE threadID=? ORDER BY date",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["GetByThreadID"]
 
 	// Get all the rows where the threadID matches
-	rows, err := statement.Query(threadID)
+	rows, err := stmt.Query(threadID)
 	if err != nil {
 		return nil, err
 	}
@@ -111,12 +116,9 @@ func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 }
 
 func (m PostModel) GetByUserID(userID int) ([]Post, error) {
-	statement, err := m.DB.Prepare(
-		"SELECT * FROM posts WHERE userID=? ORDER BY date DESC",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["GetByUserID"]
 
-	rows, err := statement.Query(userID)
+	rows, err := stmt.Query(userID)
 	if err != nil {
 		return nil, err
 	}

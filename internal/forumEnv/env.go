@@ -14,11 +14,11 @@ type Env struct {
 	DB        *sql.DB
 	Templates map[string]*template.Template
 
-	Users      forumDB.UserInterface
-	Posts      forumDB.PostInterface
-	Threads    forumDB.ThreadInterface
-	Categories forumDB.CategoryInterface
-	Sessions   forumDB.SessionInterface
+	Users      forumDB.UserModel
+	Posts      forumDB.PostModel
+	Threads    forumDB.ThreadModel
+	Categories forumDB.CategoryModel
+	Sessions   forumDB.SessionModel
 }
 
 // NewEnv creates a new Env for use in http handlers
@@ -27,10 +27,10 @@ func NewEnv(db *sql.DB, templates map[string]*template.Template) Env {
 		DB:        db,
 		Templates: templates,
 
-		Users:      forumDB.UserModel{DB: db},
-		Posts:      forumDB.PostModel{DB: db},
-		Threads:    forumDB.ThreadModel{DB: db},
-		Categories: forumDB.CategoryModel{DB: db},
-		Sessions:   forumDB.SessionModel{DB: db},
+		Users:      forumDB.NewUserModel(db),
+		Posts:      forumDB.NewPostModel(db),
+		Threads:    forumDB.NewThreadModel(db),
+		Categories: forumDB.NewCategoryModel(db),
+		Sessions:   forumDB.NewSessionModel(db),
 	}
 }

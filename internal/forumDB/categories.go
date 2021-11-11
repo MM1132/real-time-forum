@@ -12,22 +12,47 @@ type Category struct {
 	Description sql.NullString
 }
 
-type CategoryInterface interface {
-	Insert(newCat Category) (int, error)
-	Get(categoryID int) (Category, error)
-	GetChildern(categoryID int) ([]Category, error)
-	GetBreadcrumbs(categoryID int) ([]Category, error)
+type CategoryModel struct {
+	db         *sql.DB
+	statements map[string]*sql.Stmt
 }
 
-type CategoryModel struct {
-	DB *sql.DB
+func NewCategoryModel(db *sql.DB) CategoryModel {
+	statements := make(map[string]*sql.Stmt)
+	model := CategoryModel{db: db}
+
+	var err error
+	statements["Insert"], err = db.Prepare("INSERT INTO categories(parentID, name, description) values(?,?,?)")
+	utils.FatalErr(err)
+
+	statements["Get"], err = db.Prepare("SELECT * FROM categories WHERE categoryID=?")
+	utils.FatalErr(err)
+
+	statements["GetChildern"], err = db.Prepare("SELECT * FROM categories WHERE parentID=?")
+	utils.FatalErr(err)
+
+	statements["GetBreadcrumbs"], err = db.Prepare(`
+		WITH ancestors AS (
+			SELECT *
+			FROM categories
+			WHERE categoryID=?
+			
+			UNION ALL
+		
+			SELECT c.*
+			FROM categories c
+				JOIN
+				ancestors a ON c.categoryID = a.parentID
+		)
+		SELECT * FROM ancestors`)
+	utils.FatalErr(err)
+
+	model.statements = statements
+	return model
 }
 
 func (m CategoryModel) Insert(newCat Category) (int, error) {
-	stmt, err := m.DB.Prepare(
-		"INSERT INTO categories(parentID, name, description) values(?,?,?)",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["Insert"]
 
 	res, err := stmt.Exec(
 		newCat.ParentID,
@@ -43,14 +68,11 @@ func (m CategoryModel) Insert(newCat Category) (int, error) {
 }
 
 func (m CategoryModel) Get(categoryID int) (Category, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM categories WHERE categoryID=?",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["Get"]
 
 	row := stmt.QueryRow(categoryID)
 	category := Category{}
-	err = row.Scan(
+	err := row.Scan(
 		&category.CategoryID,
 		&category.ParentID,
 		&category.Name,
@@ -64,10 +86,7 @@ func (m CategoryModel) Get(categoryID int) (Category, error) {
 }
 
 func (m CategoryModel) GetChildern(categoryID int) ([]Category, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM categories WHERE parentID=?",
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["GetChildern"]
 
 	rows, err := stmt.Query(categoryID)
 	if err != nil {
@@ -94,26 +113,9 @@ func (m CategoryModel) GetChildern(categoryID int) ([]Category, error) {
 }
 
 func (m CategoryModel) GetBreadcrumbs(categoryID int) ([]Category, error) {
-	statement, err := m.DB.Prepare(
-		`
-		WITH ancestors AS (
-			SELECT *
-			FROM categories
-			WHERE categoryID=?
-			
-			UNION ALL
-		
-			SELECT c.*
-			FROM categories c
-				JOIN
-				ancestors a ON c.categoryID = a.parentID
-		)
-		SELECT * FROM ancestors
-		`,
-	)
-	utils.FatalErr(err)
+	stmt := m.statements["GetBreadcrumbs"]
 
-	rows, err := statement.Query(categoryID)
+	rows, err := stmt.Query(categoryID)
 	if err != nil {
 		return nil, err
 	}

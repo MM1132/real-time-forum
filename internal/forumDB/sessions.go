@@ -2,7 +2,6 @@ package forumDB
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/internal/utils"
 	"time"
 
@@ -15,44 +14,48 @@ type Session struct {
 	Created time.Time
 }
 
-type SessionInterface interface {
-	New(user *User) (string, error)
-	GetByUserID(userID int) (Session, error)
-	GetByToken(token string) (Session, error)
+type SessionModel struct {
+	db         *sql.DB
+	statements map[string]*sql.Stmt
 }
 
-type SessionModel struct {
-	DB *sql.DB
+func NewSessionModel(db *sql.DB) SessionModel {
+	statements := make(map[string]*sql.Stmt)
+	model := SessionModel{db: db}
+
+	var err error
+	statements["New"], err = db.Prepare("INSERT INTO sessions(token, userID, created) values(?,?,?)")
+	utils.FatalErr(err)
+
+	statements["GetByToken"], err = db.Prepare("SELECT * FROM sessions WHERE token=?")
+	utils.FatalErr(err)
+
+	statements["GetByUserID"], err = db.Prepare("SELECT * FROM sessions WHERE userID=?")
+	utils.FatalErr(err)
+
+	model.statements = statements
+	return model
 }
 
 // creates a new session for specified user
 func (m SessionModel) New(user *User) (string, error) {
-	stmt, err := m.DB.Prepare(
-		"INSERT INTO sessions(token, userID, created) values(?,?,?)",
-	)
-	utils.FatalErr(err)
 	session := Session{}
 	session.Token = uuid.NewV4().String()
 	session.UserID = user.UserID
 	session.Created = time.Now()
-	fmt.Print(session)
-	_, err = stmt.Exec(session.Token, session.UserID, session.Created)
-	if err != nil {
-		return "0", err
+
+	stmt := m.statements["New"]
+	if _, err := stmt.Exec(session.Token, session.UserID, session.Created); err != nil {
+		return "", err
 	}
 
-	return string(session.Token), err
+	return session.Token, nil
 }
 
 func (m SessionModel) GetByToken(token string) (Session, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM sessions WHERE token=?",
-	)
-	utils.FatalErr(err)
-
-	row := stmt.QueryRow(token)
+	row := m.statements["GetByToken"].QueryRow(token)
 	session := Session{}
-	err = row.Scan(&session.Token, &session.UserID, &session.Created)
+	err := row.Scan(&session.Token, &session.UserID, &session.Created)
 	if err != nil {
 		return Session{}, err
 	}
@@ -61,14 +64,9 @@ func (m SessionModel) GetByToken(token string) (Session, error) {
 }
 
 func (m SessionModel) GetByUserID(userID int) (Session, error) {
-	stmt, err := m.DB.Prepare(
-		"SELECT * FROM sessions WHERE userID=?",
-	)
-	utils.FatalErr(err)
-
-	row := stmt.QueryRow(userID)
+	row := m.statements["GetByUserID"].QueryRow(userID)
 	session := Session{}
-	err = row.Scan(&session.Token, &session.UserID, &session.Created)
+	err := row.Scan(&session.Token, &session.UserID, &session.Created)
 	if err != nil {
 		return session, err
 	}

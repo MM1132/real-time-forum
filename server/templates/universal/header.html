@@ -15,14 +15,14 @@
         </nav>
 
         <div class="expander"></div>
-        {{ if eq .User.UserID 0 }}
+        {{ if eq .GenericData.User.UserID 0 }}
             <form action="/login" method="post" class="flex-center">
                 <label>Username: <input name="name" type="text"></label>
                 <label>Password: <input name="pass" type="password"></label>
                 <input type="submit" style="display: none;" />
             </form>
         {{ else }}
-            <div class="remove-me-later flex-center"><span>Welcome {{ .User.Name }}!</span></div>
+            <div class="remove-me-later flex-center"><span>Welcome <a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span></div>
             <form action="/logout" method="post" class="flex-center">
                 <button type="submit">Logout</button>
             </form>

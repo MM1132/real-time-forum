@@ -12,7 +12,7 @@ type Logout struct {
 func (env Logout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		env.ClearSession(w)
-		http.Redirect(w, r, "/", http.StatusFound)
+		http.Redirect(w, r, r.Referer(), http.StatusFound)
 	}
 }
 

@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"fmt"
 	"forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"log"
@@ -24,11 +23,8 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	switch r.Method {
-	case "GET":
-	//
 	case "POST":
 		env.register(w, r)
-
 	}
 	data.AddTitle("Register")
 
@@ -41,18 +37,13 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Register) register(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
 	newUser := forumDB.User{Name: r.FormValue("username"), Email: r.FormValue("email"), Password: r.FormValue("password")}
 
 	_, err := env.Users.Insert(newUser)
 	if err != nil {
 		log.Println(err)
 	}
-	log.Print("New user registered: ")
-	log.Println(newUser)
+	log.Printf("New user registered: %s\n", newUser.Name)
 	http.Redirect(w, r, "/login", http.StatusFound)
 
 	// forumDB.InsertUser(p.db, &newUser)

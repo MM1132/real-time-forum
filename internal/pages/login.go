@@ -49,11 +49,6 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User {
-	if err := r.ParseForm(); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return nil
-	}
 	user, err := env.Users.ByName(r.FormValue("name"))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -74,9 +69,8 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User {
 
 		http.SetCookie(w, cookie)
 
-		log.Printf("%v has logged in.", user.Name)
-		log.Println()
-		http.Redirect(w, r, "/forum", http.StatusFound)
+		log.Printf("%v has logged in.\n", user.Name)
+		http.Redirect(w, r, r.Referer(), http.StatusFound)
 
 		return &user
 	}

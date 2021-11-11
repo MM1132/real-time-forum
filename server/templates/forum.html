@@ -1,10 +1,7 @@
 {{- /*gotype: forum/pages.forumData*/ -}}
 {{ define "content" }}
-    <span>
-        {{ range .Breadcrumbs}}
-            <a {{ template "href" .CategoryID }}>{{ .Name }}</a> >
-        {{ end }}
-        <a {{ template "href" .ThisCat.CategoryID }}>{{ .ThisCat.Name }}</a>
+    <span class="breadcrumbs">
+        {{ range .Breadcrumbs}}<span><a {{ template "href" .CategoryID }}>{{ .Name }}</a></span>{{ end }}
     </span>
     <h3>Subforums</h3>
     <ul>

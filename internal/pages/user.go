@@ -13,7 +13,14 @@ type User struct {
 
 type UserData struct {
 	forumEnv.GenericData
-	User fdb.User
+	User       fdb.User
+	BreadPosts []BreadPost
+}
+
+type BreadPost struct {
+	Post     fdb.Post
+	Thread   fdb.Thread
+	Category fdb.Category
 }
 
 func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +53,28 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 	} else {
 		data.User = user
+	}
+
+	// Get all the posts from that user
+	if posts, err := env.Posts.GetByUserID(data.User.UserID); err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+	} else {
+		for i := range posts {
+			data.BreadPosts = append(data.BreadPosts, BreadPost{Post: posts[i]})
+
+			// Get the thread where the post is in
+			thread, err := env.Threads.Get(data.BreadPosts[i].Post.ThreadID)
+			if err != nil {
+				sendErr(err, w, http.StatusInternalServerError)
+			}
+			data.BreadPosts[i].Thread = thread
+
+			if category, err := env.Categories.Get(thread.CategoryID); err != nil {
+				sendErr(err, w, http.StatusInternalServerError)
+			} else {
+				data.BreadPosts[i].Category = category
+			}
+		}
 	}
 
 	// And finally we are executing the template with the data we got

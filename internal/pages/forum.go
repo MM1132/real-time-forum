@@ -2,6 +2,7 @@ package pages
 
 import (
 	"forum/internal/forumDB"
+	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"net/http"
 	"strconv"
@@ -14,9 +15,8 @@ type Forum struct {
 // Contains things that are generated for every request and passed on to the template
 type forumData struct {
 	forumEnv.GenericData
-	ThisCat     forumDB.Category
-	ChildCats   []forumDB.Category
-	Breadcrumbs []forumDB.Category
+	ChildCats   []fdb.Category
+	Breadcrumbs []fdb.Category
 
 	Threads []forumDB.Thread
 }
@@ -50,7 +50,6 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data.AddTitle(thisCat.Name)
-	data.ThisCat = thisCat
 
 	// And then its children
 	childCats, err := env.Categories.GetChildern(thisCat.CategoryID)
@@ -60,15 +59,8 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.ChildCats = childCats
 
 	// BREAD-CRUMBS!!!!
-	// Get a list of this category's parents. Outermost first
-	tempCat := thisCat
-	for tempCat.ParentID.Valid {
-		var err error
-		tempCat, err = env.Categories.Get(int(tempCat.ParentID.Int64))
-		if err != nil {
-			sendErr(err, w, http.StatusInternalServerError)
-		}
-		data.Breadcrumbs = append([]forumDB.Category{tempCat}, data.Breadcrumbs...)
+	if data.Breadcrumbs, err = env.Categories.GetBreadcrumbs(thisCat.CategoryID); err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
 	}
 
 	// Get a list of threads in this category

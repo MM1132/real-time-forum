@@ -19,6 +19,7 @@ type PostInterface interface {
 	Insert(newPost Post) (int, error)
 	Get(postID int) (Post, error)
 	GetByThreadID(threadID int) ([]Post, error)
+	GetByUserID(userID int) ([]Post, error)
 }
 
 type PostModel struct {
@@ -100,6 +101,35 @@ func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 			&post.User.Email,
 			&post.User.Password,
 			&post.User.Creation,
+		)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
+}
+
+func (m PostModel) GetByUserID(userID int) ([]Post, error) {
+	statement, err := m.DB.Prepare(
+		"SELECT * FROM posts WHERE userID=? ORDER BY date DESC",
+	)
+	utils.FatalErr(err)
+
+	rows, err := statement.Query(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	posts := []Post{}
+	for rows.Next() {
+		post := Post{}
+		err = rows.Scan(
+			&post.PostID,
+			&post.ThreadID,
+			&post.UserID,
+			&post.Content,
+			&post.Date,
 		)
 		if err != nil {
 			return nil, err

@@ -55,21 +55,8 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// BreadCrumbs
 	// Get the category the thread is in
-	tempCategory, err := env.Categories.Get(thread.CategoryID)
-	if err != nil {
+	if data.Breadcrumbs, err = env.Categories.GetBreadcrumbs(thread.CategoryID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
-		return
-	}
-	data.Breadcrumbs = []forumDB.Category{tempCategory}
-	// Now loop through all the categories and add them all to the amazing breadcrumbs
-	for tempCategory.ParentID.Valid {
-		tempCategory, err = env.Categories.Get(int(tempCategory.ParentID.Int64))
-		if err != nil {
-			sendErr(err, w, http.StatusInternalServerError)
-			continue
-		}
-		// And of course, append the category to the end of breadcrumbs
-		data.Breadcrumbs = append([]forumDB.Category{tempCategory}, data.Breadcrumbs...)
 	}
 
 	// And finally we are executing the template with the data we got

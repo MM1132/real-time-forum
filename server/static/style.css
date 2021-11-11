@@ -62,6 +62,7 @@ a:active, a:focus {
 #header-logo img {
     display: block;
     height: 100%;
+    aspect-ratio: 1;
 }
 
 #header-logo a:hover img:last-child {
@@ -130,4 +131,19 @@ a:visited {
 a:hover {
     color: var(--color-link-hover);
     text-decoration: underline;
+}
+
+/* BREADCRUMBS ARROWS */
+.breadcrumbs span:not(:last-child)::after {
+    content: "";
+    display: inline-block;
+    
+    height: 1.2em;
+    aspect-ratio: 1;
+    vertical-align: sub;
+
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9JzMwMHB4JyB3aWR0aD0nMzAwcHgnICBmaWxsPSIjZmZmZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjAiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgOTUgOTUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDk1IDk1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7ZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7fQo8L3N0eWxlPjxwb2x5Z29uIGNsYXNzPSJzdDAiIHBvaW50cz0iNzIuNSw0Ny41IDIyLjUsMjIuNSAzOS43LDQ3LjUgMjIuNSw3Mi41IDcyLjUsNDcuNSAiPjwvcG9seWdvbj48L3N2Zz4=");
 }

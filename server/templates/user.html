@@ -1,11 +1,27 @@
 {{ define "content" }}
     <hr>
-    <h3>Welcome to the profile of <u>{{.User.Name}}</u>!</h3>
+    <h2>Welcome to the profile of <u>{{.User.Name}}</u>({{.User.UserID}})!</h2>
+    <h3>Info:</h3>
+    <ul>
+        <li>Email: {{.User.Email}}</li>
+        <li>Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</li>
+    </ul>
+    <h3>Recent posts:</h3>
+    {{ range .BreadPosts }}
+    <hr>
     <div>
-        <span>ID: {{.User.UserID}}</span><br>
-        <span>Email: {{.User.Email}}</span><br>
-        <span>Password: {{.User.Password}}</span><br>
-        <span>Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</span>
+        <div>
+            <span class="breadcrumbs">
+                <span><a href="/forum?id={{ .Category.CategoryID }}">{{ .Category.Name }}</a></span>
+                <span><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
+            </span>
+            <br>
+            <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>
+            <br>
+            <a href="/user?id={{ .Post.User.UserID }}">{{ .Post.User.Name }}</a>
+        </div>
+        <p>{{ .Post.Content }}</p>
     </div>
+    {{ end }}
     <hr>
 {{ end }}

@@ -1,9 +1,9 @@
 {{ define "content" }}
     <span>
-        {{ range .Breadcrumbs}}
-            <a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a> >
-        {{ end }}
-        <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a>
+        <span class="breadcrumbs">
+            {{ range .Breadcrumbs}}<span><a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a></span>{{ end }}
+            <span><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
+        </span>
     </span>
     <h3>Posts</h3>
     {{ range .Posts }}

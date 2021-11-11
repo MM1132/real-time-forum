@@ -16,6 +16,7 @@ type CategoryInterface interface {
 	Insert(newCat Category) (int, error)
 	Get(categoryID int) (Category, error)
 	GetChildern(categoryID int) ([]Category, error)
+	GetBreadcrumbs(categoryID int) ([]Category, error)
 }
 
 type CategoryModel struct {
@@ -89,5 +90,47 @@ func (m CategoryModel) GetChildern(categoryID int) ([]Category, error) {
 		categories = append(categories, category)
 	}
 
+	return categories, nil
+}
+
+func (m CategoryModel) GetBreadcrumbs(categoryID int) ([]Category, error) {
+	statement, err := m.DB.Prepare(
+		`
+		WITH ancestors AS (
+			SELECT *
+			FROM categories
+			WHERE categoryID=?
+			
+			UNION ALL
+		
+			SELECT c.*
+			FROM categories c
+				JOIN
+				ancestors a ON c.categoryID = a.parentID
+		)
+		SELECT * FROM ancestors
+		`,
+	)
+	utils.FatalErr(err)
+
+	rows, err := statement.Query(categoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	categories := []Category{}
+	for rows.Next() {
+		category := Category{}
+		err = rows.Scan(
+			&category.CategoryID,
+			&category.ParentID,
+			&category.Name,
+			&category.Description,
+		)
+		if err != nil {
+			return nil, err
+		}
+		categories = append([]Category{category}, categories...)
+	}
 	return categories, nil
 }

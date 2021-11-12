@@ -19,7 +19,8 @@
             <form action="/login" method="post" class="flex-center">
                 <label>Username: <input name="name" type="text"></label>
                 <label>Password: <input name="pass" type="password"></label>
-                <input type="submit" style="display: none;" />
+                <input type="submit" value="Login" />
+                <input type="button" value="Register" onclick="window.location.href='/register'" />
             </form>
         {{ else }}
             <div class="remove-me-later flex-center"><span>Welcome <a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span></div>

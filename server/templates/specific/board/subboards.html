@@ -1,27 +1,27 @@
-{{- /*gotype: forum/internal/pages.forumData*/ -}}
-{{ define "subcats" }}
-    <table id="categories">
+{{- /*gotype: board/internal/pages.boardData*/ -}}
+{{ define "subboards" }}
+    <table id="boards">
         <thead>
         <colgroup>
-            <col class="category">
+            <col class="board">
             <col class="threads">
             <col class="posts">
             <col class="latest">
         </colgroup>
         <tr>
-            <th>Forum</th>
+            <th>Board</th>
             <th>Threads</th>
             <th>Posts</th>
             <th>Last post</th>
         </tr>
         </thead>
         <tbody>
-        {{ range .ChildCats }}
+        {{ range .ChildBoards }}
             <tr>
                 <td class="left-align">
-                    <a class="cat-name" href="/forum?id={{ .CategoryID }}">{{ .Name }}</a>
+                    <a class="board-name" href="/board?id={{ .BoardID }}">{{ .Name }}</a>
                     <br>
-                    <span class="cat-desc">{{ .Description.String }}</span>
+                    <span class="board-desc">{{ .Description.String }}</span>
                 </td>
                 {{ with .Extras }}
                     <td>{{ .CountThreads }}</td>

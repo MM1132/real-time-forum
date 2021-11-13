@@ -16,7 +16,7 @@ type ThreadData struct {
 	forumEnv.GenericData
 	Thread      forumDB.Thread
 	Posts       []forumDB.Post
-	Breadcrumbs []forumDB.Category
+	Breadcrumbs []forumDB.Board
 
 	HighlightPost int
 }
@@ -66,8 +66,8 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// BreadCrumbs
-	// Get the category the thread is in
-	if data.Breadcrumbs, err = env.Categories.GetBreadcrumbs(thread.CategoryID); err != nil {
+	// Get the board the thread is in
+	if data.Breadcrumbs, err = env.Boards.GetBreadcrumbs(thread.BoardID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 	}
 

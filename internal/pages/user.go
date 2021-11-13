@@ -17,9 +17,9 @@ type UserData struct {
 }
 
 type BreadPost struct {
-	Post     fdb.Post
-	Thread   fdb.Thread
-	Category fdb.Category
+	Post   fdb.Post
+	Thread fdb.Thread
+	Board  fdb.Board
 }
 
 func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -61,10 +61,10 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 			data.BreadPosts[i].Thread = thread
 
-			if category, err := env.Categories.Get(thread.CategoryID); err != nil {
+			if board, err := env.Boards.Get(thread.BoardID); err != nil {
 				sendErr(err, w, http.StatusInternalServerError)
 			} else {
-				data.BreadPosts[i].Category = category
+				data.BreadPosts[i].Board = board
 			}
 		}
 	}

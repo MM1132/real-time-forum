@@ -34,7 +34,7 @@ func initDB(db *sql.DB, dbPath string) {
 		pre+"init.sql",
 		// ! Delete these before submitting the project
 		pre+"initTestUsers.sql",
-		pre+"initTestCats.sql",
+		pre+"initTestBoards.sql",
 		pre+"initTestThreads.sql",
 		pre+"initTestPosts.sql",
 	)

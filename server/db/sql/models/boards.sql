@@ -1,44 +1,44 @@
 -- Func: Insert
-INSERT INTO categories(parentID, name, description)
+INSERT INTO boards(parentID, name, description)
 values (?, ?, ?);
 
 -- Func: Get
 SELECT *
-FROM categories
-WHERE categoryID = ?;
+FROM boards
+WHERE boardID = ?;
 
 -- Func: GetChildren
 SELECT *
-FROM categories
+FROM boards
 WHERE parentID = ?;
 
 -- Func: GetBreadcrumbs
 WITH ancestors AS (
     SELECT *
-    FROM categories
-    WHERE categoryID = ?
+    FROM boards
+    WHERE boardID = ?
 
     UNION ALL
 
-    SELECT c.*
-    FROM categories c
+    SELECT b.*
+    FROM boards b
              JOIN
-         ancestors a ON c.categoryID = a.parentID
+         ancestors a ON b.boardID = a.parentID
 )
 SELECT *
 FROM ancestors;
 
 -- Func: GetExtras
 WITH descendants AS
-         (SELECT ? categoryID
+         (SELECT ? boardID
 
           UNION ALL
 
-          SELECT c.categoryID
-          FROM categories c
+          SELECT b.boardID
+          FROM boards b
                    JOIN
                descendants d
-               ON d.categoryID = c.parentID),
+               ON d.boardID = b.parentID),
 
      aggregate AS
          (SELECT max(p.postID)              AS latestID,
@@ -46,7 +46,7 @@ WITH descendants AS
                  count(*)                   AS postCount
           FROM descendants d
                    JOIN
-               threads t ON d.categoryID = t.categoryID
+               threads t ON d.boardID = t.boardID
                    JOIN
                posts p ON t.threadID = p.threadID)
 

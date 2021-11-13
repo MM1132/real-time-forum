@@ -5,9 +5,9 @@ import (
 )
 
 type Thread struct {
-	ThreadID   int
-	Title      string
-	CategoryID int
+	ThreadID int
+	Title    string
+	BoardID  int
 }
 
 type ThreadModel struct {
@@ -28,7 +28,7 @@ func (m ThreadModel) Insert(newThread Thread) (int, error) {
 
 	res, err := stmt.Exec(
 		newThread.Title,
-		newThread.CategoryID,
+		newThread.BoardID,
 	)
 	if err != nil {
 		return 0, err
@@ -47,7 +47,7 @@ func (m ThreadModel) Get(threadID int) (Thread, error) {
 	err := row.Scan(
 		&thread.ThreadID,
 		&thread.Title,
-		&thread.CategoryID,
+		&thread.BoardID,
 	)
 	if err != nil {
 		return Thread{}, err
@@ -56,9 +56,9 @@ func (m ThreadModel) Get(threadID int) (Thread, error) {
 	return thread, nil
 }
 
-func (m ThreadModel) ByCategory(categoryID int) ([]Thread, error) {
-	stmt := m.statements["ByCategory"]
-	rows, err := stmt.Query(categoryID)
+func (m ThreadModel) ByBoard(boardID int) ([]Thread, error) {
+	stmt := m.statements["ByBoard"]
+	rows, err := stmt.Query(boardID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (m ThreadModel) ByCategory(categoryID int) ([]Thread, error) {
 		err = rows.Scan(
 			&thread.ThreadID,
 			&thread.Title,
-			&thread.CategoryID,
+			&thread.BoardID,
 		)
 		if err != nil {
 			return nil, err

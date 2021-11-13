@@ -1,4 +1,4 @@
-insert into threads (threadID, title, categoryID)
+insert into threads (threadID, title, boardID)
 values (1, 'Automated context-sensitive forecast', 4),
        (2, 'Distributed context-sensitive strategy', 4),
        (3, 'Secured high-level policy', 5),

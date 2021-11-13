@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS `threads`
 (
     `threadID`   INTEGER PRIMARY KEY AUTOINCREMENT,
     `title`      TEXT    NOT NULL,
-    `categoryID` INTEGER NOT NULL,
-    FOREIGN KEY (categoryID) REFERENCES categories (categoryID)
+    `boardID` INTEGER NOT NULL,
+    FOREIGN KEY (boardID) REFERENCES boards (boardID)
 );
 
 CREATE TABLE IF NOT EXISTS `posts`
@@ -34,11 +34,20 @@ CREATE TABLE IF NOT EXISTS `posts`
     FOREIGN KEY (threadID) REFERENCES threads (threadID)
 );
 
-CREATE TABLE IF NOT EXISTS `categories`
+CREATE TABLE IF NOT EXISTS `boards`
 (
-    `categoryID`  INTEGER PRIMARY KEY AUTOINCREMENT,
+    `boardID`  INTEGER PRIMARY KEY AUTOINCREMENT,
     `parentID`    INTEGER,
     `name`        TEXT NOT NULL,
     `description` TEXT,
-    FOREIGN KEY (parentID) REFERENCES categories (categoryID)
+    FOREIGN KEY (parentID) REFERENCES boards (boardID)
+);
+
+CREATE TABLE IF NOT EXISTS `boards`
+(
+    `boardID`  INTEGER PRIMARY KEY AUTOINCREMENT,
+    `parentID`    INTEGER,
+    `name`        TEXT NOT NULL,
+    `description` TEXT,
+    FOREIGN KEY (parentID) REFERENCES boards (boardID)
 );

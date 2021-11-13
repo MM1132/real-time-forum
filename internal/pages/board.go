@@ -8,63 +8,63 @@ import (
 	"net/http"
 )
 
-type Forum struct {
+type Board struct {
 	forumEnv.Env
 }
 
 // Contains things that are generated for every request and passed on to the template
-type forumData struct {
+type boardData struct {
 	forumEnv.GenericData
-	ChildCats   []fdb.Category
-	Breadcrumbs []fdb.Category
+	ChildBoards []fdb.Board
+	Breadcrumbs []fdb.Board
 
 	Threads []forumDB.Thread
 }
 
 // ServeHTTP is called with every request this page receives.
-func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	data := forumData{}
+func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	data := boardData{}
 	if err := data.InitData(env.Env, r); err != nil {
 		return
 	}
 
 	// Read query with key "id"
-	thisCatID, err := GetQueryInt("id", r)
-	if err != nil && thisCatID != 0 {
+	thisBoardID, err := GetQueryInt("id", r)
+	if err != nil && thisBoardID != 0 {
 		http.NotFound(w, r)
 	}
 
-	// Get our current category
-	thisCat, err := env.Categories.Get(thisCatID)
+	// Get our current board
+	thisBoard, err := env.Boards.Get(thisBoardID)
 	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
-	data.AddTitle(thisCat.Name)
+	data.AddTitle(thisBoard.Name)
 
 	// And then its children
-	childCats, err := env.Categories.GetChildren(thisCat.CategoryID)
+	childBoards, err := env.Boards.GetChildren(thisBoard.BoardID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 
 	// Then set their extra data
-	if err := env.Categories.SetSliceExtras(childCats); err != nil {
+	if err := env.Boards.SetSliceExtras(childBoards); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 
-	data.ChildCats = childCats
+	data.ChildBoards = childBoards
 
 	// BREAD-CRUMBS!!!!
-	if data.Breadcrumbs, err = env.Categories.GetBreadcrumbs(thisCat.CategoryID); err != nil {
+	if data.Breadcrumbs, err = env.Boards.GetBreadcrumbs(thisBoard.BoardID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
 
-	// Get a list of threads in this category
-	threads, err := env.Threads.ByCategory(thisCat.CategoryID)
+	// Get a list of threads in this board
+	threads, err := env.Threads.ByBoard(thisBoard.BoardID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
@@ -72,7 +72,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.Threads = threads
 
 	// Finally, execute the template with the data we got
-	tmpl := env.Templates["forum"]
+	tmpl := env.Templates["board"]
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		log.Print(err)
 		return

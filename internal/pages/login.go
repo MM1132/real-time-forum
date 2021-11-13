@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"fmt"
 	"forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"log"
@@ -21,7 +20,6 @@ type loginData struct {
 func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !strings.Contains(r.Referer(), "localhost") && !strings.Contains(r.Referer(), "127.0.0.1") {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		fmt.Println(r.Referer())
 		return
 	}
 	// We must create a new loginData struct because it can't be shared between requests

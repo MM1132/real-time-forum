@@ -1,5 +1,5 @@
 -- Func: Insert
-INSERT INTO threads(title, categoryID)
+INSERT INTO threads(title, boardID)
 values (?, ?);
 
 -- Func: Get
@@ -7,7 +7,7 @@ SELECT *
 FROM threads
 WHERE threadID = ?;
 
--- Func: ByCategory
+-- Func: ByBoard
 SELECT *
 FROM threads
-WHERE categoryID = ?;
+WHERE boardID = ?;

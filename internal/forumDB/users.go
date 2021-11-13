@@ -20,20 +20,10 @@ type UserModel struct {
 }
 
 func NewUserModel(db *sql.DB) UserModel {
-	statements := make(map[string]*sql.Stmt)
 	model := UserModel{db: db}
 
-	var err error
-	statements["Insert"], err = db.Prepare("INSERT INTO users(name, email, password, created) values(?,?,?,?)")
-	utils.FatalErr(err)
+	model.statements = makeStatementMap(db, "server/db/sql/models/users.sql")
 
-	statements["Get"], err = db.Prepare("SELECT * FROM users WHERE userID=?")
-	utils.FatalErr(err)
-
-	statements["ByName"], err = db.Prepare("SELECT * FROM users WHERE name=?")
-	utils.FatalErr(err)
-
-	model.statements = statements
 	return model
 }
 
@@ -66,8 +56,8 @@ func (m UserModel) Get(UID int) (User, error) {
 	return user, nil
 }
 
-func (m UserModel) ByName(name string) (User, error) {
-	stmt := m.statements["ByName"]
+func (m UserModel) GetByName(name string) (User, error) {
+	stmt := m.statements["GetByName"]
 	row := stmt.QueryRow(name)
 
 	user := User{}

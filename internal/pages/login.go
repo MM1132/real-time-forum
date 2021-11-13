@@ -49,13 +49,13 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User {
-	user, err := env.Users.ByName(r.FormValue("name"))
+	user, err := env.Users.GetByName(r.FormValue("name"))
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		log.Println("Incorrect username or password.")
 		return nil
 	} else if r.FormValue("pass") == user.Password {
-		token, err := env.Sessions.New(&user)
+		token, err := env.Sessions.Insert(user.UserID)
 		if err != nil {
 			log.Panic()
 		}

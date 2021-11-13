@@ -2,7 +2,6 @@ package forumDB
 
 import (
 	"database/sql"
-	"forum/internal/utils"
 )
 
 type Category struct {
@@ -10,6 +9,11 @@ type Category struct {
 	ParentID    sql.NullInt64
 	Name        string
 	Description sql.NullString
+
+	ThreadCount int
+	PostCount   int
+
+	LatestPost Post
 }
 
 type CategoryModel struct {
@@ -18,36 +22,10 @@ type CategoryModel struct {
 }
 
 func NewCategoryModel(db *sql.DB) CategoryModel {
-	statements := make(map[string]*sql.Stmt)
 	model := CategoryModel{db: db}
 
-	var err error
-	statements["Insert"], err = db.Prepare("INSERT INTO categories(parentID, name, description) values(?,?,?)")
-	utils.FatalErr(err)
+	model.statements = makeStatementMap(db, "server/db/sql/models/categories.sql")
 
-	statements["Get"], err = db.Prepare("SELECT * FROM categories WHERE categoryID=?")
-	utils.FatalErr(err)
-
-	statements["GetChildern"], err = db.Prepare("SELECT * FROM categories WHERE parentID=?")
-	utils.FatalErr(err)
-
-	statements["GetBreadcrumbs"], err = db.Prepare(`
-		WITH ancestors AS (
-			SELECT *
-			FROM categories
-			WHERE categoryID=?
-			
-			UNION ALL
-		
-			SELECT c.*
-			FROM categories c
-				JOIN
-				ancestors a ON c.categoryID = a.parentID
-		)
-		SELECT * FROM ancestors`)
-	utils.FatalErr(err)
-
-	model.statements = statements
 	return model
 }
 
@@ -85,8 +63,8 @@ func (m CategoryModel) Get(categoryID int) (Category, error) {
 	return category, nil
 }
 
-func (m CategoryModel) GetChildern(categoryID int) ([]Category, error) {
-	stmt := m.statements["GetChildern"]
+func (m CategoryModel) GetChildren(categoryID int) ([]Category, error) {
+	stmt := m.statements["GetChildren"]
 
 	rows, err := stmt.Query(categoryID)
 	if err != nil {

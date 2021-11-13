@@ -2,7 +2,6 @@ package forumDB
 
 import (
 	"database/sql"
-	"forum/internal/utils"
 	"time"
 )
 
@@ -21,23 +20,10 @@ type PostModel struct {
 }
 
 func NewPostModel(db *sql.DB) PostModel {
-	statements := make(map[string]*sql.Stmt)
 	model := PostModel{db: db}
 
-	var err error
-	statements["Insert"], err = db.Prepare("INSERT INTO posts(content, userID, threadID, date) values(?,?,?,?)")
-	utils.FatalErr(err)
+	model.statements = makeStatementMap(db, "server/db/sql/models/posts.sql")
 
-	statements["Get"], err = db.Prepare("SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE postID=?")
-	utils.FatalErr(err)
-
-	statements["GetByThreadID"], err = db.Prepare("SELECT * FROM posts p JOIN users u ON p.userID = u.userID WHERE threadID=? ORDER BY date")
-	utils.FatalErr(err)
-
-	statements["GetByUserID"], err = db.Prepare("SELECT * FROM posts WHERE userID=? ORDER BY date DESC")
-	utils.FatalErr(err)
-
-	model.statements = statements
 	return model
 }
 

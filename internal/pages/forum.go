@@ -42,7 +42,7 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.AddTitle(thisCat.Name)
 
 	// And then its children
-	childCats, err := env.Categories.GetChildern(thisCat.CategoryID)
+	childCats, err := env.Categories.GetChildren(thisCat.CategoryID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 	}

@@ -2,7 +2,6 @@ package forumDB
 
 import (
 	"database/sql"
-	"forum/internal/utils"
 )
 
 type Thread struct {
@@ -17,20 +16,10 @@ type ThreadModel struct {
 }
 
 func NewThreadModel(db *sql.DB) ThreadModel {
-	statements := make(map[string]*sql.Stmt)
 	model := ThreadModel{db: db}
 
-	var err error
-	statements["Insert"], err = db.Prepare("INSERT INTO threads(title, categoryID) values(?,?)")
-	utils.FatalErr(err)
+	model.statements = makeStatementMap(db, "server/db/sql/models/threads.sql")
 
-	statements["Get"], err = db.Prepare("SELECT * FROM threads WHERE threadID=?")
-	utils.FatalErr(err)
-
-	statements["ByCategory"], err = db.Prepare("SELECT * FROM threads WHERE categoryID=?")
-	utils.FatalErr(err)
-
-	model.statements = statements
 	return model
 }
 

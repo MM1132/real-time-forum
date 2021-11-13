@@ -2,7 +2,6 @@ package forumDB
 
 import (
 	"database/sql"
-	"forum/internal/utils"
 	"time"
 
 	uuid "github.com/satori/go.uuid"
@@ -20,31 +19,21 @@ type SessionModel struct {
 }
 
 func NewSessionModel(db *sql.DB) SessionModel {
-	statements := make(map[string]*sql.Stmt)
 	model := SessionModel{db: db}
 
-	var err error
-	statements["New"], err = db.Prepare("INSERT INTO sessions(token, userID, created) values(?,?,?)")
-	utils.FatalErr(err)
+	model.statements = makeStatementMap(db, "server/db/sql/models/sessions.sql")
 
-	statements["GetByToken"], err = db.Prepare("SELECT * FROM sessions WHERE token=?")
-	utils.FatalErr(err)
-
-	statements["GetByUserID"], err = db.Prepare("SELECT * FROM sessions WHERE userID=?")
-	utils.FatalErr(err)
-
-	model.statements = statements
 	return model
 }
 
 // creates a new session for specified user
-func (m SessionModel) New(user *User) (string, error) {
+func (m SessionModel) Insert(userID int) (string, error) {
 	session := Session{}
 	session.Token = uuid.NewV4().String()
-	session.UserID = user.UserID
+	session.UserID = userID
 	session.Created = time.Now()
 
-	stmt := m.statements["New"]
+	stmt := m.statements["Insert"]
 	if _, err := stmt.Exec(session.Token, session.UserID, session.Created); err != nil {
 		return "", err
 	}

@@ -5,7 +5,6 @@ import (
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"net/http"
-	"strconv"
 )
 
 type Forum struct {
@@ -29,18 +28,9 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Read query with key "id"
-	query := r.URL.Query()
-	queryString := query.Get("id")
-
-	// Then turn it into an int (0 if no query)
-	thisCatID := 0
-	if queryString != "" {
-		var err error
-		thisCatID, err = strconv.Atoi(queryString)
-		if err != nil {
-			http.NotFound(w, r)
-			return
-		}
+	thisCatID, err := GetQueryInt("id", r)
+	if err != nil && thisCatID != 0 {
+		http.NotFound(w, r)
 	}
 
 	// Get our current category

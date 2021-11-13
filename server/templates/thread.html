@@ -17,4 +17,12 @@
             <p>{{ .Content }}</p>
         </div>
     {{ end }}
+    {{ if eq .GenericData.User.UserID 0 }}
+    <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
+    {{ else }}
+    <form method="POST">
+        <label>Post: <textarea name="post" id="" cols="30" rows="10"></textarea></label>
+        <input type="submit" value="submit">
+    </form>
+    {{ end }}
 {{ end }}

@@ -41,6 +41,7 @@ func NewPostModel(db *sql.DB) PostModel {
 	return model
 }
 
+// When giving a post, only the content, UserID and ThreadID is needed
 func (m PostModel) Insert(newPost Post) (int, error) {
 	stmt := m.statements["Insert"]
 

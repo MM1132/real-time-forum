@@ -4,7 +4,6 @@ import (
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"net/http"
-	"strconv"
 )
 
 type User struct {
@@ -36,16 +35,9 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the id of the thread we return to the client
-	idString := r.URL.Query().Get("id")
-	// Then we try turning the id into an integer
-	if idString == "" {
+	idInt, err := GetQueryInt("id", r)
+	if err != nil {
 		http.NotFound(w, r)
-	}
-	idInt := 0
-	if id, err := strconv.Atoi(idString); err != nil {
-		http.NotFound(w, r)
-	} else {
-		idInt = id
 	}
 
 	// Get all the information about the user by its ID

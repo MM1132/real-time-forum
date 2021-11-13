@@ -21,14 +21,14 @@ func recoverHandler(w http.ResponseWriter) {
 }
 
 // Get the id of the thread we return to the client
-func GetThreadID(r *http.Request) (int, error) {
-	threadIdString := r.URL.Query().Get("id")
+func GetQueryInt(key string, r *http.Request) (int, error) {
+	idString := r.URL.Query().Get(key)
 	// Then we try turning the id into an integer
-	if threadIdString == "" {
-		return 0, errors.New("no ThreadID given")
+	if idString == "" {
+		return 0, errors.New("no id given")
 	}
-	if id, err := strconv.Atoi(threadIdString); err != nil {
-		return 0, errors.New("could not convert threadIdString")
+	if id, err := strconv.Atoi(idString); err != nil {
+		return 0, errors.New("could not convert idString")
 	} else {
 		return id, nil
 	}

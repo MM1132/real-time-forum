@@ -1,7 +1,13 @@
 {{- /*gotype: board/internal/pages.boardData*/ -}}
 {{ define "content" }}
     <div class="breadcrumbs">
-        {{ range .Breadcrumbs }}<span><a href="/board?id={{ .BoardID }}">{{ .Name }}</a></span>{{ end }}
+        {{ range .Breadcrumbs -}}
+            {{- if .IsGroup -}}
+                <span class="bc-group">/{{ .Name }}</span>
+            {{- else -}}
+                <span class="bc-board"><a href="/board?id={{ .BoardID }}">{{ .Name }}</a></span>
+            {{- end -}}
+        {{- end }}
     </div>
     {{ if .ChildBoards }}
         {{ template "subboards" . }}

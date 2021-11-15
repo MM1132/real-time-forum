@@ -15,7 +15,7 @@ func OpenDB(dbPath string) *sql.DB {
 		exists = false
 	}
 
-	db, err := sql.Open("sqlite3", dbPath)
+	db, err := sql.Open("sqlite3", dbPath+"?_foreign_keys=on")
 	util.FatalErr(err)
 
 	if !exists {

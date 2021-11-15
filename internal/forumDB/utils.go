@@ -2,6 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
+	"fmt"
 	"forum/internal/utils"
 	"log"
 	"os"
@@ -28,7 +29,9 @@ func makeStatementMap(db *sql.DB, sqlPath string) map[string]*sql.Stmt {
 
 		name := nameSlc[1]
 		statements[name], err = db.Prepare(stmt)
-		utils.FatalErr(err)
+		if err != nil {
+			log.Panic(fmt.Errorf("error preparing %v: %w", name, err))
+		}
 	}
 
 	return statements

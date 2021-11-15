@@ -1,44 +1,73 @@
-{{- /*gotype: board/internal/pages.boardData*/ -}}
+{{- /*gotype: forum/internal/pages.boardData*/ -}}
 {{ define "subboards" }}
-    <table id="boards">
-        <thead>
-        <colgroup>
-            <col class="board">
-            <col class="threads">
-            <col class="posts">
-            <col class="latest">
-        </colgroup>
-        <tr>
-            <th>Board</th>
-            <th>Threads</th>
-            <th>Posts</th>
-            <th>Last post</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{ range .ChildBoards }}
-            <tr>
-                <td class="left-align">
-                    <a class="board-name" href="/board?id={{ .BoardID }}">{{ .Name }}</a>
-                    <br>
-                    <span class="board-desc">{{ .Description.String }}</span>
-                </td>
-                {{ with .Extras }}
-                    <td>{{ .CountThreads }}</td>
-                    <td>{{ .CountPosts }}</td>
-                    <td>
-                        <a class="latest-date" title="{{ .ThreadTitle }}"
-                           href="/thread?id={{ .ThreadID }}&post={{ .LatestID }}#{{ .LatestID }}">
-                            {{ .LatestDate.Format "2 Jan 2006, 15:04" }}
-                        </a>
-                        <br>
-                        <a class="latest-author" href="/user?id={{ .LatestAuthorID }}">
-                            {{ .LatestAuthor }}
-                        </a>
-                    </td>
+    <div id="boards" class="flex-table">
+        <input id="group-boards" class="group-toggle" type="checkbox">
+        <label class="flex-row group-header" for="group-boards">Boards</label>
+        <div class="group-content">
+            {{ range .ChildBoards }}
+                {{ if .IsGroup }}
+                    {{ template "group" . }}
+                {{ else }}
+                    {{ template "board" . }}
                 {{ end }}
-            </tr>
+            {{ end }}
+        </div>
+    </div>
+{{ end }}
+
+{{ define "group" }}
+    <input id="group-{{ .Name }}" class="group-toggle" type="checkbox">
+    <label class="flex-row group-header" for="group-{{ .Name }}">{{ .Name }}</label>
+    <div class="group-content">
+        {{ range .Children }}
+            {{ if .IsGroup }}
+                {{ template "group" . }}
+            {{ else }}
+                {{ template "board" . }}
+            {{ end }}
         {{ end }}
-        </tbody>
-    </table>
+    </div>
+{{ end }}
+
+{{ define "board" }}
+    <div class="flex-row">
+        <div class="flex-cell board-base grow">
+            <div class="grow"></div>
+            <a class="board-name" href="/board?id={{ .BoardID }}">{{ .Name }}</a>
+            <span class="board-desc">{{ .Description.String }}</span>
+            <div class="grow"></div>
+            {{ with .Children }}
+                <span class="board-children">Child boards:
+                {{ with index . 0 }}{{ template "subBoard" . }}{{ end }}
+                    {{ range slice . 1 }}
+                        , {{ template "subBoard" . }}
+                    {{ end }}
+            </span>
+            {{ end }}
+        </div>
+        {{ with .Extras }}
+            <div class="flex-cell counts">
+                <span>Threads: {{ .CountThreads }}</span>
+                <span>Posts: {{ .CountPosts }}</span>
+            </div>
+            <div class="flex-cell latest-post">
+                <span class="latest-author"><strong>Last post</strong> by
+                    <a href="/user?id={{ .LatestAuthorID }}">
+                    {{ .LatestAuthor }}
+                </a></span>
+                <span class="latest-thread">in
+                    <a title="{{ .ThreadTitle }}"
+                       href="/thread?id={{ .ThreadID }}&post={{ .LatestID }}#{{ .LatestID }}">
+                        {{ .ThreadTitle }}
+                    </a></span>
+                <span class="latest-date">at {{ .LatestDate.Format "2 Jan 2006, 15:04" }}</span>
+            </div>
+        {{ end }}
+    </div>
+{{ end }}
+
+
+{{ define "subBoard" }}
+    {{ if .IsGroup }}<span class="subgroup">{{ .Name }}...</span>{{ else }}<a
+            href="/board?id={{ .BoardID }}">{{ .Name }}</a>{{ end }}
 {{ end }}

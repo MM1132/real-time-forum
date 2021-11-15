@@ -10,7 +10,9 @@ WHERE boardID = ?;
 -- Func: GetChildren
 SELECT *
 FROM boards
-WHERE parentID = ?;
+WHERE parentID = ?
+ORDER BY isGroup, "order";
+
 
 -- Func: GetBreadcrumbs
 WITH ancestors AS (

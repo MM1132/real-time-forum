@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"forum/internal/forumDB"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
@@ -37,10 +38,16 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Get our current board
 	thisBoard, err := env.Boards.Get(thisBoardID)
 	if err != nil {
-		http.NotFound(w, r)
+		sendErr(err, w, http.StatusNotFound)
 		return
 	}
 	data.AddTitle(thisBoard.Name)
+
+	// Check if current board is a group
+	if thisBoard.IsGroup {
+		http.Redirect(w, r, fmt.Sprintf("%v?id=%v", r.URL.Path, thisBoard.ParentID.Int64), http.StatusTemporaryRedirect)
+		return
+	}
 
 	// And then its children
 	childBoards, err := env.Boards.GetChildren(thisBoard.BoardID)
@@ -49,11 +56,11 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Then set their extra data
-	if err := env.Boards.SetSliceExtras(childBoards); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
-		return
-	}
+	// // Then set their extra data
+	// if err := env.Boards.SetSliceExtras(childBoards); err != nil {
+	// 	sendErr(err, w, http.StatusInternalServerError)
+	// 	return
+	// }
 
 	data.ChildBoards = childBoards
 

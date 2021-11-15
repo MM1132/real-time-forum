@@ -10,8 +10,12 @@ type Board struct {
 	ParentID    sql.NullInt64
 	Name        string
 	Description sql.NullString
+	IsGroup     bool
+	Order       int
 
 	Extras *BoardExtras
+
+	Children []Board
 }
 
 type BoardExtras struct {
@@ -47,6 +51,8 @@ func (m BoardModel) Insert(newBoard Board) (int, error) {
 		newBoard.ParentID,
 		newBoard.Name,
 		newBoard.Description,
+		newBoard.IsGroup,
+		newBoard.Order,
 	)
 	if err != nil {
 		return 0, err
@@ -66,6 +72,8 @@ func (m BoardModel) Get(boardID int) (Board, error) {
 		&board.ParentID,
 		&board.Name,
 		&board.Description,
+		&board.IsGroup,
+		&board.Order,
 	)
 	if err != nil {
 		return Board{}, err
@@ -75,6 +83,10 @@ func (m BoardModel) Get(boardID int) (Board, error) {
 }
 
 func (m BoardModel) GetChildren(boardID int) ([]Board, error) {
+	return m.getChildrenLocal(boardID, true, 0)
+}
+
+func (m BoardModel) getChildrenLocal(boardID int, extras bool, level int) ([]Board, error) {
 	stmt := m.statements["GetChildren"]
 
 	rows, err := stmt.Query(boardID)
@@ -90,9 +102,25 @@ func (m BoardModel) GetChildren(boardID int) ([]Board, error) {
 			&board.ParentID,
 			&board.Name,
 			&board.Description,
+			&board.IsGroup,
+			&board.Order,
 		)
 		if err != nil {
 			return nil, err
+		}
+
+		if extras {
+			board.Children, err = m.getChildrenLocal(board.BoardID, extras && board.IsGroup, level+1)
+			if err != nil {
+				return nil, err
+			}
+
+			if extras {
+				board, err = m.GetExtras(board)
+				if err != nil && err != sql.ErrNoRows {
+					return nil, err
+				}
+			}
 		}
 
 		boards = append(boards, board)
@@ -117,6 +145,8 @@ func (m BoardModel) GetBreadcrumbs(boardID int) ([]Board, error) {
 			&board.ParentID,
 			&board.Name,
 			&board.Description,
+			&board.IsGroup,
+			&board.Order,
 		)
 		if err != nil {
 			return nil, err
@@ -128,10 +158,12 @@ func (m BoardModel) GetBreadcrumbs(boardID int) ([]Board, error) {
 
 func (m BoardModel) SetSliceExtras(boards []Board) error {
 	for i := range boards {
-		var err error
-		boards[i], err = m.GetExtras(boards[i])
-		if err != nil {
-			return err
+		if !boards[i].IsGroup {
+			var err error
+			boards[i], err = m.GetExtras(boards[i])
+			if err != nil && err != sql.ErrNoRows {
+				return err
+			}
 		}
 	}
 
@@ -156,7 +188,7 @@ func (m BoardModel) GetExtras(board Board) (Board, error) {
 		&extras.ThreadTitle,
 	)
 	if err != nil {
-		return Board{}, err
+		return board, err
 	}
 
 	board.Extras = &extras

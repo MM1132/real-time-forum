@@ -14,6 +14,7 @@ import (
 func main() {
 	// Initialize sql.DB struct
 	db := fdb.OpenDB("server/db/forum.db")
+	defer db.Close()
 
 	// Create a custom mux
 	mux := http.NewServeMux()

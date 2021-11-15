@@ -13,41 +13,40 @@ CREATE TABLE IF NOT EXISTS `sessions`
     `userID`  INTEGER NOT NULL,
     `created` DATE    NOT NULL,
     FOREIGN KEY (userID) REFERENCES users (userID)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `threads`
 (
-    `threadID`   INTEGER PRIMARY KEY AUTOINCREMENT,
-    `title`      TEXT    NOT NULL,
-    `boardID` INTEGER NOT NULL,
+    `threadID` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `title`    TEXT    NOT NULL,
+    `boardID`  INTEGER NOT NULL,
     FOREIGN KEY (boardID) REFERENCES boards (boardID)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `posts`
 (
     `postID`   INTEGER PRIMARY KEY AUTOINCREMENT,
     `threadID` INTEGER,
-    `userID`   INTEGER NOT NULL,
-    `content`  TEXT    NOT NULL,
-    `date`     DATE    NOT NULL,
+    `userID`   INTEGER,
+    `content`  TEXT NOT NULL,
+    `date`     DATE NOT NULL,
     FOREIGN KEY (userID) REFERENCES users (userID),
     FOREIGN KEY (threadID) REFERENCES threads (threadID)
+        ON DELETE CASCADE
 );
+
+
 
 CREATE TABLE IF NOT EXISTS `boards`
 (
-    `boardID`  INTEGER PRIMARY KEY AUTOINCREMENT,
+    `boardID`     INTEGER PRIMARY KEY AUTOINCREMENT,
     `parentID`    INTEGER,
-    `name`        TEXT NOT NULL,
+    `name`        TEXT    NOT NULL,
     `description` TEXT,
+    `isGroup`     INTEGER NOT NULL DEFAULT 0,
+    `order`       INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (parentID) REFERENCES boards (boardID)
-);
-
-CREATE TABLE IF NOT EXISTS `boards`
-(
-    `boardID`  INTEGER PRIMARY KEY AUTOINCREMENT,
-    `parentID`    INTEGER,
-    `name`        TEXT NOT NULL,
-    `description` TEXT,
-    FOREIGN KEY (parentID) REFERENCES boards (boardID)
+        ON DELETE RESTRICT
 );

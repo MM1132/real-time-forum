@@ -2,6 +2,9 @@ package pages
 
 import (
 	"errors"
+	"fmt"
+	"forum/internal/forumDB"
+	"forum/internal/forumEnv"
 	"log"
 	"net/http"
 	"strconv"
@@ -32,4 +35,25 @@ func GetQueryInt(key string, r *http.Request) (int, error) {
 	} else {
 		return id, nil
 	}
+}
+
+func checkUser(data forumEnv.GenericData, addr string) error {
+	if data.User.UserID == 0 {
+		return fmt.Errorf("%v not authorized to post", addr)
+	}
+	return nil
+}
+
+func writePost(content string, userID int, threadID int, env Thread) error {
+	newPost := forumDB.Post{
+		Content:  content,
+		UserID:   userID,
+		ThreadID: threadID,
+	}
+
+	_, err := env.Posts.Insert(newPost)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"forum/internal/forumEnv"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Thread struct {
@@ -36,6 +37,8 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Printf("error inserting post: %v", err)
 			return
 		}
+		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		return
 	} else if r.Method != "GET" { // If it's neither GET or POST, don't allow it
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
 		return
@@ -69,6 +72,7 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Get the board the thread is in
 	if data.Breadcrumbs, err = env.Boards.GetBreadcrumbs(thread.BoardID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
+		return
 	}
 
 	// And finally we are executing the template with the data we got
@@ -89,19 +93,23 @@ func (env Thread) post(w http.ResponseWriter, r *http.Request, data ThreadData) 
 		return err
 	}
 
-	if data.User.UserID == 0 {
-		return fmt.Errorf("%v not authorized to post in threadID %v", r.RemoteAddr, threadID)
-	}
-
-	newPost := forumDB.Post{
-		Content:  r.FormValue("post"),
-		UserID:   data.User.UserID,
-		ThreadID: threadID,
-	}
-
-	_, err = env.Posts.Insert(newPost)
+	err = checkUser(data.GenericData, r.RemoteAddr)
 	if err != nil {
+		sendErr(err, w, http.StatusForbidden)
+		return err
+	}
+
+	// See the postThread() comment
+	if strings.TrimSpace(r.FormValue("post")) == "" {
+		err = fmt.Errorf("empty post content from %v", r.RemoteAddr)
 		sendErr(err, w, http.StatusBadRequest)
+		return err
+	}
+
+	err = writePost(r.FormValue("post"), data.User.UserID, threadID, env)
+
+	if err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
 		return err
 	}
 

@@ -4,6 +4,7 @@ import (
 	"forum/internal/forumDB"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
+	"log"
 	"net/http"
 )
 
@@ -45,25 +46,35 @@ func (env Forum) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	childCats, err := env.Categories.GetChildren(thisCat.CategoryID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
+		return
 	}
+
+	// Then set their extra data
+	if err := env.Categories.SetSliceExtras(childCats); err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return
+	}
+
 	data.ChildCats = childCats
 
 	// BREAD-CRUMBS!!!!
 	if data.Breadcrumbs, err = env.Categories.GetBreadcrumbs(thisCat.CategoryID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
+		return
 	}
 
 	// Get a list of threads in this category
 	threads, err := env.Threads.ByCategory(thisCat.CategoryID)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
+		return
 	}
 	data.Threads = threads
 
 	// Finally, execute the template with the data we got
 	tmpl := env.Templates["forum"]
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
+		log.Print(err)
 		return
 	}
 }

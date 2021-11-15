@@ -17,6 +17,8 @@ type ThreadData struct {
 	Thread      forumDB.Thread
 	Posts       []forumDB.Post
 	Breadcrumbs []forumDB.Category
+
+	HighlightPost int
 }
 
 func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +26,8 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err := data.InitData(env.Env, r); err != nil {
 		return
 	}
+
+	data.HighlightPost, _ = GetQueryInt("post", r)
 
 	// If there's a POST request for this thread, let another function handle it.
 	if r.Method == "POST" {

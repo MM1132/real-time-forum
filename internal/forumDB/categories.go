@@ -2,6 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Category struct {
@@ -10,10 +11,20 @@ type Category struct {
 	Name        string
 	Description sql.NullString
 
-	ThreadCount int
-	PostCount   int
+	Extras *CategoryExtras
+}
 
-	LatestPost Post
+type CategoryExtras struct {
+	CountThreads int
+	CountPosts   int
+
+	LatestID       int
+	LatestAuthorID int
+	LatestAuthor   string
+	LatestDate     time.Time
+
+	ThreadID    int
+	ThreadTitle string
 }
 
 type CategoryModel struct {
@@ -98,7 +109,7 @@ func (m CategoryModel) GetBreadcrumbs(categoryID int) ([]Category, error) {
 		return nil, err
 	}
 
-	categories := []Category{}
+	var categories []Category
 	for rows.Next() {
 		category := Category{}
 		err = rows.Scan(
@@ -113,4 +124,41 @@ func (m CategoryModel) GetBreadcrumbs(categoryID int) ([]Category, error) {
 		categories = append([]Category{category}, categories...)
 	}
 	return categories, nil
+}
+
+func (m CategoryModel) SetSliceExtras(categories []Category) error {
+	for i := range categories {
+		var err error
+		categories[i], err = m.GetExtras(categories[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m CategoryModel) GetExtras(category Category) (Category, error) {
+	stmt := m.statements["GetExtras"]
+
+	row := stmt.QueryRow(category.CategoryID)
+	extras := CategoryExtras{}
+	err := row.Scan(
+		&extras.CountThreads,
+		&extras.CountPosts,
+
+		&extras.LatestID,
+		&extras.LatestAuthorID,
+		&extras.LatestAuthor,
+		&extras.LatestDate,
+
+		&extras.ThreadID,
+		&extras.ThreadTitle,
+	)
+	if err != nil {
+		return Category{}, err
+	}
+
+	category.Extras = &extras
+	return category, nil
 }

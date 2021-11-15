@@ -1,8 +1,13 @@
 -- Func: Insert
-INSERT INTO sessions(token, userID, created) values(?,?,?);
+INSERT INTO sessions(token, userID, created)
+values (?, ?, ?);
 
 -- Func: GetByToken
-SELECT * FROM sessions WHERE token=?;
+SELECT *
+FROM sessions
+WHERE token = ?;
 
 -- Func: GetByUserID
-SELECT * FROM sessions WHERE userID=?;
+SELECT *
+FROM sessions
+WHERE userID = ?;

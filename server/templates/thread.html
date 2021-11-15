@@ -1,14 +1,16 @@
+{{- /*gotype: forum/internal/pages.ThreadData*/ -}}
 {{ define "content" }}
-    <span>
-        <span class="breadcrumbs">
+    <div class="breadcrumbs">
+        <span>
             {{ range .Breadcrumbs}}<span><a href="/forum?id={{ .CategoryID }}">{{ .Name }}</a></span>{{ end }}
             <span><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
         </span>
-    </span>
+    </div>
     <h3>Posts</h3>
+    {{ $fragment := .HighlightPost }}
     {{ range .Posts }}
         <hr>
-        <div>
+        <div id="{{ .PostID }}" {{ if eq .PostID $fragment }}class="highlight-post"{{ end }}>
             <div>
                 <span>{{ .Date.Format "2 Jan 2006, 15:04" }}</span>
                 <br>

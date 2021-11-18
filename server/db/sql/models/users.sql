@@ -11,3 +11,9 @@ WHERE userID = ?;
 SELECT *
 FROM users
 WHERE name = ?;
+
+-- Func: GetByEmail
+SELECT *
+FROM users
+WHERE email = ?;
+

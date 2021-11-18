@@ -69,3 +69,17 @@ func (m UserModel) GetByName(name string) (User, error) {
 
 	return user, nil
 }
+
+func (m UserModel) GetByEmail(email string) (User, error) {
+	stmt := m.statements["GetByEmail"]
+	row := stmt.QueryRow(email)
+
+	user := User{}
+	if err := row.Scan(
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+	); err != nil {
+		return User{}, err
+	}
+
+	return user, nil
+}

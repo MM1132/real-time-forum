@@ -1,6 +1,18 @@
 {{ define "content" }}
     <h3> Register </h3>
-    <p> You have reached the register page, this bit of the page comes from <code>./server/register.html</code> . </p>
-    <hr>
-    {{ template "test" }}
+    <table class="register-form">
+    <form method="POST" action="/register" class="register-form" novalidate>
+    <tr><td><label>Username</label>: </td><td><input name="username" type="text" /></td> {{ if .Errors.Username }}<td class="error"> {{ .Errors.Username }} </td> {{else}}<td>Length must be between 4 and 12 characters.</td>{{ end }}</tr>
+    
+    <tr><td><label>Password</label>: </td><td><input name="password" type="password" /></td> {{ if .Errors.Password }} <td class="error"> {{ .Errors.Password }}</td> {{else}} <td>Length must be between 6 and 20 characters. </td>{{ end }}</tr>
+    
+    <tr><td><label>Confirm password</label>: </td><td><input name="confirm-password" type="password" id="password"/></td><td class="error">{{ if .Errors.Password2 }} {{ .Errors.Password2 }} {{ end }}</td></tr>
+    
+    <tr><td><label>E-mail</label>: </td><td><input name="email" type="email" ></td> <td class="error">{{ if .Errors.Email }} {{ .Errors.Email }}  {{ end }}</td></tr>
+    
+    <tr><td><label>Confirm e-mail</label>: </td><td><input name="confirm-email" type="email" ></td><td class="error">{{ if .Errors.Email2 }} {{ .Errors.Email2 }}  {{ end }}</td></tr>
+    
+    <tr><td><input type="submit" value="submit"/> </td></tr>
+    </form>
+    </table>
 {{ end }}

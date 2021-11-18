@@ -9,11 +9,22 @@ type Logout struct {
 	forumEnv.Env
 }
 
+type logoutData struct {
+	forumEnv.GenericData
+}
+
 func (env Logout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		env.ClearSession(w)
-		http.Redirect(w, r, r.Referer(), http.StatusFound)
+	data := logoutData{}
+	if err := data.InitData(env.Env, r); err != nil {
+		return
 	}
+	if data.User.UserID == 0 { // access denied unless logged in
+		http.Redirect(w, r, "/board", http.StatusTemporaryRedirect)
+		return
+	}
+
+	env.ClearSession(w)
+	http.Redirect(w, r, "/board", http.StatusFound)
 }
 
 func (env Logout) ClearSession(w http.ResponseWriter) {

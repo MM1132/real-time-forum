@@ -8,25 +8,23 @@
             </a>
         </div>
 
-        <nav id="header-nav">
-            <a href="/page1" class="flex-center">Page 1</a>
-            <a href="/page2" class="flex-center">Page 2</a>
-            <a href="/page3" class="flex-center">Page 3</a>
+        <nav class="header-nav">
+            <a href="/page1">Page 1</a>
+            <a href="/page2">Page 2</a>
+            <a href="/page3">Page 3</a>
         </nav>
 
         <div class="expander"></div>
         {{ if eq .GenericData.User.UserID 0 }}
-            <form action="/login" method="post" class="flex-center">
-                <label>Username: <input name="name" type="text"></label>
-                <label>Password: <input name="pass" type="password"></label>
-                <input type="submit" value="Login" />
-                <input type="button" value="Register" onclick="window.location.href='/register'" />
-            </form>
+            <nav class="header-nav">
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </nav>
         {{ else }}
-            <div class="remove-me-later flex-center"><span>Welcome <a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span></div>
-            <form action="/logout" method="post" class="flex-center">
-                <button type="submit">Logout</button>
-            </form>
+            <span>Welcome<a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
+            <nav class="header-nav">
+                <a href="/logout">Logout</a>
+            </nav>
         {{ end }}
     </header>
 {{ end }}

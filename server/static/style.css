@@ -84,23 +84,23 @@ a:active, a:focus {
     margin-left: 10px;
 }
 
-#header-nav {
+.header-nav {
     display: flex;
     font-size: larger;
     margin: 0 16px;
 }
 
-#header-nav a {
+.header-nav a {
     min-width: 50px;
     padding: 6px 12px;
     border-radius: 5px;
 }
 
-#header-nav a + a {
+.header-nav a + a {
     margin-left: 8px;
 }
 
-#header-nav a:hover {
+.header-nav a:hover {
     background-color: var(--color-lighten-10);
     text-decoration: none;
 }
@@ -343,6 +343,16 @@ a:hover {
 }
 
 /* GROUP COLLAPSING END*/
+
+/* REGISTER STUFF */
+td {
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+
+.error {
+    color: rgb(167, 45, 45);
+}
 
 /* MISC STUFF */
 .highlight-post {

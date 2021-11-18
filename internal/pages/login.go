@@ -15,26 +15,27 @@ type Login struct {
 // Contains things that are generated for every request and passed on to the template
 type loginData struct {
 	forumEnv.GenericData
+	Errors map[string]string // string didn't work for some reason. Maybe we'll add other errors in the future so whatever.
 }
 
 func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if !strings.Contains(r.Referer(), "localhost") && !strings.Contains(r.Referer(), "127.0.0.1") {
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
-	}
-	// We must create a new loginData struct because it can't be shared between requests
-	data := &loginData{}
+	data := loginData{}
 	if err := data.InitData(env.Env, r); err != nil {
 		return
 	}
+	if data.User.UserID != 0 { // access denied if logged in
+		http.Redirect(w, r, "/board", http.StatusTemporaryRedirect)
+		return
+	}
+	// We must create a new loginData struct because it can't be shared between requests
+
 	data.AddTitle("Login")
+	data.Errors = make(map[string]string)
 
-	switch r.Method {
-	case "GET":
-	//
-	case "POST":
-		env.login(w, r)
-
+	if r.Method == "POST" {
+		if env.validate(r, data) {
+			env.login(w, r)
+		}
 	}
 	// Finally execute the template with the data we got
 	tmpl := env.Templates["login"]
@@ -46,33 +47,38 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Served %v to %v\n", data.Title, r.RemoteAddr)
 }
 
-func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User {
-	user, err := env.Users.GetByName(r.FormValue("name"))
+func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { // creates a new session for specified user, only usable in POST request. Returns pointer to user if successful, if not returns nil.
+	// username is always capitalized, lowercase
+	user, _ := env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
+
+	token, err := env.Sessions.Insert(user.UserID)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		log.Println("Incorrect username or password.")
-		return nil
-	} else if r.FormValue("pass") == user.Password {
-		token, err := env.Sessions.Insert(user.UserID)
-		if err != nil {
-			log.Panic()
-		}
-		cookie := &http.Cookie{
-			Name:   "session",
-			Value:  token,
-			Path:   "/", // Otherwise it defaults to /login
-			Secure: true,
-			MaxAge: 86400, // One day
-		}
-
-		http.SetCookie(w, cookie)
-
-		log.Printf("%v has logged in.\n", user.Name)
-		http.Redirect(w, r, r.Referer(), http.StatusFound)
-
-		return &user
+		log.Panic()
 	}
-	log.Println("Incorrect username or password.")
-	w.WriteHeader(http.StatusUnauthorized)
-	return nil
+
+	cookie := &http.Cookie{ // creates new cookie
+		Name:   "session",
+		Value:  token,
+		Path:   "/", // Otherwise it defaults to /login
+		Secure: true,
+		MaxAge: 86400, // One day
+	}
+
+	http.SetCookie(w, cookie) // sets the cookie
+
+	log.Printf("%v has logged in.\n", user.Name)
+	http.Redirect(w, r, "/board", http.StatusFound)
+
+	return &user
+}
+
+func (env Login) validate(r *http.Request, data loginData) bool {
+	user, err := env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
+	if err != nil {
+		data.Errors["Error"] = "Incorrect username or password."
+	}
+	if r.FormValue("password") != user.Password {
+		data.Errors["Error"] = "Incorrect username or password."
+	}
+	return len(data.Errors) == 0
 }

@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS `sessions`
     `userID`  INTEGER NOT NULL,
     `created` DATE    NOT NULL,
     FOREIGN KEY (userID) REFERENCES users (userID)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    -- Make sessions one-per-user, just for audit requirement
+    CONSTRAINT session_unique UNIQUE (userID)
+        ON CONFLICT REPLACE
 );
 
 CREATE TABLE IF NOT EXISTS `threads`

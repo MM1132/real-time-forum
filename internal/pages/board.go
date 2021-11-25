@@ -2,7 +2,6 @@ package pages
 
 import (
 	"fmt"
-	"forum/internal/forumDB"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"log"
@@ -17,11 +16,12 @@ type Board struct {
 // Contains things that are generated for every request and passed on to the template
 type boardData struct {
 	forumEnv.GenericData
+	ThisBoard   fdb.Board
 	ChildBoards []fdb.Board
 	Breadcrumbs []fdb.Board
 	BoardID     int
 
-	Threads []forumDB.Thread
+	ThreadsPage ThreadsPage
 }
 
 // ServeHTTP is called with every request this page receives.
@@ -34,10 +34,6 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Read query with key "id"
 	thisBoardID, err := GetQueryInt("id", r)
 	if err != nil && thisBoardID != 0 {
-		if r.Method == "POST" {
-			sendErr(err, w, http.StatusBadRequest)
-			return
-		}
 		http.NotFound(w, r)
 		return
 	}
@@ -46,14 +42,11 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Get our current board
 	thisBoard, err := env.Boards.Get(thisBoardID)
 	if err != nil {
-		if r.Method == "POST" {
-			sendErr(err, w, http.StatusBadRequest)
-			return
-		}
-		sendErr(err, w, http.StatusNotFound)
+		http.NotFound(w, r)
 		return
 	}
 	data.AddTitle(thisBoard.Name)
+	data.ThisBoard = thisBoard
 
 	// If it's a post request, let another function handle it first
 	if r.Method == "POST" {
@@ -62,11 +55,11 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			sendErr(err, w, 405)
 			return
 		}
-		err := env.postThread(w, r, data, thisBoardID)
+		newID, err := env.postThread(w, r, data, thisBoardID)
 		if err != nil {
 			return // We do all the error sending/logging in the function
 		}
-		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprint("/thread?id=", newID), http.StatusSeeOther)
 		return
 	}
 
@@ -98,12 +91,12 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get a list of threads in this board
-	threads, err := env.Threads.ByBoard(thisBoard.BoardID)
+	threadsPage, err := env.GetThreadsPage(thisBoard.BoardID, r)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-	data.Threads = threads
+	data.ThreadsPage = threadsPage
 
 	// Finally, execute the template with the data we got
 	tmpl := env.Templates["board"]
@@ -113,25 +106,25 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardData, boardID int) error {
+func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardData, boardID int) (int, error) {
 	// HTML checks if the form is filled with something, so this is for clients that don't honor the required
 	// attribute. However HTML5, for some reason, the tag textarea doesn't have required pattern matching,
 	// so this still gives errors to users who decide to put only white spaces in their posts,
 	// but those are probably idiots and get what they deserve. Still, I think that kind of error
 	// handling should be done in the front-end, so as not to waste any time on frivolus requests
-	if strings.TrimSpace(r.FormValue("title")) == "" || strings.TrimSpace(r.FormValue("post")) == "" {
+	if strings.TrimSpace(r.FormValue("title")) == "" || strings.TrimSpace(r.FormValue("content")) == "" {
 		err := fmt.Errorf("title or content empty from %v", r.RemoteAddr)
 		sendErr(err, w, http.StatusBadRequest)
-		return err
+		return 0, err
 	}
 
 	err := checkUser(data.GenericData, r.RemoteAddr)
 	if err != nil {
 		sendErr(err, w, http.StatusForbidden)
-		return err
+		return 0, err
 	}
 
-	newThread := forumDB.Thread{
+	newThread := fdb.Thread{
 		Title:   r.FormValue("title"),
 		BoardID: boardID,
 	}
@@ -139,14 +132,14 @@ func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardDa
 	threadID, err := env.Threads.Insert(newThread)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
-		return err
+		return 0, err
 	}
 
-	writePost(r.FormValue("post"), data.Session.UserID, threadID, Thread(env))
+	err = writePost(r.FormValue("content"), data.Session.UserID, threadID, Thread(env))
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
-		return err
+		return 0, err
 	}
 
-	return nil
+	return threadID, nil
 }

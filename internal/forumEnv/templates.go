@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 )
 
@@ -38,7 +39,16 @@ func createTemplate(fileSystem fs.FS, templPath, name string) *template.Template
 	)
 
 	// Put all the files that match the patterns into the template
-	newTemplate := template.Must(template.ParseFS(fileSystem, patterns...))
+	newTemplate := template.Must(template.New(name).Funcs(getFuncMap()).ParseFS(fileSystem, patterns...))
 
 	return newTemplate
+}
+
+// Set custom functions for all templates
+func getFuncMap() template.FuncMap {
+	return template.FuncMap{
+		"itoa": func(num int) string {
+			return strconv.Itoa(num)
+		},
+	}
 }

@@ -12,10 +12,10 @@
     <hr>
     <div>
         <div>
-            <span class="breadcrumbs">
-                <span><a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a></span>
-                <span><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
-            </span>
+            <div class="breadcrumbs">
+                <span class="bc-board"><a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a></span>
+                <span class="bc-thread"><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
+            </div>
             <br>
             <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>
             <br>

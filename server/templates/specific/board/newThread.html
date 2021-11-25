@@ -1,0 +1,10 @@
+{{- /*gotype: forum/internal/pages.boardData*/ -}}
+{{ define "newThread" }}
+    <div id="new-thread" class="group-content">
+        <form id="new-thread-form" method="POST">
+            <input placeholder="Title" type="text" name="title" required>
+            <textarea placeholder="Write something..." name="content" required></textarea>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+{{ end }}

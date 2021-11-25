@@ -9,20 +9,12 @@
             {{- end -}}
         {{- end }}
     </div>
+    <div class="flex-table">
     {{ if .ChildBoards }}
-        {{ template "subboards" . }}
+        {{ template "boardList" . }}
     {{ end }}
-    <h3>Threads</h3>
-    <ul>
-        {{ range .Threads }}
-            <li><a href="/thread?id={{ .ThreadID }}">{{ .Title }}</a></li>
-        {{ end }}
-    </ul>
-    {{ if and (ne .GenericData.User.UserID 0) (ne .BoardID 0) }}
-    <form method="POST">
-        <label>Title: <input type="text" name="title" id="" required pattern=".*\S+.*"></label>
-        <label>Post: <textarea name="post" id="" cols="30" rows="10" required=""></textarea></label>
-        <input type="submit" value="submit">
-    </form>
+    {{ if .ThreadsPage.Threads }}
+        {{ template "threadList" . }}
     {{ end }}
+    </div>
 {{ end }}

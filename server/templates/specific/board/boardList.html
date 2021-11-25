@@ -1,17 +1,15 @@
 {{- /*gotype: forum/internal/pages.boardData*/ -}}
-{{ define "subboards" }}
-    <div id="boards" class="flex-table">
-        <input id="group-boards" class="group-toggle" type="checkbox">
-        <label class="flex-row group-header" for="group-boards">Boards</label>
-        <div class="group-content">
-            {{ range .ChildBoards }}
-                {{ if .IsGroup }}
-                    {{ template "group" . }}
-                {{ else }}
-                    {{ template "board" . }}
-                {{ end }}
+{{ define "boardList" }}
+    <input id="group-boards" class="group-toggle" type="checkbox">
+    <label class="flex-row group-header" for="group-boards">Boards</label>
+    <div class="group-content">
+        {{ range .ChildBoards }}
+            {{ if .IsGroup }}
+                {{ template "group" . }}
+            {{ else }}
+                {{ template "board" . }}
             {{ end }}
-        </div>
+        {{ end }}
     </div>
 {{ end }}
 
@@ -30,10 +28,10 @@
 {{ end }}
 
 {{ define "board" }}
-    <div class="flex-row">
+    <div class="flex-row board">
         <div class="flex-cell board-base grow">
             <div class="grow"></div>
-            <a class="board-name" href="/board?id={{ .BoardID }}">{{ .Name }}</a>
+            <span><a class="board-name" href="/board?id={{ .BoardID }}">{{ .Name }}</a></span>
             <span class="board-desc">{{ .Description.String }}</span>
             <div class="grow"></div>
             {{ with .Children }}
@@ -46,11 +44,11 @@
             {{ end }}
         </div>
         {{ with .Extras }}
-            <div class="flex-cell counts">
-                <span>Threads: {{ .CountThreads }}</span>
-                <span>Posts: {{ .CountPosts }}</span>
+            <div class="flex-cell board-counts">
+                <span>{{ .CountThreads }} threads</span>
+                <span>{{ .CountPosts }} posts</span>
             </div>
-            <div class="flex-cell latest-post">
+            <div class="flex-cell board-latest-post">
                 <span class="latest-author"><strong>Last post</strong> by
                     <a href="/user?id={{ .LatestAuthorID }}">
                     {{ .LatestAuthor }}
@@ -68,6 +66,9 @@
 
 
 {{ define "subBoard" }}
-    {{ if .IsGroup }}<span class="subgroup">{{ .Name }}...</span>{{ else }}<a
-            href="/board?id={{ .BoardID }}">{{ .Name }}</a>{{ end }}
+    {{ if .IsGroup }}
+        <span class="subgroup">{{ .Name }}...</span>
+    {{ else }}
+        <a href="/board?id={{ .BoardID }}">{{ .Name }}</a>
+    {{ end }}
 {{ end }}

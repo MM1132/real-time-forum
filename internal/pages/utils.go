@@ -16,13 +16,6 @@ func sendErr(err error, w http.ResponseWriter, code int) {
 	http.Error(w, http.StatusText(code), code)
 }
 
-// Recover from panicking goroutine if it's a handler.
-func recoverHandler(w http.ResponseWriter) {
-	if err := recover(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
-	}
-}
-
 // Get the id of the thread we return to the client
 func GetQueryInt(key string, r *http.Request) (int, error) {
 	idString := r.URL.Query().Get(key)

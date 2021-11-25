@@ -1,16 +1,29 @@
+.texture-light,
+body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23FFF' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+}
+.texture-dark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23000' fill-opacity='0.1' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+}
 :root {
   --color-text: #e6e6e6;
-  --color-text-semi: rgba(230, 230, 230, 0.6);
+  --color-text-semi-1: rgba(230, 230, 230, 0.9);
+  --color-text-semi-4: rgba(230, 230, 230, 0.6);
   --color-text-inverted: #1a1a1a;
-  --color-text-inverted-semi: rgba(26, 26, 26, 0.6);
+  --color-text-inverted-semi-1: rgba(26, 26, 26, 0.9);
+  --color-text-inverted-semi-4: rgba(26, 26, 26, 0.6);
   --color-link: var(--color-secondary-light-4);
   --color-link-visited: var(--color-secondary-light-3);
   --color-link-hover: var(--color-secondary-light-5);
   --color-border-dark: rgba(0, 0, 0, 0.3);
   --color-border-light: rgba(255, 255, 255, 0.3);
+  --color-darken-02: rgba(0, 0, 0, 0.02);
+  --color-darken-05: rgba(0, 0, 0, 0.05);
   --color-darken-10: rgba(0, 0, 0, 0.1);
   --color-darken-20: rgba(0, 0, 0, 0.2);
   --color-darken-30: rgba(0, 0, 0, 0.3);
+  --color-lighten-02: rgba(255, 255, 255, 0.02);
+  --color-lighten-05: rgba(255, 255, 255, 0.05);
   --color-lighten-10: rgba(255, 255, 255, 0.1);
   --color-lighten-20: rgba(255, 255, 255, 0.2);
   --color-lighten-30: rgba(255, 255, 255, 0.3);

@@ -2,12 +2,30 @@ package forumDB
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Thread struct {
 	ThreadID int
 	Title    string
 	BoardID  int
+
+	Extras *ThreadExtras
+}
+
+type ThreadExtras struct {
+	CountPosts int
+	CountUsers int
+
+	LatestID       int
+	LatestAuthorID int
+	LatestAuthor   string
+	LatestDate     time.Time
+
+	OldestID       int
+	OldestAuthorID int
+	OldestAuthor   string
+	OldestDate     time.Time
 }
 
 type ThreadModel struct {
@@ -79,4 +97,60 @@ func (m ThreadModel) ByBoard(boardID int) ([]Thread, error) {
 	}
 
 	return threads, nil
+}
+
+// GetPageThreads returns all threads that are supposed to be in a single page
+func (m ThreadModel) GetPageThreads(boardID, page, pageSize int, orderKey string) ([]Thread, error) {
+	key := "GetPageThreads-" + orderKey
+	stmt := m.statements[key]
+
+	rows, err := stmt.Query(
+		boardID,
+		pageSize,
+		(page-1)*pageSize,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var threads []Thread
+	for rows.Next() {
+		thread := Thread{Extras: &ThreadExtras{}}
+		err = rows.Scan(
+			&thread.ThreadID,
+			&thread.Title,
+			&thread.BoardID,
+
+			&thread.Extras.CountPosts,
+			&thread.Extras.CountUsers,
+
+			&thread.Extras.LatestID,
+			&thread.Extras.LatestAuthorID,
+			&thread.Extras.LatestAuthor,
+			&thread.Extras.LatestDate,
+
+			&thread.Extras.OldestID,
+			&thread.Extras.OldestAuthorID,
+			&thread.Extras.OldestAuthor,
+			&thread.Extras.OldestDate,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		threads = append(threads, thread)
+	}
+
+	return threads, nil
+}
+
+func (m ThreadModel) ThreadCount(boardID int) int {
+	stmt := m.statements["ThreadCount"]
+
+	row := stmt.QueryRow(boardID)
+
+	var count int
+	_ = row.Scan(&count)
+
+	return count
 }

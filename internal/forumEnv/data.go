@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"forum/internal/forumDB"
 	"net/http"
+	"net/url"
 )
 
 type GenericData struct {
@@ -11,11 +12,14 @@ type GenericData struct {
 	Session forumDB.Session
 	User    forumDB.User
 
+	CurrentURL url.URL
+
 	Theme string
 }
 
 func (data *GenericData) InitData(env Env, r *http.Request) error {
 	data.Title = env.SiteName
+	data.CurrentURL = *r.URL
 
 	data.parseSessionCookie(env, r)
 

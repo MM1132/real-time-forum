@@ -23,7 +23,7 @@ func main() {
 	templates := forumEnv.CreateTemplates("./server/templates")
 	// And create an Env for page DB and Template access
 	env := forumEnv.NewEnv(db, templates)
-	env.SiteName = "Cool Forum"
+	env.SiteName = "Ubian Debuntu"
 
 	// Then convert the Env into page-specific versions, so they act as handlers
 	mux.Handle("/board", pages.Board{env})

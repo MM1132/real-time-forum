@@ -82,6 +82,13 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		data.Posts[i].Likes = sum
 	}
 
+	// Set the extras for the user
+	for i := range data.Posts {
+		if err := env.Users.SetExtras(&data.Posts[i].User); err != nil {
+			sendErr(err, w, http.StatusInternalServerError)
+		}
+	}
+
 	// BreadCrumbs
 	// Get the board the thread is in
 	if data.Breadcrumbs, err = env.Boards.GetBreadcrumbs(thread.BoardID); err != nil {

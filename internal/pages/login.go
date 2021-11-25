@@ -64,7 +64,7 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { /
 		MaxAge: 86400, // One day
 	}
 
-	http.SetCookie(w, cookie) // sets the cookie
+	w.Header().Add("Set-Cookie", cookie.String())
 
 	log.Printf("%v has logged in.\n", user.Name)
 	http.Redirect(w, r, "/board", http.StatusFound)

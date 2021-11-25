@@ -11,7 +11,14 @@ type User struct {
 	Name     string
 	Email    string
 	Password string
+	Image    string
 	Creation time.Time
+
+	Extras *UserExtras
+}
+
+type UserExtras struct {
+	TotalPosts int
 }
 
 type UserModel struct {
@@ -48,7 +55,7 @@ func (m UserModel) Get(UID int) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -62,7 +69,7 @@ func (m UserModel) GetByName(name string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -76,10 +83,34 @@ func (m UserModel) GetByEmail(email string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
 
 	return user, nil
+}
+
+func (m UserModel) SetExtras(user *User) error {
+	stmt := m.statements["SetExtras"]
+	row := stmt.QueryRow(user.UserID)
+
+	extras := UserExtras{}
+	if err := row.Scan(
+		&extras.TotalPosts,
+	); err != nil {
+		return err
+	}
+	user.Extras = &extras
+	return nil
+}
+
+// This function is for changing the profile picture of the user
+func (m UserModel) SetImage(image string, userID int) error {
+	stmt := m.statements["SetImage"]
+	_, err := stmt.Exec(image, userID)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -21,7 +21,8 @@
                 <a href="/register">Register</a>
             </nav>
         {{ else }}
-            <span>Welcome<a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
+            <span>Welcome, <a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
+            <img class="header-user-image" src="/profile-pictures/{{ .GenericData.User.Image }}" alt="ERROR: Image file does not exist">
             <nav class="header-nav">
                 <a href="/logout">Logout</a>
             </nav>

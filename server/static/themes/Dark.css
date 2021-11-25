@@ -27,6 +27,7 @@ body {
   --color-lighten-10: rgba(255, 255, 255, 0.1);
   --color-lighten-20: rgba(255, 255, 255, 0.2);
   --color-lighten-30: rgba(255, 255, 255, 0.3);
+  --color-high-contrast-1: #7adf5e;
   --color-primary: #454851;
   --color-primary-dark-1: #3e4149;
   --color-primary-dark-2: #373a41;

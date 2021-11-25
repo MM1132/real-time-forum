@@ -17,3 +17,12 @@ SELECT *
 FROM users
 WHERE email = ?;
 
+-- Func: SetExtras
+SELECT count(*)
+FROM posts
+WHERE userID = ?;
+
+-- Func: SetImage
+UPDATE users
+SET image = ?
+WHERE userID = ?;

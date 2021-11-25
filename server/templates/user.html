@@ -1,20 +1,60 @@
 {{- /*gotype: forum/internal/pages.UserData*/ -}}
 {{ define "content" }}
-    <hr>
-    <h2>Welcome to the profile of <u>{{.User.Name}}</u>({{.User.UserID}})!</h2>
-    <h3>Info:</h3>
-    <ul>
-        <li>Email: {{.User.Email}}</li>
-        <li>Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</li>
-    </ul>
+    <div class="profile-top-bar">
+        <div class="profile-name">{{.User.Name}}</div>
+        {{ if eq .GenericData.User.UserID .User.UserID }}
+            <a href="/settings"class="div-link">
+                <div class="profile-settings-button button">
+                    Settings
+                </div>
+            </a>
+        {{ end }}
+    </div>
+    <div class="profile-user-information-container">
+        {{ if eq .GenericData.User.UserID .User.UserID }}
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" class="button" accept="image/*" name="profile-picture" id="profile-picture-file-input" onchange="form.submit();" hidden>
+            <label for="profile-picture-file-input" class="profile-user-image-label">
+                <div class="profile-image-hover-text">Change Picture</div>
+                <img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
+            </label>
+        </form>
+        {{ else }}
+        <img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
+        {{ end }}
+    
+        <div class="profile-user-information">
+            <div class="profile-information-header">Contact Information:</div>
+            <div class="profile-information-data">Email: {{.User.Email}}</div>
+            <div class="profile-information-header">General Information:</div>
+            <div class="profile-information-data">Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</div>
+            <div class="profile-information-data">Total Posts: {{ .User.Extras.TotalPosts }}</div>
+        </div>
+    </div>
+    {{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
+    <!--
+    {{ if eq .GenericData.User.UserID .User.UserID }}
+        <h3>Change Profile Picture:</h3>
+        (Only image/png files allowed, 1MB at most)
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" class="button" accept="image/*" name="profile-picture"><br>
+            <button type="submit" class="button" >Upload</button>
+        </form>
+        {{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
+    {{ end }}
+    -->
     <h3>Recent posts:</h3>
     {{ range .BreadPosts }}
     <hr>
     <div>
         <div>
             <div class="breadcrumbs">
-                <span class="bc-board"><a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a></span>
-                <span class="bc-thread"><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
+                <span class="bc-board">
+                    <a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a>
+                </span>
+                <span class="bc-thread">
+                    <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a>
+                </span>
             </div>
             <br>
             <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>

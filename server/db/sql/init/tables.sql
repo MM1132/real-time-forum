@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `users`
     `name`     TEXT UNIQUE NOT NULL,
     `email`    TEXT UNIQUE NOT NULL,
     `password` TEXT        NOT NULL,
+    `image`    TEXT        NOT NULL DEFAULT '0-0.png',
     `created`  DATE        NOT NULL
 );
 

@@ -248,4 +248,5 @@ values (1, 'Automated context-sensitive forecast', 4),
        (247, 'Enterprise-wide optimizing structure', 5),
        (248, 'Optional background benchmark', 5),
        (249, 'Fully-configurable didactic capability', 2),
-       (250, 'Quality-focused reciprocal customer loyalty', 5);
+       (250, 'Quality-focused reciprocal customer loyalty', 5),
+       (251, 'Adding profile pictures to users. Also formatting the way posts are displayed under threads.', 9);

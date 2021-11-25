@@ -220,6 +220,10 @@ a:hover {
     flex-shrink: 1;
 }
 
+.thread-tag.thread-tag {
+    color: var(--color-text-semi-4)
+}
+
 .board-name {
     font-size: large;
     font-weight: bold;
@@ -405,6 +409,7 @@ a:hover {
     justify-content: center;
     align-items: center;
     height: 30px;
+    user-select: none;
 }
 
 .thread-page-nav:first-child {
@@ -531,12 +536,14 @@ a:hover {
 /* GROUP COLLAPSING END*/
 
 /* NEW THREAD */
-#new-thread {
+#new-thread,
+#new-thread-toggle.default-open:checked + #new-thread {
     max-height: 0;
     transition: max-height var(--t-fold-con) cubic-bezier(0, 1, 0, 1);
 }
 
-#new-thread-toggle:checked + #new-thread {
+#new-thread-toggle:checked + #new-thread,
+#new-thread-toggle.default-open {
     max-height: 10000px;
     transition: max-height var(--t-fold-exp) cubic-bezier(1, 0, 1, 0);
 }
@@ -546,7 +553,7 @@ a:hover {
 }
 
 #new-thread-button,
-#new-thread-form > input[type="submit"]{
+#new-thread-submit {
     color: var(--color-text-inverted);
     height: 32px;
     padding: 0 12px;
@@ -561,12 +568,24 @@ a:hover {
 }
 
 #new-thread-button:active,
-#new-thread-form > input[type="submit"]:active {
+#new-thread-submit:active {
     border-style: inset;
 }
 
-#new-thread-form > input[type="submit"] {
-    max-width: 200px;
+#new-thread-submit {
+    min-width: 200px;
+}
+
+#new-thread-tags {
+    min-width: 300px;
+    flex-grow: 1;
+}
+
+#new-thread-form > div {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 #new-thread {
@@ -579,21 +598,18 @@ a:hover {
     max-width: 700px;
     display: flex;
     flex-direction: column;
-    /*align-items: center;*/
     margin: 10px 0;
 }
 
 #new-thread-form > * {
     margin: 2px;
-    width: 100%;
 }
 
-#new-thread-form > input[name="title"] {
-    padding: 8px;
+#new-thread-title {
     font-size: larger;
 }
 
-#new-thread-form > textarea {
+#new-thread-content {
     height: 200px;
 }
 
@@ -601,18 +617,16 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
-    padding: 3px;
+    padding: 6px 8px;
 
     border-radius: var(--radius);
     color: var(--color-text);
     background-color: var(--color-darken-20);
 
-    border-color: var(--color-border-light);
-    border-style: solid;
+    border: 2px solid var(--color-border-light);
 }
 
 textarea {
-    padding: 8px;
     font-family: 'Source Serif Pro', serif;
     resize: none;
 }

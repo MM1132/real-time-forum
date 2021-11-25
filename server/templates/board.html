@@ -9,12 +9,16 @@
             {{- end -}}
         {{- end }}
     </div>
-    <div class="flex-table">
-    {{ if .ChildBoards }}
-        {{ template "boardList" . }}
+    {{ if or .ChildBoards .ThreadsPage.Threads }}
+        <div class="flex-table">
+            {{ if .ChildBoards }}
+                {{ template "boardList" . }}
+            {{ end }}
+            {{ if .ThreadsPage.Threads }}
+                {{ template "threadList" . }}
+            {{ end }}
+        </div>
+    {{ else }}
+        <h2>There doesn't seem to be anything here :(<br><br>Go back <a href="/">home</a>?</h2>
     {{ end }}
-    {{ if .ThreadsPage.Threads }}
-        {{ template "threadList" . }}
-    {{ end }}
-    </div>
 {{ end }}

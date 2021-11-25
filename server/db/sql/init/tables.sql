@@ -65,3 +65,15 @@ CREATE TABLE IF NOT EXISTS `likes`
 
 CREATE INDEX IF NOT EXISTS likes_userID
 ON likes(userID, value);
+
+CREATE TABLE IF NOT EXISTS `tags`
+(
+    `name`     TEXT,
+    `threadID` INTEGER NOT NULL,
+    FOREIGN KEY (threadID) REFERENCES threads (threadID)
+        ON DELETE CASCADE,
+    CONSTRAINT tag_unique UNIQUE (threadID, name)
+        ON CONFLICT IGNORE
+);
+
+CREATE INDEX tag_index ON tags (name, threadID);

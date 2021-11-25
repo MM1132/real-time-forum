@@ -6,6 +6,7 @@ import (
 	"forum/internal/forumEnv"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -22,10 +23,18 @@ type boardData struct {
 	BoardID     int
 
 	ThreadsPage ThreadsPage
+
+	TagSuggestions []string
 }
 
 // ServeHTTP is called with every request this page receives.
 func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// If user is looking for tag, use a separate handler
+	if r.URL.Query().Has("tag") {
+		env.ServeTagResults(w, r)
+		return
+	}
+
 	data := boardData{}
 	if err := data.InitData(env.Env, r); err != nil {
 		return
@@ -98,6 +107,9 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	data.ThreadsPage = threadsPage
 
+	// Get suggestions for likes
+	data.TagSuggestions = env.Threads.Tags.GetPopular(thisBoardID)
+
 	// Finally, execute the template with the data we got
 	tmpl := env.Templates["board"]
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
@@ -129,6 +141,9 @@ func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardDa
 		BoardID: boardID,
 	}
 
+	// Process the given tags into a slice (also error check)
+	newThread.Tags = env.ProcessTags(r.FormValue("tags"))
+
 	threadID, err := env.Threads.Insert(newThread)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
@@ -142,4 +157,34 @@ func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardDa
 	}
 
 	return threadID, nil
+}
+
+func (_ Board) ProcessTags(rawTags string) (tags []string) {
+	if rawTags == "" || len(rawTags) > 100 {
+		return nil
+	}
+
+	splits := strings.Split(rawTags, "#")
+	splits = splits[1:]
+
+	for _, tag := range splits {
+		tag = strings.TrimSpace(tag)
+
+		r1 := regexp.MustCompile(`\s`)
+		tag = r1.ReplaceAllString(tag, "-")
+
+		r2 := regexp.MustCompile(`[^\w-]`)
+		tag = r2.ReplaceAllString(tag, "")
+
+		r3 := regexp.MustCompile(`-+`)
+		tag = r3.ReplaceAllString(tag, "-")
+
+		if tag == "" {
+			continue
+		}
+
+		tags = append(tags, tag)
+	}
+
+	return tags
 }

@@ -12,6 +12,7 @@ import (
 // To do this, it has all kinds of configuration variables, which are used to fill out the Threads field
 type ThreadsPage struct {
 	BoardID int
+	TagName string
 
 	Page         int
 	PageSize     int
@@ -26,13 +27,13 @@ type ThreadsPage struct {
 }
 
 // GetThreadsPage returns a ThreadsPage struct, which represents a single page's worth of threads.
-func (env Board) GetThreadsPage(boardID int, r *http.Request) (ThreadsPage, error) {
-	page, err := env.initThreadPage(boardID, r)
+func (env Board) GetThreadsPage(boardID_OR_tag interface{}, r *http.Request) (ThreadsPage, error) {
+	page, err := env.initThreadPage(boardID_OR_tag, r)
 	if err != nil {
 		return ThreadsPage{}, err
 	}
 
-	page.Threads, err = env.Threads.GetPageThreads(boardID, page.Page, page.PageSize, page.SQLKey)
+	page.Threads, err = env.Threads.GetPageThreads(boardID_OR_tag, page.Page, page.PageSize, page.SQLKey)
 	if err != nil {
 		return ThreadsPage{}, err
 	}
@@ -41,9 +42,23 @@ func (env Board) GetThreadsPage(boardID int, r *http.Request) (ThreadsPage, erro
 }
 
 // Initializes the ThreadsPage variables based on query values from the request.
-func (env Board) initThreadPage(boardID int, r *http.Request) (ThreadsPage, error) {
+func (env Board) initThreadPage(boardID_OR_tag interface{}, r *http.Request) (ThreadsPage, error) {
 	page := ThreadsPage{}
-	page.BoardID = boardID
+
+	switch v := boardID_OR_tag.(type) {
+	case int:
+		// If boardID
+		page.BoardID = v
+		page.ThreadsTotal = env.Threads.ThreadCount(v)
+
+	case string:
+		// If tag
+		page.TagName = v
+		page.ThreadsTotal = env.Threads.Tags.ThreadCount(v)
+
+	default:
+		panic("initThreadPage: invalid type for boardID_OR_tag")
+	}
 
 	// Parse current page and page size. Need both to build the UI correctly in the template
 	page.Page, _ = GetQueryInt("p", r)
@@ -55,7 +70,7 @@ func (env Board) initThreadPage(boardID int, r *http.Request) (ThreadsPage, erro
 		page.PageSize = 16
 	}
 
-	page.ThreadsTotal = env.Threads.ThreadCount(boardID)
+	// ThreadsTotal is set above in switch
 	page.PagesTotal = page.ThreadsTotal / page.PageSize
 	if page.ThreadsTotal%page.PageSize != 0 {
 		page.PagesTotal++

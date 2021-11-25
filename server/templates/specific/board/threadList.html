@@ -28,7 +28,11 @@
 {{ define "thread" }}
     <div class="flex-row thread">
         <div class="flex-cell thread-base grow">
-            <span><a class="thread-title" href="/thread?id={{ .ThreadID }}">{{ .Title }}</a></span>
+            <div><a class="thread-title" href="/thread?id={{ .ThreadID }}">{{ .Title }}</a>
+                {{- range .Tags }}
+                    <a href="/board?tag={{ . }}" class="thread-tag">#{{ . }}</a>
+                {{- end -}}
+            </div>
             <span class="thread-author">
                 Started by
                 {{ with .Extras }}<a href="/user?id={{ .OldestAuthorID }}">{{ .OldestAuthor }}</a>{{ end }}
@@ -73,7 +77,8 @@
                 <a href="{{ $.GenericData.Query "p" (itoa .) }}#threads">{{ . }}</a>
             {{- end }}
         </div>
-        <a class="to-end" href="{{ .GenericData.Query "p" (itoa .ThreadsPage.PagesTotal) }}#threads" title="To last page"></a>
+        <a class="to-end" href="{{ .GenericData.Query "p" (itoa .ThreadsPage.PagesTotal) }}#threads"
+           title="To last page"></a>
     </div>
 {{ end }}
 

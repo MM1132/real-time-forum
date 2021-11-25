@@ -12,6 +12,7 @@ type Post struct {
 	ThreadID int
 	Date     time.Time
 	User     User
+	Likes    int
 }
 
 type PostModel struct {
@@ -93,6 +94,7 @@ func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 			&post.User.Email,
 			&post.User.Password,
 			&post.User.Creation,
+			&post.Likes,
 		)
 		if err != nil {
 			return nil, err

@@ -11,3 +11,7 @@ WHERE threadID = ?;
 SELECT *
 FROM threads
 WHERE boardID = ?;
+
+-- Func: ByPost
+SELECT *
+FROM threads

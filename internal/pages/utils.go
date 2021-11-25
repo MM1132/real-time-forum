@@ -39,7 +39,7 @@ func GetQueryInt(key string, r *http.Request) (int, error) {
 
 func checkUser(data forumEnv.GenericData, addr string) error {
 	if data.User.UserID == 0 {
-		return fmt.Errorf("%v not authorized to post", addr)
+		return fmt.Errorf("%v not authorized", addr)
 	}
 	return nil
 }

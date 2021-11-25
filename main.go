@@ -32,6 +32,8 @@ func main() {
 	mux.Handle("/login", pages.Login{env})
 	mux.Handle("/logout", pages.Logout{env})
 	mux.Handle("/user", pages.User{env})
+	mux.Handle("/like", pages.Like{env})
+	mux.Handle("/dislike", pages.Like{env})
 
 	staticFS := http.FileServer(http.Dir("./server/static"))
 	mux.Handle("/", forumEnv.RedirectEmpty("/board", staticFS))

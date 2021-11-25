@@ -9,7 +9,13 @@ FROM posts p
 WHERE postID = ?;
 
 -- Func: GetByThreadID
-SELECT *
+SELECT p.*,
+       u.*,
+       (SELECT IFNULL(SUM(value), 0)
+        FROM likes
+        WHERE postID = p.postID
+       ) AS likes
+
 FROM posts p
          JOIN users u ON p.userID = u.userID
 WHERE threadID = ?

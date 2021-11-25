@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"database/sql"
 	"fmt"
 	"forum/internal/forumDB"
 	"forum/internal/forumEnv"
@@ -66,6 +67,19 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if data.Posts, err = env.Posts.GetByThreadID(threadIdInt); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
+	}
+
+	for i, post := range data.Posts {
+		sum, err := env.Likes.GetPostTotal(post.PostID)
+
+		if err == sql.ErrNoRows {
+			data.Posts[i].Likes = 0
+			continue
+		} else if err != nil {
+			sendErr(err, w, http.StatusInternalServerError)
+			return
+		}
+		data.Posts[i].Likes = sum
 	}
 
 	// BreadCrumbs

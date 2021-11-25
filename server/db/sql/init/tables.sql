@@ -50,3 +50,18 @@ CREATE TABLE IF NOT EXISTS `boards`
     FOREIGN KEY (parentID) REFERENCES boards (boardID)
         ON DELETE RESTRICT
 );
+
+CREATE TABLE IF NOT EXISTS `likes`
+(
+    `postID`    INTEGER NOT NULL,
+    `userID`    INTEGER NOT NULL,
+    `value`     INTEGER NOT NULL,
+    `date`      DATE NOT NULL,
+    FOREIGN KEY (postID) REFERENCES posts (postID),
+    FOREIGN KEY (userID) REFERENCES users (userID),
+    CONSTRAINT uniq UNIQUE (postID, userID)
+    ON CONFLICT REPLACE
+);
+
+CREATE INDEX IF NOT EXISTS likes_userID
+ON likes(userID, value);

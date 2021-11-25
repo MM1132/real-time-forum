@@ -1,3 +1,4 @@
+{{- /*gotype: forum/internal/pages.UserData*/ -}}
 {{ define "content" }}
     <hr>
     <h2>Welcome to the profile of <u>{{.User.Name}}</u>({{.User.UserID}})!</h2>
@@ -23,5 +24,17 @@
         <p>{{ .Post.Content }}</p>
     </div>
     {{ end }}
+    <h3>Recent (dis)likes:</h3>
     <hr>
+    {{ range .LikedPosts }}
+    <div>
+        <span class="likes">{{/* This html is garbage, please don't use this as a base when reworking it */}}
+            <p>
+                {{$.User.Name}} {{ if eq .Value -1}}dis{{ end }}liked a <a href="/thread?id={{ .Post.ThreadID }}"> post</a> by <a href="/user?id={{ .Author.UserID }}">{{ .Author.Name }}</a>:
+            </p>
+            <p>{{ .Post.Content }}</p>
+        </span>
+    </div>
+    <hr>
+    {{ end }}
 {{ end }}

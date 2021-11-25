@@ -20,6 +20,16 @@
                 <span>{{ .Date.Format "2 Jan 2006, 15:04" }}</span>
                 <br>
                 <a href="/user?id={{.User.UserID}}">{{ .User.Name }}</a>
+                <br>
+                <span>{{ .Likes }}</span>
+                {{ if ne $.GenericData.User.UserID 0 }}
+                <form method="post" action="/like?id={{.PostID}}">
+                <input type="submit" value="Like">
+                </form>
+                <form method="post" action="/dislike?id={{.PostID}}">
+                <input type="submit" value="Wrongthink">
+                </form>
+                {{ end }}
             </div>
             <p>{{ .Content }}</p>
         </div>

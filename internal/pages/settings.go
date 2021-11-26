@@ -62,7 +62,13 @@ func (env Settings) checkForm(w http.ResponseWriter, r *http.Request, data Setti
 	}
 
 	// Set the new password for the user
-	err := env.Users.SetPassword(password_1, data.Session.UserID)
+	// But first, convert it into a hash
+	hashedPassword, err := generateHash(password_1)
+	if err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return err
+	}
+	err = env.Users.SetPassword(hashedPassword, data.Session.UserID)
 	if err != nil {
 		return err
 	}

@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Sends an error on the writer with default text
@@ -49,4 +51,13 @@ func writePost(content string, userID int, threadID int, env Thread) error {
 		return err
 	}
 	return nil
+}
+
+// Used to turn passwords into hashes
+func generateHash(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
 }

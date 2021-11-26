@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Login struct {
@@ -73,11 +75,13 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { /
 }
 
 func (env Login) validate(r *http.Request, data loginData) bool {
+	// Get the user information
 	user, err := env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
 	if err != nil {
 		data.Errors["Error"] = "Incorrect username or password."
 	}
-	if r.FormValue("password") != user.Password {
+	// Check if the typed in password successfully converts into the matching hash
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(r.FormValue("password"))); err != nil {
 		data.Errors["Error"] = "Incorrect username or password."
 	}
 	return len(data.Errors) == 0

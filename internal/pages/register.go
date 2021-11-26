@@ -47,10 +47,21 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Register) register(w http.ResponseWriter, r *http.Request) { // Creates a new user from POST request. Only usable in POST request.
-	// username always capitalized, lowercase. Email always lowercase.
-	newUser := forumDB.User{Name: strings.Title(strings.ToLower(r.FormValue("username"))), Email: strings.ToLower(r.FormValue("email")), Password: r.FormValue("password")}
+	// Let's convert the password into a hash
+	passwordHash, err := generateHash(r.FormValue("password"))
+	if err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return
+	}
 
-	_, err := env.Users.Insert(newUser)
+	// username always capitalized, lowercase. Email always lowercase.
+	newUser := forumDB.User{
+		Name:     strings.Title(strings.ToLower(r.FormValue("username"))),
+		Email:    strings.ToLower(r.FormValue("email")),
+		Password: passwordHash,
+	}
+
+	_, err = env.Users.Insert(newUser)
 	if err != nil {
 		log.Println(err)
 	}

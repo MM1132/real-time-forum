@@ -8,6 +8,6 @@ require (
 )
 
 require (
-	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
+	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

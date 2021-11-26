@@ -1,18 +1,17 @@
-{{- /*gotype: forum/internal/pages.boardData*/ -}}
-{{ define "newThread" }}
-    <div id="new-thread" class="group-content">
-        <form id="new-thread-form" method="POST">
-            <input id="new-thread-title" placeholder="Title" type="text" name="title" required>
-            <textarea id="new-thread-content" placeholder="Write something..." name="content" required></textarea>
-            <div>
-                <input id="new-thread-tags" list="popular-tags" placeholder="#Tag1 #Tag2" type="text" name="tags" maxlength="100" pattern="^#.+">
-                <input id="new-thread-submit" type="submit" value="Submit">
-                <datalist id="popular-tags">
+{{- /*gotype: forum/internal/pages.boardData*/ -}} {{ define "newThread" }}
+<div id="new-thread" class="group-content">
+    <form id="new-thread-form" method="POST">
+        <input id="new-thread-title" placeholder="Title" type="text" name="title" required>
+        <textarea id="new-thread-content" placeholder="Write something..." name="content" required></textarea>
+        <div>
+            <input id="new-thread-tags" list="popular-tags" placeholder="#Tag1 #Tag2" type="text" name="tags" maxlength="100" pattern="^#.+">
+            <input id="new-thread-submit" class="button" type="submit" value="Submit">
+            <datalist id="popular-tags">
                     {{ range .TagSuggestions }}
                         <option value="#{{ . }}">
                     {{ end }}
                 </datalist>
-            </div>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 {{ end }}

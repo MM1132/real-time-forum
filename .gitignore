@@ -1,1 +1,3 @@
 server/db/forum.db
+server/static/profile-pictures/*
+!server/static/profile-pictures/0-0.png

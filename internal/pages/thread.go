@@ -19,6 +19,7 @@ type ThreadData struct {
 	Thread      forumDB.Thread
 	Posts       []forumDB.Post
 	Breadcrumbs []forumDB.Board
+	LikedPosts  []forumDB.Like
 
 	HighlightPost int
 }
@@ -64,7 +65,13 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.AddTitle(thread.Title)
 
 	// Get all the posts that match this thread's ID
-	if data.Posts, err = env.Posts.GetByThreadID(threadIdInt); err != nil {
+	if data.Posts, err = env.Posts.GetByThreadID(threadIdInt, data.User.UserID); err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return
+	}
+
+	// Get all the likes from the loged in user
+	if data.LikedPosts, err = env.Likes.GetAllUser(data.Session.UserID); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}

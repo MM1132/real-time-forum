@@ -26,7 +26,7 @@ func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err := checkUser(data, r.RemoteAddr)
 	if err != nil {
-		sendErr(fmt.Errorf(`like: %w`, err), w, http.StatusForbidden)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 

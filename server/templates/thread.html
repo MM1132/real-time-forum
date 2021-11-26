@@ -1,44 +1,52 @@
-{{- /*gotype: board/internal/pages.ThreadData*/ -}}
-<script src="pattern.js"></script>
-{{ define "content" }}
-    <div class="breadcrumbs">
-        {{ range .Breadcrumbs -}}
-            {{- if .IsGroup -}}
-                <span class="bc-group">/{{ .Name }}</span>
-            {{- else -}}
-                <span class="bc-board"><a href="/board?id={{ .BoardID }}">{{ .Name }}</a></span>
-            {{- end -}}
-        {{- end }}
-        <span class="bc-thread"><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
-    </div>
-    <h3>Posts</h3>
+{{- /*gotype: board/internal/pages.ThreadData*/ -}} {{ define "content" }}
+<div class="breadcrumbs">
+    {{ range .Breadcrumbs -}} {{- if .IsGroup -}}
+    <span class="bc-group">/{{ .Name }}</span> {{- else -}}
+    <span class="bc-board"><a href="/board?id={{ .BoardID }}">{{ .Name }}</a></span> {{- end -}} {{- end }}
+    <span class="bc-thread"><a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a></span>
+</div>
+<h3>Posts</h3>
 
-    {{ $fragment := .HighlightPost }}
-    {{ range .Posts }}
-        <!-- Post container -->
-        <div id="{{ .PostID }}" class="post {{ if eq .PostID $fragment }}highlight-post{{ end }}">
-            <!-- The user -->
-            <div class="post-user">
-                <div class="post-user-name"><a href="/user?id={{ .User.UserID }}">{{ .User.Name }}</a></div>
-                <img class="post-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
-                <div>Join Date:<br>{{ .User.Creation.Format "2 Jan 2006" }}</div>
-                <div>Posts: {{ .User.Extras.TotalPosts }}</div>
+{{ $fragment := .HighlightPost }} {{ range .Posts }}
+<!-- Post container -->
+<div id="{{ .PostID }}" class="post {{ if eq .PostID $fragment }}highlight-post{{ end }}">
+    <!-- The user -->
+    <div class="post-user">
+        <div class="post-user-name"><a href="/user?id={{ .User.UserID }}">{{ .User.Name }}</a></div>
+        <img class="post-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
+        <div>Join Date:<br>{{ .User.Creation.Format "2 Jan 2006" }}</div>
+        <div>Posts: {{ .User.Extras.TotalPosts }}</div>
+    </div>
+    <!-- Just a simple divider in between -->
+    <div class="post-divider"></div>
+    <!-- Container > Date, Content, Like/Dislike -->
+    <div class="post-content-container">
+        <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
+        <div class="post-content">{{ .Content }}</div>
+        <div class="like-dislike-container">
+            <div class="like-button">
+                <form method="post" action="/like?id={{ .PostID }}">
+                    <input type="submit" id="hidden-like-button-{{ .PostID }}" hidden>
+                    <label class="shown-like-button like-dislike-button {{ if eq .MyLike 1 }}like-dislike-highlight{{ end }}" for="hidden-like-button-{{ .PostID }}"></label>
+                </form>
             </div>
-            <!-- Just a simple divider in between -->
-            <div class="post-divider"></div>
-            <!-- The post itself -->
-            <div class="post-content-container">
-                <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
-                <div class="post-content">{{ .Content }}</div>
+            <div class="likes">
+                {{ .Likes }}
+            </div>
+            <div class="dislike-button">
+                <form method="post" action="/dislike?id={{ .PostID }}">
+                    <input type="submit" id="hidden-dislike-button-{{ .PostID }}" hidden>
+                    <label class="shown-dislike-button like-dislike-button {{ if eq .MyLike -1 }}like-dislike-highlight{{ end }}" for="hidden-dislike-button-{{ .PostID }}"></label>
+                </form>
             </div>
         </div>
-    {{ end }}
-    {{ if eq .GenericData.User.UserID 0 }}
-    <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
-    {{ else }}
-    <form method="POST">
-        <textarea name="post" id="" cols="30" rows="10" class="new-post-textarea" placeholder="Write Some Bullshit..." required></textarea>
-        <button type="submit" class="button-submit-post button">Submit</button>
-    </form>
-    {{ end }}
-{{ end }}
+    </div>
+</div>
+{{ end }} {{ if eq .GenericData.User.UserID 0 }}
+<p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
+{{ else }}
+<form method="POST">
+    <textarea name="post" id="" cols="30" rows="10" class="new-post-textarea" placeholder="Write Some Bullshit..." required></textarea>
+    <button type="submit" class="button-submit-post button">Submit</button>
+</form>
+{{ end }} {{ end }}

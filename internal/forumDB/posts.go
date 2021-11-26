@@ -13,6 +13,7 @@ type Post struct {
 	Date     time.Time
 	User     User
 	Likes    int
+	MyLike   int
 }
 
 type PostModel struct {
@@ -72,11 +73,11 @@ func (m PostModel) Get(postID int) (Post, error) {
 }
 
 // Get all the posts with the threadID
-func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
+func (m PostModel) GetByThreadID(threadID int, userID int) ([]Post, error) {
 	stmt := m.statements["GetByThreadID"]
 
 	// Get all the rows where the threadID matches
-	rows, err := stmt.Query(threadID)
+	rows, err := stmt.Query(userID, threadID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +98,7 @@ func (m PostModel) GetByThreadID(threadID int) ([]Post, error) {
 			&post.User.Image,
 			&post.User.Creation,
 			&post.Likes,
+			&post.MyLike,
 		)
 		if err != nil {
 			return nil, err

@@ -31,7 +31,7 @@ img {
 
 
 *:focus {
-    outline: var(--color-secondary-light-2) inset 1px;
+    outline: solid 1px var(--color-secondary-light-1);
 }
 
 a:active, a:focus {
@@ -58,7 +58,7 @@ a:active, a:focus {
 #content {
     background-color: var(--color-primary-dark-3);
     padding: 1em;
-    border: 1px solid var(--color-border-dark);;
+    border: 1px solid var(--color-border-dark);
 
     margin: 1em auto;
     width: 100%;
@@ -625,7 +625,7 @@ textarea {
     color: var(--color-text);
     background-color: var(--color-darken-20);
 
-    border: 2px solid var(--color-border-light);
+    border: solid 1px var(--color-secondary-dark-1);
 }
 
 textarea {
@@ -640,7 +640,12 @@ td {
 }
 
 .error {
-    color: rgb(224, 21, 21);
+    color: var(--color-error);
+    font-size: 24px;
+}
+
+.success {
+    color: var(--color-success);
     font-size: 24px;
 }
 
@@ -713,7 +718,6 @@ td {
 .button {
     color: var(--color-text-inverted);
     padding: 6px 12px;
-    font-size: 28px;
     background-color: var(--color-secondary-dark-1);
     border-radius: 5px;
     transition: 0.2s;
@@ -847,6 +851,23 @@ td {
 .profile-user-information-container {
     margin-top: 10px;
     display: flex;
+}
+
+/* Settings */
+.settings-form-table {
+    border-spacing: 10px;
+}
+
+.settings-form-table > div {
+    display: table-row;
+}
+
+.settings-form-table > div > label, .settings-form-table > div > input {
+    display: table-cell;
+}
+
+.settings-form-table > div > label {
+    text-align: right;
 }
 
 /* MISC STUFF */

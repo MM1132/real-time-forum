@@ -1,0 +1,22 @@
+{{ define "content" }} {{ if ne .GenericData.User.UserID 0 }}
+<div class="settings-container">
+    <form method="POST">
+        <div class="settings-form-table">
+            <div>
+                <label for="new-password">New Password Once</label>
+                <input name="new-password-first" type="password" id="new-password">
+            </div>
+            <div>
+                <label for="new-password-again">New Password Again</label>
+                <input name="new-password-second" type="password" id="new-password-again">
+            </div>
+        </div>
+        {{ with .Error }}<span class="error">{{ . }}</span><br>{{ end }} {{ with .Success }}<span class="success">{{ . }}</span><br>{{ end }}
+        <input type="submit" class="button" value="Save Changes">
+    </form>
+</div>
+{{ else }}
+<div>
+    <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to change settings</p>
+</div>
+{{ end }} {{ end }}

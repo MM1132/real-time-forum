@@ -32,6 +32,7 @@ func main() {
 	mux.Handle("/login", pages.Login{env})
 	mux.Handle("/logout", pages.Logout{env})
 	mux.Handle("/user", pages.User{env})
+	mux.Handle("/settings", pages.Settings{env})
 	mux.Handle("/like", pages.Like{env})
 	mux.Handle("/dislike", pages.Like{env})
 

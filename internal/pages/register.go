@@ -79,11 +79,11 @@ func (env Register) validate(r *http.Request, data registerData) bool { // Check
 
 	// password errors
 
-	if len(r.FormValue("password")) < 6 || len(r.FormValue("password")) > 20 { // checks if password is between 6 and 20 characters
+	if len(r.FormValue("password")) < 6 || len(r.FormValue("password")) > 128 { // checks if password is between 6 and 20 characters
 		if len(r.FormValue("password")) == 0 { // checks if password is empty
 			data.Errors["Password"] = "Password can't be empty."
 		} else {
-			data.Errors["Password"] = "Length must be between 6 and 20 characters."
+			data.Errors["Password"] = "Length must be between 6 and 128 characters."
 		}
 	}
 

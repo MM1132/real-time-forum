@@ -28,6 +28,8 @@ body {
   --color-lighten-20: rgba(255, 255, 255, 0.2);
   --color-lighten-30: rgba(255, 255, 255, 0.3);
   --color-high-contrast-1: #7adf5e;
+  --color-error: #f82222;
+  --color-success: #1ae01a;
   --color-primary: #454851;
   --color-primary-dark-1: #3e4149;
   --color-primary-dark-2: #373a41;

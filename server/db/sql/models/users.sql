@@ -26,3 +26,8 @@ WHERE userID = ?;
 UPDATE users
 SET image = ?
 WHERE userID = ?;
+
+-- Func: SetPassword
+UPDATE users
+SET password = ?
+WHERE userID = ?;

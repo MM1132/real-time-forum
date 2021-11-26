@@ -1,18 +1,21 @@
 {{ define "content" }}
-    <h3> Login </h3>
+<h3> Login </h3>
 
-    {{ if .Errors.Error }}<span class="error"> {{.Errors.Error}} </span> {{else}} <span>Enter username and password.</span> {{end}} 
-    <br><br>
+{{ if .Errors.Error }}<span class="error"> {{.Errors.Error}} </span> {{else}} <span>Enter username and password.</span> {{end}}
+<br><br>
 
+<form method="POST" class="login-form">
     <table class="login-form">
-    <form method="POST" class="login-form">
+        <tr>
+            <td><label>Username</label>: </td>
+            <td> <input name="username" type="text" /></td>
+        </tr>
 
-        <tr><td><label>Username</label>: </td> <td> <input name="username" type="text" /></td></tr>
-
-        <tr><td><label>Password</label>: </td> <td> <input name="password" type="password"/></td></tr>
-
-        <tr><td><input type="submit" value="submit"/></td></tr>
-        
-    </form>
+        <tr>
+            <td><label>Password</label>: </td>
+            <td> <input name="password" type="password" /></td>
+        </tr>
     </table>
+    <input class="button" type="submit" value="Login" />
+</form>
 {{ end }}

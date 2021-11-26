@@ -114,3 +114,13 @@ func (m UserModel) SetImage(image string, userID int) error {
 	}
 	return nil
 }
+
+// This function shall be called from the settings page, for when the user wants their password to be changed
+func (m UserModel) SetPassword(password string, userID int) error {
+	stmt := m.statements["SetPassword"]
+	_, err := stmt.Exec(password, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

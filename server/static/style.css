@@ -671,6 +671,7 @@ td {
     display: inline-block;
     background-size: contain;
     background-repeat: no-repeat;
+    cursor: pointer;
 }
 
 .shown-like-button {

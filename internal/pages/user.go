@@ -193,10 +193,12 @@ func (env User) profilePictureUpload(w http.ResponseWriter, r *http.Request, dat
 		return err
 	}
 
-	// Here, delete the old image file
-	err = os.Remove("./server/static/profile-pictures/" + data.User.Image)
-	if err != nil {
-		return err
+	// Here, delete the old image file, unless the previous image ID was 0
+	if imageID != 0 {
+		err = os.Remove("./server/static/profile-pictures/" + data.User.Image)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

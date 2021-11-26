@@ -40,7 +40,7 @@ func main() {
 	mux.Handle("/", forumEnv.RedirectEmpty("/board", staticFS))
 
 	// Start the server
-	host := "localhost:" + getPort()
+	host := ":" + getPort()
 	log.Printf("Listening on %v\n", host)
 	log.Fatal(http.ListenAndServe(host, forumEnv.Log(mux)))
 }

@@ -59,8 +59,8 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { /
 	cookie := &http.Cookie{ // creates new cookie
 		Name:   "session",
 		Value:  token,
-		Path:   "/", // Otherwise it defaults to /login
-		Secure: true,
+		Path:   "/",   // Otherwise it defaults to /login
+		Secure: true,  // true will not work on connections not localhost or HTTPS secured
 		MaxAge: 86400, // One day
 	}
 

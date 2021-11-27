@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"forum/internal/forumEnv"
 	"net/http"
+	"strconv"
 )
 
 type Like struct {
@@ -46,7 +47,14 @@ func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(fmt.Errorf(`like: %w`, err), w, http.StatusInternalServerError)
 		return
 	} else {
-		http.Redirect(w, r, r.Referer(), http.StatusSeeOther)
+		// Liking was successful
+		// Get the number of likes at the moment
+		likeCount, err := env.Likes.GetPostTotal(postID)
+		if err != nil {
+			sendErr(fmt.Errorf(`like: %w`, err), w, http.StatusInternalServerError)
+			return
+		}
+		w.Write([]byte(strconv.Itoa(likeCount)))
 	}
 }
 

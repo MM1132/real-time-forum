@@ -24,21 +24,11 @@
         <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
         <div class="post-content">{{ .Content }}</div>
         <div class="like-dislike-container">
-            <div class="like-button">
-                <form method="post" action="/like?id={{ .PostID }}">
-                    <input type="submit" id="hidden-like-button-{{ .PostID }}" hidden>
-                    <label class="shown-like-button like-dislike-button {{ if eq .MyLike 1 }}like-dislike-highlight{{ end }}" for="hidden-like-button-{{ .PostID }}"></label>
-                </form>
-            </div>
-            <div class="likes">
+            <div postid="{{ .PostID }}" class="shown-like-button like-dislike-button {{ if eq .MyLike 1 }}like-dislike-highlight{{ end }}"></div>
+            <div id="likes-{{ .PostID }}">
                 {{ .Likes }}
             </div>
-            <div class="dislike-button">
-                <form method="post" action="/dislike?id={{ .PostID }}">
-                    <input type="submit" id="hidden-dislike-button-{{ .PostID }}" hidden>
-                    <label class="shown-dislike-button like-dislike-button {{ if eq .MyLike -1 }}like-dislike-highlight{{ end }}" for="hidden-dislike-button-{{ .PostID }}"></label>
-                </form>
-            </div>
+            <div postid="{{ .PostID }}" class="shown-dislike-button like-dislike-button {{ if eq .MyLike -1 }}like-dislike-highlight{{ end }}"></div>
         </div>
     </div>
 </div>
@@ -49,4 +39,6 @@
     <textarea name="post" id="" cols="30" rows="10" class="new-post-textarea" placeholder="Write Some Bullshit..." required></textarea>
     <button type="submit" class="button-submit-post button">Submit</button>
 </form>
+<script src="/js/jquery-3.6.0.min.js"></script>
+<script src="/js/like-dislike.js"></script>
 {{ end }} {{ end }}

@@ -1,10 +1,11 @@
+{{- /*gotype: forum/internal/pages.registerData*/ -}}
 {{ define "content" }}
 <h3> Register </h3>
 <form method="POST" action="/register" class="register-form" novalidate>
     <table class="register-form">
         <tr>
             <td><label>Username</label>: </td>
-            <td><input name="username" type="text" /></td>
+            <td><input name="username" type="text" value="{{ .Inputs.Get "username" }}" /></td>
             {{ if .Errors.Username }}
             <td class="error">{{ .Errors.Username }}</td>
             {{else}}
@@ -30,13 +31,13 @@
 
         <tr>
             <td><label>E-mail</label>: </td>
-            <td><input name="email" type="email"></td>
+            <td><input name="email" type="email" value="{{ .Inputs.Get "email" }}"></td>
             <td class="error">{{ if .Errors.Email }}{{ .Errors.Email }}{{ end }}</td>
         </tr>
 
         <tr>
             <td><label>Confirm e-mail</label>: </td>
-            <td><input name="confirm-email" type="email"></td>
+            <td><input name="confirm-email" type="email" value="{{ .Inputs.Get "confirm-email" }}"></td>
             <td class="error">{{ if .Errors.Email2 }}{{ .Errors.Email2 }}{{ end }}</td>
         </tr>
     </table>

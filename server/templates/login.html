@@ -1,3 +1,4 @@
+{{- /*gotype: forum/internal/pages.loginData*/ -}}
 {{ define "content" }}
 <h3> Login </h3>
 
@@ -8,7 +9,7 @@
     <table class="login-form">
         <tr>
             <td><label>Username</label>: </td>
-            <td> <input name="username" type="text" /></td>
+            <td> <input name="username" type="text" value="{{ .Inputs.Get "username" }}"/></td>
         </tr>
 
         <tr>

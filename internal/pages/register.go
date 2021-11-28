@@ -5,6 +5,7 @@ import (
 	"forum/internal/forumEnv"
 	"log"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -17,6 +18,7 @@ type Register struct {
 type registerData struct {
 	forumEnv.GenericData
 	Errors map[string]string
+	Inputs url.Values
 }
 
 func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +34,9 @@ func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.Errors = make(map[string]string) // errors map for validate function
 
 	if r.Method == "POST" {
+		r.ParseForm()
+		data.Inputs = r.Form
+
 		if env.validate(r, data) { // checks for errors in form before calling register function.
 			env.register(w, r)
 		}
@@ -72,9 +77,6 @@ func (env Register) register(w http.ResponseWriter, r *http.Request) { // Create
 func (env Register) validate(r *http.Request, data registerData) bool { // Checks form for errors and logs them, returns true if no errors found. Usable only in POST request.
 	usernameFormat := regexp.MustCompile(`^[a-zA-Z0-9]*$`) // alphanumerical only
 	emailFormat := regexp.MustCompile(`.+@+.+\..+`)        // x@x.x format
-
-	// username errors
-	r.ParseForm() // Works without this line too, but my anti-virus detecs forum.exe as trojan then. Keeping it for the sake of my sanity.
 
 	if len(r.FormValue("username")) < 4 || len(r.FormValue("username")) > 12 { // checks if length is between 4 and 12 characters.
 		if len(r.FormValue("username")) == 0 { // checks for empty username

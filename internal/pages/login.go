@@ -5,6 +5,7 @@ import (
 	"forum/internal/forumEnv"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
@@ -18,6 +19,7 @@ type Login struct {
 type loginData struct {
 	forumEnv.GenericData
 	Errors map[string]string // string didn't work for some reason. Maybe we'll add other errors in the future so whatever.
+	Inputs url.Values
 }
 
 func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +37,9 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.Errors = make(map[string]string)
 
 	if r.Method == "POST" {
+		r.ParseForm()
+		data.Inputs = r.Form
+
 		if env.validate(r, data) {
 			env.login(w, r)
 		}

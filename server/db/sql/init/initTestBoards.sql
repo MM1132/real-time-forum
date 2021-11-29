@@ -1,8 +1,9 @@
-INSERT INTO boards (parentID, name, description, "order")
-VALUES (1, 'Animals', 'All the different animals', 1),
-       (3, 'Cats', 'Please don''t post anything other than just cats here :)', 2),
-       (3, 'Dogs', 'This is a strictly NO CATS zone!', 1),
-       (3, 'Parrots', 'Caw caw!', 0),
-       (3, 'Ducks', 'Quack quack!', 0),
-       (3, 'Penguins', 'Yes, penguins are birds', 0),
-       (1, 'Forum Updates', 'Any discussion of the most recent updates belongs in this section.', 0);
+INSERT INTO boards (boardID, parentID, name, description, "order", isGroup)
+VALUES ( 3, 1, 'Animals', 'All the different animals', 1, 0),
+       ( 4, 3, 'Cats', 'Please don''t post anything other than just cats here :)', 2, 0),
+       ( 5, 3, 'Dogs', 'This is a strictly NO CATS zone!', 1, 0),
+       ( 6, 9, 'Parrots', 'Caw caw!', 0, 0),
+       ( 7, 9, 'Ducks', 'Quack quack!', 0, 0),
+       ( 8, 10, 'Penguins', 'Yes, penguins are birds', 0, 0),
+       ( 9, 3, 'Birds', '', 1, 1),
+       (10, 9, 'Flightless', '', 0, 1);

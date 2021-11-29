@@ -11728,5 +11728,12 @@ In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.', '2021
 Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.
 
 Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.', '2021-10-20 22:45:41'),
-(3001, 251, 4, 'Now, it has finally come the time to add profile pictures to users. I, as a well-known owner of one of the biggest profile picture corporations in Estonia, decided to take this complex task upon myself. Reasons are limitless and the ways of profile picture ownership are yet to be improved. Let''s make this the future of our forum! ', '2021-11-19 22:38:08.2729087+02:00'),
-(3002, 251, 2, 'Hello, guyses! I agree with everything Robert said :) ', '2021-11-19 23:58:39.8141268+02:00');
+       (3001, 251, 102, 'Some notable features of the forum:
+
+           * Sorting threads by different columns
+* Changing your profile''s picture and description
+* You can see any user''s recent posts, likes and dislikes on their profile page
+* You can click on a tag in the thread listing to show all threads with that tag', '2021-11-29 14:41:01.5549802+02:00'),
+       (3002, 251, 103,
+        'Also, all the other posts are very important, so please read them carefully before you proceed.',
+        '2021-11-29 14:50:57.2829142+02:00');

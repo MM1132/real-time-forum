@@ -840,6 +840,7 @@ td {
 }
 
 .post-content {
+    flex-grow: 1;
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;

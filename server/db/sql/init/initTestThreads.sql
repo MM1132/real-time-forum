@@ -240,13 +240,16 @@ values (1, 'Automated context-sensitive forecast', 4),
        (239, 'Self-enabling eco-centric knowledge base', 4),
        (240, 'User-friendly user-facing concept', 5),
        (241, 'Open-architected uniform challenge', 3),
-       (242, 'Innovative holistic hierarchy', 1),
-       (243, 'Self-enabling multi-tasking pricing structure', 1),
-       (244, 'Innovative didactic protocol', 3),
-       (245, 'Optional 24 hour groupware', 5),
-       (246, 'Extended optimal synergy', 4),
-       (247, 'Enterprise-wide optimizing structure', 5),
-       (248, 'Optional background benchmark', 5),
-       (249, 'Fully-configurable didactic capability', 2),
-       (250, 'Quality-focused reciprocal customer loyalty', 5),
-       (251, 'Adding profile pictures to users. Also formatting the way posts are displayed under threads.', 9);
+       (242, 'Innovative holistic hierarchy', 6),
+       (243, 'Self-enabling multi-tasking pricing structure', 7),
+       (244, 'Innovative didactic protocol', 8),
+       (245, 'Optional 24 hour groupware', 6),
+       (246, 'Extended optimal synergy', 7),
+       (247, 'Enterprise-wide optimizing structure', 8),
+       (248, 'Optional background benchmark', 6),
+       (249, 'Fully-configurable didactic capability', 7),
+       (250, 'Quality-focused reciprocal customer loyalty', 8),
+       (251, 'Welcome to our forum!', 1);
+
+INSERT INTO tags (name, threadID)
+VALUES ('readme', 251);

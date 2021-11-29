@@ -31,3 +31,8 @@ WHERE userID = ?;
 UPDATE users
 SET password = ?
 WHERE userID = ?;
+
+-- Func: SetDescription
+UPDATE users
+SET description = ?
+WHERE userID = ?;

@@ -64,6 +64,7 @@ func (m PostModel) Get(postID int) (Post, error) {
 		&post.User.Email,
 		&post.User.Password,
 		&post.User.Image,
+		&post.User.Description,
 		&post.User.Creation,
 	); err != nil {
 		return Post{}, err
@@ -96,6 +97,7 @@ func (m PostModel) GetByThreadID(threadID int, userID int) ([]Post, error) {
 			&post.User.Email,
 			&post.User.Password,
 			&post.User.Image,
+			&post.User.Description,
 			&post.User.Creation,
 			&post.Likes,
 			&post.MyLike,

@@ -46,7 +46,7 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Get all the information about the user by its ID
 	if user, err := env.Users.Get(idInt); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
+		sendErr(err, w, http.StatusBadRequest)
 		return
 	} else if err := env.Users.SetExtras(&user); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)

@@ -1,11 +1,12 @@
 CREATE TABLE IF NOT EXISTS `users`
 (
-    `userID`   INTEGER PRIMARY KEY AUTOINCREMENT,
-    `name`     TEXT UNIQUE NOT NULL,
-    `email`    TEXT UNIQUE NOT NULL,
-    `password` TEXT        NOT NULL,
-    `image`    TEXT        NOT NULL DEFAULT '0-0.png',
-    `created`  DATE        NOT NULL
+    `userID`      INTEGER PRIMARY KEY AUTOINCREMENT,
+    `name`        TEXT UNIQUE NOT NULL,
+    `email`       TEXT UNIQUE NOT NULL,
+    `password`    TEXT        NOT NULL,
+    `image`       TEXT        NOT NULL DEFAULT '0-0.png',
+    `description` TEXT        NOT NULL DEFAULT 'Welcome to my profile!',
+    `created`     DATE        NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `sessions`

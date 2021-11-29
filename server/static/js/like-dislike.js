@@ -5,8 +5,14 @@ $(document).ready(() => {
         $.ajax({
             url: "/like?id=" + postID,
             method: "post",
+            dataType: "json", // We are getting back json from the server
             success: (response) => {
-                $("#likes-" + postID).text(response);
+                if (response.RedirectPath) {
+                    $(location).attr("href", response.RedirectPath)
+                    return;
+                }
+
+                $("#likes-" + postID).text(response.LikeCount);
                 $(this).toggleClass("like-dislike-highlight");
                 $(".shown-dislike-button[postid='" + postID + "']").removeClass("like-dislike-highlight")
             }
@@ -19,8 +25,14 @@ $(document).ready(() => {
         $.ajax({
             url: "/dislike?id=" + postID,
             method: "post",
+            dataType: "json", // We are getting back json from the server
             success: (response) => {
-                $("#likes-" + postID).text(response);
+                if (response.RedirectPath) {
+                    $(location).attr("href", response.RedirectPath)
+                    return;
+                }
+
+                $("#likes-" + postID).text(response.LikeCount);
                 $(this).toggleClass("like-dislike-highlight");
                 $(".shown-like-button[postid='" + postID + "']").removeClass("like-dislike-highlight")
             }

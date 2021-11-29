@@ -7,12 +7,13 @@ import (
 )
 
 type User struct {
-	UserID   int
-	Name     string
-	Email    string
-	Password string
-	Image    string
-	Creation time.Time
+	UserID      int
+	Name        string
+	Email       string
+	Password    string
+	Image       string
+	Description string
+	Creation    time.Time
 
 	Extras *UserExtras
 }
@@ -55,7 +56,7 @@ func (m UserModel) Get(UID int) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -69,7 +70,7 @@ func (m UserModel) GetByName(name string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -83,7 +84,7 @@ func (m UserModel) GetByEmail(email string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Creation,
+		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -119,6 +120,16 @@ func (m UserModel) SetImage(image string, userID int) error {
 func (m UserModel) SetPassword(password string, userID int) error {
 	stmt := m.statements["SetPassword"]
 	_, err := stmt.Exec(password, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// This is to change the Description the user has on their profile
+func (m UserModel) SetDescription(description string, userID int) error {
+	stmt := m.statements["SetDescription"]
+	_, err := stmt.Exec(description, userID)
 	if err != nil {
 		return err
 	}

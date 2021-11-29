@@ -24,11 +24,11 @@
         <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
         <div class="post-content">{{ .Content }}</div>
         <div class="like-dislike-container">
-            <div postid="{{ .PostID }}" class="shown-like-button like-dislike-button {{ if eq .MyLike 1 }}like-dislike-highlight{{ end }}"></div>
-            <div id="likes-{{ .PostID }}">
+            {{ template "svg-like" . }}
+            <div class="post-like-count" id="likes-{{ .PostID }}">
                 {{ .Likes }}
             </div>
-            <div postid="{{ .PostID }}" class="shown-dislike-button like-dislike-button {{ if eq .MyLike -1 }}like-dislike-highlight{{ end }}"></div>
+            {{ template "svg-dislike" . }}
         </div>
     </div>
 </div>
@@ -39,6 +39,6 @@
     <textarea name="post" id="" cols="30" rows="10" class="new-post-textarea" placeholder="Write Some Bullshit..." required></textarea>
     <button type="submit" class="button-submit-post button">Submit</button>
 </form>
-<script src="/js/jquery-3.6.0.min.js"></script>
+{{ end }}
 <script src="/js/like-dislike.js"></script>
-{{ end }} {{ end }}
+{{ end }}

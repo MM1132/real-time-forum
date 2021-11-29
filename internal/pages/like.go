@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"forum/internal/forumEnv"
 	"net/http"
-	"strconv"
 )
 
 type Like struct {
 	forumEnv.Env
+}
+
+type LikeInfo struct {
+	LikeCount int
 }
 
 func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +30,8 @@ func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err := checkUser(data, r.RemoteAddr)
 	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		sendInterfaceAsJson(w, Redirect{RedirectPath: "/login"})
+		// http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
@@ -54,7 +58,7 @@ func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			sendErr(fmt.Errorf(`like: %w`, err), w, http.StatusInternalServerError)
 			return
 		}
-		w.Write([]byte(strconv.Itoa(likeCount)))
+		sendInterfaceAsJson(w, LikeInfo{LikeCount: likeCount})
 	}
 }
 

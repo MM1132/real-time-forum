@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"forum/internal/forumDB"
@@ -32,6 +33,17 @@ func GetQueryInt(key string, r *http.Request) (int, error) {
 	}
 }
 
+// Convert any golang object into json and send it to the user
+func sendInterfaceAsJson(w http.ResponseWriter, response interface{}) error {
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+	w.Write(jsonData)
+	return nil
+}
+
+// I guess this function is used to determine whether the user is logged in or not
 func checkUser(data forumEnv.GenericData, addr string) error {
 	if data.User.UserID == 0 {
 		return fmt.Errorf("%v not authorized", addr)

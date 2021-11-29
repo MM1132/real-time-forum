@@ -1,20 +1,49 @@
 {{ define "content" }} {{ if ne .GenericData.User.UserID 0 }}
 <div class="settings-container">
-    <form method="POST">
-        <div class="settings-form-table">
-            <div>
-                <label for="new-password">New Password Once</label>
-                <input name="new-password-first" type="password" id="new-password">
-            </div>
-            <div>
-                <label for="new-password-again">New Password Again</label>
-                <input name="new-password-second" type="password" id="new-password-again">
-            </div>
+    <div class="top-bar">
+        <div class="top-bar-title">Settings</div>
+        <div id="save-settings" class="button">
+            {{ template "svg-save" . }} Save Changes
         </div>
-        {{ with .Error }}<span class="error">{{ . }}</span><br>{{ end }} {{ with .Success }}<span class="success">{{ . }}</span><br>{{ end }}
-        <input type="submit" class="button" value="Save Changes">
-    </form>
+    </div>
+    <table class="settings-form-table">
+        <!-- PASSWORD -->
+        <tbody class="form-part-container">
+            <tr class="table-row">
+                <td class="table-heading">
+                    <div class="table-caption">Change Password</div>
+                </td>
+                <td id="change-password"></td>
+            </tr>
+            <tr class="table-row">
+                <td class="settings-label"><label for="current-password">Current Password:</label></td>
+                <td class="settings-input-text"><input type="password" id="current-password" maxlength="128"></td>
+            </tr>
+            <tr class="table-row">
+                <td class="settings-label"><label for="new-password-first">New Password Once:</label></td>
+                <td class="settings-input-text"><input type="password" id="new-password-first" maxlength="128"></td>
+            </tr>
+            <tr class="table-row">
+                <td class="settings-label"><label for="new-password-second">New Password Again:</label></td>
+                <td class="settings-input-text"><input type="password" id="new-password-second" maxlength="128"></td>
+            </tr>
+        </tbody>
+        <!-- DESCRIPTION -->
+        <tbody class="form-part-container">
+            <tr class="table-row">
+                <td class="table-heading">
+                    <div class="table-caption">Change Description</div>
+                </td>
+                <td id="change-description"></td>
+            </tr>
+            <tr class="table-row">
+                <td class="settings-label"><label for="new-description">New Description:</label></td>
+                <td class="settings-input-text"><input type="text" id="new-description" maxlength="256"></td>
+            </tr>
+        </tbody>
+    </table>
 </div>
+<script src="/js/settings.js"></script>
 {{ else }}
 <div>
     <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to change settings</p>

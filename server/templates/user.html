@@ -1,80 +1,68 @@
-{{- /*gotype: forum/internal/pages.UserData*/ -}}
-{{ define "content" }}
-    <div class="profile-top-bar">
-        <div class="profile-name">{{.User.Name}}</div>
-        {{ if eq .GenericData.User.UserID .User.UserID }}
-            <a href="/settings"class="div-link">
-                <div class="profile-settings-button button">
-                    Settings
-                </div>
-            </a>
-        {{ end }}
+{{- /*gotype: forum/internal/pages.UserData*/ -}} {{ define "content" }}
+<div class="top-bar">
+    <div class="top-bar-title">{{.User.Name}}</div>
+    {{ if eq .GenericData.User.UserID .User.UserID }}
+    <div id="settings-href" class="button">
+        {{ template "svg-settings" . }} Edit Profile
     </div>
-    <div class="profile-user-information-container">
-        {{ if eq .GenericData.User.UserID .User.UserID }}
+    {{ end }}
+</div>
+<div class="profile-container">
+    {{ if eq .GenericData.User.UserID .User.UserID }}
+    <div class="profile-picture-container">
         <form method="POST" enctype="multipart/form-data">
             <input type="file" class="button" accept="image/*" name="profile-picture" id="profile-picture-file-input" onchange="form.submit();" hidden>
             <label for="profile-picture-file-input" class="profile-user-image-label">
-                <div class="profile-image-hover-text">Change Picture</div>
-                <img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
-            </label>
+            <div class="profile-image-hover-text">Change Picture</div>
+            <img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
+        </label>
         </form>
-        {{ else }}
-        <img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">
-        {{ end }}
-    
-        <div class="profile-user-information">
+    </div>
+    {{ else }}<img class="profile-user-image" src="/profile-pictures/{{ .User.Image }}" alt="ERROR: Image file does not exist">{{ end }}
+
+    <div class="profile-user-info-container">
+        <div class="profile-info">
             <div class="profile-information-header">Contact Information:</div>
             <div class="profile-information-data">Email: {{.User.Email}}</div>
             <div class="profile-information-header">General Information:</div>
             <div class="profile-information-data">Profile Created: {{ .User.Creation.Format "2 Jan 2006, 15:04" }}</div>
             <div class="profile-information-data">Total Posts: {{ .User.Extras.TotalPosts }}</div>
         </div>
+        <div class="profile-description">{{.User.Description}}</div>
     </div>
-    {{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
-    <!--
-    {{ if eq .GenericData.User.UserID .User.UserID }}
-        <h3>Change Profile Picture:</h3>
-        (Only image/png files allowed, 1MB at most)
-        <form method="POST" enctype="multipart/form-data">
-            <input type="file" class="button" accept="image/*" name="profile-picture"><br>
-            <button type="submit" class="button" >Upload</button>
-        </form>
-        {{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
-    {{ end }}
-    -->
-    <h3>Recent posts:</h3>
-    {{ range .BreadPosts }}
-    <hr>
+</div>
+{{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
+<h3>Recent posts:</h3>
+{{ range .BreadPosts }}
+<hr>
+<div>
     <div>
-        <div>
-            <div class="breadcrumbs">
-                <span class="bc-board">
+        <div class="breadcrumbs">
+            <span class="bc-board">
                     <a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a>
                 </span>
-                <span class="bc-thread">
+            <span class="bc-thread">
                     <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a>
                 </span>
-            </div>
-            <br>
-            <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>
-            <br>
-            <a href="/user?id={{ .Post.User.UserID }}">{{ .Post.User.Name }}</a>
         </div>
-        <p>{{ .Post.Content }}</p>
+        <br>
+        <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>
+        <br>
+        <a href="/user?id={{ .Post.User.UserID }}">{{ .Post.User.Name }}</a>
     </div>
-    {{ end }}
-    <h3>Recent (dis)likes:</h3>
-    <hr>
-    {{ range .LikedPosts }}
-    <div>
-        <span class="likes">{{/* This html is garbage, please don't use this as a base when reworking it */}}
+    <p>{{ .Post.Content }}</p>
+</div>
+{{ end }}
+<h3>Recent (dis)likes:</h3>
+<hr> {{ range .LikedPosts }}
+<div>
+    <span class="likes">{{/* This html is garbage, please don't use this as a base when reworking it */}}
             <p>
                 {{$.User.Name}} {{ if eq .Value -1}}dis{{ end }}liked a <a href="/thread?id={{ .Post.ThreadID }}"> post</a> by <a href="/user?id={{ .Author.UserID }}">{{ .Author.Name }}</a>:
             </p>
             <p>{{ .Post.Content }}</p>
         </span>
-    </div>
-    <hr>
-    {{ end }}
+</div>
+<hr> {{ end }}
+<script src="/js/user.js"></script>
 {{ end }}

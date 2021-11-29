@@ -4,8 +4,12 @@ By auditing, we grow. This forum is nothing short of a redefining reintegration 
 
 If you have prepared yourself mentally and physically, use either Docker or just `go run .`. Alternatively, you can go to `http://forum.olari.ee` to access the project. 
 
-# How to docker
-Check out dockerfolder for scripts on automating Docker building and running. 
+# How to run with docker
+0. Make sure docker is installed and running
+1. Make sure you are in the repo's root directory (should be called forum)
+2. Run `sh ./docker/build_docker.sh`
+3. Run `sh ./docker/run_docker.sh`
+4. Try connecting to the forum with `localhost:8080` from browser
 
 ## Quote from our famous Docker expert: 
 >"Ma tegin mõned Docker shell scriptid, mis automeerivad lihtsalt buildimist ja vb ka kustutamist, jaaaa sellised." - Urmas "the U-rist" Rist

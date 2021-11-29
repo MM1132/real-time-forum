@@ -50,7 +50,7 @@ pipeline {
                 }
             }
         }
-        stage('Deployment') {
+        /* stage('Deployment') {
             when {
                 branch 'master'
             }
@@ -58,11 +58,11 @@ pipeline {
                 echo 'Deployment...'
                 catchError(buildResult: 'SUCCESS') {
                     sh 'systemctl --user stop forum.olari.ee.service || true'
-                    sh 'rm -fr /var/www/forum.olari.ee/*'
+                    sh 'rm -fr /var/www/forum.olari.ee *//*'
                     sh 'cp -fr -t /var/www/forum.olari.ee/ ./forum ./server/'
                     sh 'systemctl --user start forum.olari.ee.service'
                 }
             }
-        }
+        } */
     }
 }

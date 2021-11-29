@@ -22,13 +22,27 @@ func makeStatementMap(db *sql.DB, sqlPath string) map[string]*sql.Stmt {
 
 	r := regexp.MustCompile(`(?i)\s*--\s*Func:\s*(\S+)`)
 	rs := regexp.MustCompile(`{(.+?)}`)
-	for _, stmt := range stmtSlice {
+	rCount1 := regexp.MustCompile(`-- ?WITH COUNT`)
+	rCount2 := regexp.MustCompile(`(?s)ORDER BY.*`)
+
+	for i := 0; i < len(stmtSlice); i++ {
+		stmt := stmtSlice[i]
 		nameSlc := r.FindStringSubmatch(stmt)
 		if nameSlc == nil {
 			log.Panicf("Could not find a function name in %v:\n%v\n", sqlPath, stmt)
 		}
 
 		name := nameSlc[1]
+
+		if rCount1.MatchString(stmt) {
+			// Create a counting statement
+			tempStmt := stmt
+			tempStmt = r.ReplaceAllString(tempStmt, fmt.Sprintf(`-- Func: %vCount`, name[:strings.Index(name, "{")]))
+			tempStmt = rCount1.ReplaceAllString(tempStmt, "")
+			tempStmt = rCount2.ReplaceAllString(tempStmt, ";")
+			tempStmt = "SELECT count(*) FROM (" + tempStmt[:len(tempStmt)-1] + ");"
+			stmtSlice = append(stmtSlice, tempStmt)
+		}
 
 		if matches := rs.FindAllStringSubmatch(name, -1); matches == nil {
 			statements[name], err = db.Prepare(stmt)
@@ -57,7 +71,7 @@ func makeStatementMap(db *sql.DB, sqlPath string) map[string]*sql.Stmt {
 // with a space separated combination of signature strings.
 // The statement's name will be suffixed by the combination used.
 func specialStatement(db *sql.DB, statements map[string]*sql.Stmt, stmtName, stmtString string, signatures [][]string) {
-	reg := regexp.MustCompile(`(?s)--START.*--END`)
+	reg := regexp.MustCompile(`(?s)-- ?START.*-- ?END`)
 
 	variations := cartN(signatures...)
 

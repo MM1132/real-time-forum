@@ -1,0 +1,25 @@
+{{- /*gotype: forum/internal/search.PostSearch*/ -}}
+{{ define "pageNav" }}
+    {{ if gt .Page 0 }}
+        <div {{ with .Name }} id="{{ . }}" {{ end }} class="flex-row thread-page-nav">
+            <a class="to-start" href="{{ .Query "page" "0" "search" $.RawSearch }}#{{ $.Name }}" title="To first page"></a>
+            <div class="before">
+                {{ range .PagesBefore -}}
+                    <a href="{{ $.Query "page" (itoa .) "search" $.RawSearch }}#{{ $.Name }}">{{ . }}</a>
+                {{- end }}
+            </div>
+            <div class="current">
+                <a href="{{ $.Query "page" (itoa .Page) "search" $.RawSearch }}#{{ $.Name }}">
+                    {{ .Page }}
+                </a>
+            </div>
+            <div class="after">
+                {{ range .PagesAfter -}}
+                    <a href="{{ $.Query "page" (itoa .) "search" $.RawSearch }}#{{ $.Name }}">{{ . }}</a>
+                {{- end }}
+            </div>
+            <a class="to-end" href="{{ .Query "page" (itoa .PageCount) "search" $.RawSearch }}#{{ $.Name }}"
+               title="To last page"></a>
+        </div>
+    {{ end }}
+{{ end }}

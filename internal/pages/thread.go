@@ -1,10 +1,10 @@
 package pages
 
 import (
-	"database/sql"
 	"fmt"
 	"forum/internal/forumDB"
 	"forum/internal/forumEnv"
+	"forum/internal/search"
 	"log"
 	"net/http"
 	"strings"
@@ -17,18 +17,16 @@ type Thread struct {
 type ThreadData struct {
 	forumEnv.GenericData
 	Thread      forumDB.Thread
-	Posts       []forumDB.Post
 	Breadcrumbs []forumDB.Board
-	LikedPosts  []forumDB.Like
+
+	PostsSearch *search.PostSearch
 
 	HighlightPost int
 }
 
 func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := ThreadData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
 
 	data.HighlightPost, _ = GetQueryInt("post", r)
 
@@ -64,37 +62,20 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data.Thread = thread
 	data.AddTitle(thread.Title)
 
-	// Get all the posts that match this thread's ID
-	if data.Posts, err = env.Posts.GetByThreadID(threadIdInt, data.User.UserID); err != nil {
+	// Get a list of threads in this board
+	postSearch := search.NewPostSearch(env.Env, data.CurrentURL, data.User.UserID)
+	postSearch.Name = "posts-page"
+	postSearch.ProcessRequestBasic(r)
+	postSearch.ThreadID.Int64 = int64(threadIdInt)
+	postSearch.ThreadID.Valid = true
+	postSearch.ProcessOrder("date-asc")
+
+	err = postSearch.DoSearch(env.Env)
+	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	// Get all the likes from the loged in user
-	if data.LikedPosts, err = env.Likes.GetAllUser(data.Session.UserID); err != nil {
-		sendErr(err, w, http.StatusInternalServerError)
-		return
-	}
-
-	for i, post := range data.Posts {
-		sum, err := env.Likes.GetPostTotal(post.PostID)
-
-		if err == sql.ErrNoRows {
-			data.Posts[i].Likes = 0
-			continue
-		} else if err != nil {
-			sendErr(err, w, http.StatusInternalServerError)
-			return
-		}
-		data.Posts[i].Likes = sum
-	}
-
-	// Set the extras for the user
-	for i := range data.Posts {
-		if err := env.Users.SetExtras(&data.Posts[i].User); err != nil {
-			sendErr(err, w, http.StatusInternalServerError)
-		}
-	}
+	data.PostsSearch = postSearch
 
 	// BreadCrumbs
 	// Get the board the thread is in

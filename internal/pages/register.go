@@ -24,9 +24,8 @@ type registerData struct {
 func (env Register) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// We must create a new indexData struct because it can't be shared between requests
 	data := registerData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
+
 	if data.User.UserID != 0 { // access denied if logged in
 		http.Redirect(w, r, "/board", http.StatusTemporaryRedirect)
 		return

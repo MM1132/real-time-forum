@@ -32,37 +32,52 @@
     </div>
 </div>
 {{ with .Error }}<span class="error"> {{ . }} </span> {{ end }}
-<h3>Recent posts:</h3>
-{{ range .BreadPosts }}
-<hr>
-<div>
-    <div>
-        <div class="breadcrumbs">
-            <span class="bc-board">
-                    <a href="/board?id={{ .Board.BoardID }}">{{ .Board.Name }}</a>
-                </span>
-            <span class="bc-thread">
-                    <a href="/thread?id={{ .Thread.ThreadID }}">{{ .Thread.Title }}</a>
-                </span>
-        </div>
-        <br>
-        <span>{{ .Post.Date.Format "2 Jan 2006, 15:04" }}</span>
-        <br>
-        <a href="/user?id={{ .Post.User.UserID }}">{{ .Post.User.Name }}</a>
+<div class="flex-table">
+    <input id="user-recent-posts" class="group-toggle" type="checkbox">
+    <label for="user-recent-posts" class="flex-row group-header">
+        <span>Recent posts</span>
+        <span class="grow"></span>
+        <span class="button small link-overlay"><a href="/search?authorID={{ .User.UserID }}"></a>See all</span>
+    </label>
+    <div class="group-content">
+        {{ if .UserPosts.HasResult }}
+            {{ .UserPosts.GetResult }}
+        {{ else }}
+            <div class="flex-row">
+                <h1>No results</h1>
+            </div>
+        {{ end }}
     </div>
-    <p>{{ .Post.Content }}</p>
+    <input id="user-recent-likes" class="group-toggle" type="checkbox">
+    <label for="user-recent-likes" class="flex-row group-header">
+        <span>Liked posts</span>
+        <span class="grow"></span>
+        <span class="button small link-overlay"><a href="/search?likedByID={{ .User.UserID }}"></a>See all</span>
+    </label>
+    <div class="group-content">
+        {{ if .UserLikes.HasResult }}
+            {{ .UserLikes.GetResult }}
+        {{ else }}
+            <div class="flex-row">
+                <h1>No results</h1>
+            </div>
+        {{ end }}
+    </div>
+    <input id="user-recent-dislikes" class="group-toggle" type="checkbox">
+    <label for="user-recent-dislikes" class="flex-row group-header">
+        <span>Disliked posts</span>
+        <span class="grow"></span>
+        <span class="button small link-overlay"><a href="/search?dislikedByID={{ .User.UserID }}"></a>See all</span>
+    </label>
+    <div class="group-content">
+        {{ if .UserDislikes.HasResult }}
+            {{ .UserDislikes.GetResult }}
+        {{ else }}
+            <div class="flex-row">
+                <h1>No results</h1>
+            </div>
+        {{ end }}
+    </div>
 </div>
-{{ end }}
-<h3>Recent (dis)likes:</h3>
-<hr> {{ range .LikedPosts }}
-<div>
-    <span class="likes">{{/* This html is garbage, please don't use this as a base when reworking it */}}
-            <p>
-                {{$.User.Name}} {{ if eq .Value -1}}dis{{ end }}liked a <a href="/thread?id={{ .Post.ThreadID }}"> post</a> by <a href="/user?id={{ .Author.UserID }}">{{ .Author.Name }}</a>:
-            </p>
-            <p>{{ .Post.Content }}</p>
-        </span>
-</div>
-<hr> {{ end }}
 <script src="/js/user.js"></script>
 {{ end }}

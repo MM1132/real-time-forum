@@ -1,0 +1,16 @@
+{{- /*gotype: forum/internal/pages.searchData*/ -}}
+{{ define "content" }}
+    <div class="flex-table">
+        <div class="group-toggle"></div>
+        <label id="threads" class="flex-row group-header no-collapse">Search results</label>
+        <div class="group-content">
+            {{ if .Search.HasResult }}
+                {{ .Search.GetResult }}
+            {{ else }}
+                <div class="flex-row">
+                    <h1>No results</h1>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+{{ end }}

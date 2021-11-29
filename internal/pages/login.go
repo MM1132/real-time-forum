@@ -24,9 +24,8 @@ type loginData struct {
 
 func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := loginData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
+
 	if data.User.UserID != 0 { // access denied if logged in
 		http.Redirect(w, r, "/board", http.StatusTemporaryRedirect)
 		return

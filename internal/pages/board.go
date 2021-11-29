@@ -4,6 +4,7 @@ import (
 	"fmt"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
+	"forum/internal/search"
 	"log"
 	"net/http"
 	"regexp"
@@ -22,23 +23,15 @@ type boardData struct {
 	Breadcrumbs []fdb.Board
 	BoardID     int
 
-	ThreadsPage ThreadsPage
+	ThreadSearch search.Searcher
 
 	TagSuggestions []string
 }
 
 // ServeHTTP is called with every request this page receives.
 func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// If user is looking for tag, use a separate handler
-	if r.URL.Query().Has("tag") {
-		env.ServeTagResults(w, r)
-		return
-	}
-
 	data := boardData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
 
 	// Read query with key "id"
 	thisBoardID, err := GetQueryInt("id", r)
@@ -100,12 +93,18 @@ func (env Board) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get a list of threads in this board
-	threadsPage, err := env.GetThreadsPage(thisBoard.BoardID, r)
+	threadSearch := search.NewThreadSearch(env.Env, data.CurrentURL, data.User.UserID)
+	threadSearch.Name = "threads-page"
+	threadSearch.ProcessRequestBasic(r)
+	threadSearch.BoardID.Int64 = int64(thisBoardID)
+	threadSearch.BoardID.Valid = true
+
+	err = threadSearch.DoSearch(env.Env)
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-	data.ThreadsPage = threadsPage
+	data.ThreadSearch = threadSearch
 
 	// Get suggestions for likes
 	data.TagSuggestions = env.Threads.Tags.GetPopular(thisBoardID)

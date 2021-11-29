@@ -35,6 +35,7 @@ type Password struct {
 	New_password_first  string `json:"new_password_first"`
 	New_password_second string `json:"new_password_second"`
 }
+
 type FormData struct {
 	Password    Password `json:"password"`
 	Description string   `json:"description"`
@@ -43,10 +44,7 @@ type FormData struct {
 func (env Settings) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Initialize data
 	data := SettingsData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		log.Println(err)
-		return
-	}
+	data.InitData(env.Env, r)
 
 	// If we are using the right http method
 	switch r.Method {

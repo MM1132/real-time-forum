@@ -1,0 +1,48 @@
+{{- /*gotype: forum/internal/search.PostSearch*/ -}}
+{{ define "posts" }}
+    {{ template "pageNav" . }}
+
+    {{ template "post" . }}
+
+    {{ template "pageNav" . }}
+{{ end }}
+
+{{ define "post" }}
+    {{ range .Results }}
+        <!-- Post container -->
+        <div id="{{ .PostID }}" class="post {{ if eq (itoa .PostID) ($.CurrentURL.Query.Get "post") }}highlight-post{{ end }}">
+            <!-- The user -->
+            <div class="post-user">
+                <div class="post-user-name"><a href="/user?id={{ .User.UserID }}">{{ .User.Name }}</a></div>
+                <img class="post-user-image" src="/profile-pictures/{{ .User.Image }}"
+                     alt="ERROR: Image file does not exist">
+                <div>Join Date:<br>{{ .User.Creation.Format "2 Jan 2006" }}</div>
+                <div>Posts: {{ .User.Extras.TotalPosts }}</div>
+            </div>
+            <!-- Just a simple divider in between -->
+            <div class="post-divider"></div>
+            <!-- Container > Date, Content, Like/Dislike -->
+            <div class="post-content-container">
+                {{ if $.Breadcrumbs }}
+                    <div class="breadcrumbs">
+                        <span class="bc-board">
+                            <a href="/board?id={{ .BoardID }}">{{ .BoardName }}</a>
+                        </span>
+                        <span class="bc-thread">
+                            <a href="/thread?id={{ .ThreadID }}">{{ .ThreadName }}</a>
+                        </span>
+                    </div>
+                {{ end }}
+                <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
+                <div class="post-content">{{ .Content }}</div>
+                <div class="like-dislike-container">
+                    {{ template "svg-like" . }}
+                    <div class="post-like-count" id="likes-{{ .PostID }}">
+                        {{ .Likes }}
+                    </div>
+                    {{ template "svg-dislike" . }}
+                </div>
+            </div>
+        </div>
+    {{ end }}
+{{ end }}

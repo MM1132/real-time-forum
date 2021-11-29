@@ -2,8 +2,10 @@ package pages
 
 import (
 	"errors"
+	"fmt"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
+	"forum/internal/search"
 	"image/png"
 	"log"
 	"net/http"
@@ -18,24 +20,16 @@ type User struct {
 
 type UserData struct {
 	forumEnv.GenericData
-	User       fdb.User
-	BreadPosts []BreadPost
-	LikedPosts []fdb.LikedPost
-	Error      string
-}
-
-type BreadPost struct {
-	Post   fdb.Post
-	Thread fdb.Thread
-	Board  fdb.Board
+	User         fdb.User
+	UserPosts    *search.PostSearch
+	UserLikes    *search.PostSearch
+	UserDislikes *search.PostSearch
+	Error        string
 }
 
 func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := UserData{}
-	// Here we initialize the data, whatever that means
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
 
 	// Get the id of the user
 	idInt, err := GetQueryInt("id", r)
@@ -67,34 +61,34 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Get all the posts from that user
-	if posts, err := env.Posts.GetByUserID(data.User.UserID); err != nil {
+	// Newest posts by this user
+	data.UserPosts = search.NewPostSearch(env.Env, data.CurrentURL, data.GenericData.User.UserID)
+	config(data.UserPosts)
+	data.UserPosts.AuthorID.Int64 = int64(data.User.UserID)
+	data.UserPosts.AuthorID.Valid = true
+	if err := data.UserPosts.DoSearch(env.Env); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
-	} else {
-		for i := range posts {
-			data.BreadPosts = append(data.BreadPosts, BreadPost{Post: posts[i]})
-
-			// Get the thread where the post is in
-			thread, err := env.Threads.Get(data.BreadPosts[i].Post.ThreadID)
-			if err != nil {
-				sendErr(err, w, http.StatusInternalServerError)
-				return
-			}
-			data.BreadPosts[i].Thread = thread
-
-			if board, err := env.Boards.Get(thread.BoardID); err != nil {
-				sendErr(err, w, http.StatusInternalServerError)
-				return
-			} else {
-				data.BreadPosts[i].Board = board
-			}
-		}
 	}
 
-	// Get all the likes from the user
-	data.LikedPosts, err = env.Likes.GetLikedPosts(data.User.UserID)
-	if err != nil {
+	// Posts recently liked by this user
+	data.UserLikes = search.NewPostSearch(env.Env, data.CurrentURL, data.GenericData.User.UserID)
+	config(data.UserLikes)
+	data.UserLikes.ProcessOrder("likeDate")
+	data.UserLikes.LikedByID.Int64 = int64(data.User.UserID)
+	data.UserLikes.LikedByID.Valid = true
+	if err := data.UserLikes.DoSearch(env.Env); err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return
+	}
+
+	// Posts recently disliked by this user
+	data.UserDislikes = search.NewPostSearch(env.Env, data.CurrentURL, data.GenericData.User.UserID)
+	config(data.UserDislikes)
+	data.UserDislikes.ProcessOrder("likeDate")
+	data.UserDislikes.DislikedByID.Int64 = int64(data.User.UserID)
+	data.UserDislikes.DislikedByID.Valid = true
+	if err := data.UserDislikes.DoSearch(env.Env); err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
@@ -105,6 +99,13 @@ func (env User) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
+}
+
+// Common configs for all searches
+func config(s *search.PostSearch) {
+	s.Breadcrumbs = true
+	s.Page = -1
+	s.PageLen = 3
 }
 
 func (env User) profilePictureUpload(w http.ResponseWriter, r *http.Request, data UserData) error {
@@ -190,7 +191,7 @@ func (env User) profilePictureUpload(w http.ResponseWriter, r *http.Request, dat
 	// Also update the Image field of the user in the database
 	err = env.Users.SetImage(newImageFilename, data.User.UserID)
 	if err != nil {
-		return err
+		log.Println(fmt.Errorf("error removing old profile picture: %w", err))
 	}
 
 	// Here, delete the old image file, unless the previous image ID was 0

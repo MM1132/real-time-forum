@@ -1,83 +1,21 @@
-{{- /*gotype: forum/internal/pages.boardData*/ -}} {{ define "threadList" }}
-<div class="group-toggle" style="display: none;"></div>
+{{- /*gotype: forum/internal/pages.boardData*/ -}}
+{{ define "threadList" }}
+    <div class="group-toggle" style="display: none;"></div>
 
-<label id="threads" class="flex-row group-header no-collapse">
-        Threads{{ with .ThisBoard.Name }}<span>&nbsp;in {{ . }}</span>{{ end }}
+    <label id="threads" class="flex-row group-header no-collapse">
+        <span>Threads{{ with .ThisBoard.Name }}</span><span class="semi">&nbsp;in {{ . }}</span>{{ end }}
         <div class="grow"></div>
         {{ if and (ne .GenericData.User.UserID 0) (ne .BoardID 0) }}
-            <label id="new-thread-button" class="button" for="new-thread-toggle" class="flex-center">Create new thread</label> {{ end }}
-</label>
+            <label id="new-thread-button" class="button flex-center" for="new-thread-toggle">Create new thread</label>
+        {{ end }}
+    </label>
 
-{{ if and (ne .GenericData.User.UserID 0) (ne .BoardID 0) }}
-<input id="new-thread-toggle" class="group-toggle" type="checkbox"> {{ template "newThread" . }} {{ end }}
-
-<div class="group-content">
-    {{ template "threadPageNav" . }} {{ template "threadColumnHeaders" . }} {{ range .ThreadsPage.Threads }} {{ template "thread" . }} {{ end }} {{ template "threadPageNav" . }}
-</div>
-{{ end }} {{ define "thread" }}
-<div class="flex-row thread">
-    <div class="flex-cell thread-base grow">
-        <div><a class="thread-title" href="/thread?id={{ .ThreadID }}">{{ .Title }}</a> {{- range .Tags }}
-            <a href="/board?tag={{ . }}" class="thread-tag">#{{ . }}</a> {{- end -}}
-        </div>
-        <span class="thread-author">
-                Started by
-                {{ with .Extras }}<a href="/user?id={{ .OldestAuthorID }}">{{ .OldestAuthor }}</a>{{ end }}
-            </span>
-    </div>
-    {{ if .Extras }}
-    <div class="flex-cell thread-counts">
-        <span>{{ .Extras.CountPosts }} posts</span>
-        <span>{{ .Extras.CountUsers }} users</span>
-    </div>
-    <div class="flex-cell thread-latest-post">
-        <span class="latest-date">
-                    <a title="{{ .Title }}"
-                       href="/thread?id={{ .ThreadID }}&post={{ .Extras.LatestID }}#{{ .Extras.LatestID }}">
-                        {{ .Extras.LatestDate.Format "2 Jan 2006, 15:04" }}
-                    </a>
-                </span>
-        <span class="latest-author">by
-                    <a href="/user?id={{ .Extras.LatestAuthorID }}">
-                    {{ .Extras.LatestAuthor }}
-                </a></span>
-    </div>
+    {{ if and (ne .GenericData.User.UserID 0) (ne .BoardID 0) }}
+        <input id="new-thread-toggle" class="group-toggle" type="checkbox">
+        {{ template "newThread" . }}
     {{ end }}
-</div>
-{{ end }} {{ define "threadPageNav" }}
-<div class="flex-row thread-page-nav">
-    <a class="to-start" href="{{ .GenericData.Query " p " "0 " }}#threads" title="To first page"></a>
-    <div class="before">
-        {{ range .PagesBefore -}}
-        <a href="{{ $.GenericData.Query " p " (itoa .) }}#threads">{{ . }}</a> {{- end }}
+
+    <div class="group-content">
+        {{ .ThreadSearch.GetResult }}
     </div>
-    <div class="current">
-        <a href="{{ $.GenericData.Query " p " (itoa .ThreadsPage.Page) }}#threads">
-                {{ .ThreadsPage.Page }}
-            </a>
-    </div>
-    <div class="after">
-        {{ range .PagesAfter -}}
-        <a href="{{ $.GenericData.Query " p " (itoa .) }}#threads">{{ . }}</a> {{- end }}
-    </div>
-    <a class="to-end" href="{{ .GenericData.Query " p " (itoa .ThreadsPage.PagesTotal) }}#threads" title="To last page"></a>
-</div>
-{{ end }} {{ define "threadColumnHeaders" }}
-<div class="flex-row thread-columns">
-    <div class="flex-cell thread-base grow">
-        <span><a {{ .ThreadColumnAttributes "name" }}>
-                        Subject
-                </a></span>
-    </div>
-    <div class="flex-cell thread-counts">
-        <span><a {{ .ThreadColumnAttributes "replies" }}>
-                    Replies
-                </a></span>
-    </div>
-    <div class="flex-cell thread-latest-post">
-        <span><a {{ .ThreadColumnAttributes "latest" }}>
-                    Last post
-                </a></span>
-    </div>
-</div>
 {{ end }}

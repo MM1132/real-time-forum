@@ -1,4 +1,4 @@
-{{- /*gotype: board/internal/pages.boardData*/ -}}
+{{- /*gotype: forum/internal/pages.boardData*/ -}}
 {{ define "content" }}
     <div class="breadcrumbs">
         {{ range .Breadcrumbs -}}
@@ -9,12 +9,12 @@
             {{- end -}}
         {{- end }}
     </div>
-    {{ if or .ChildBoards .ThreadsPage.Threads }}
+    {{ if or .ChildBoards (and (ne .ThisBoard.BoardID 0) (not .ThisBoard.IsGroup)) }}
         <div class="flex-table">
             {{ if .ChildBoards }}
                 {{ template "boardList" . }}
             {{ end }}
-            {{ if .ThreadsPage.Threads }}
+            {{ if and (ne .ThisBoard.BoardID 0) (not .ThisBoard.IsGroup) }}
                 {{ template "threadList" . }}
             {{ end }}
         </div>

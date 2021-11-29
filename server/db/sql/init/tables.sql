@@ -30,6 +30,9 @@ CREATE TABLE IF NOT EXISTS `threads`
         ON DELETE CASCADE
 );
 
+CREATE INDEX IF NOT EXISTS threads_boardID
+    ON threads(boardID, threadID);
+
 CREATE TABLE IF NOT EXISTS `posts`
 (
     `postID`   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +44,9 @@ CREATE TABLE IF NOT EXISTS `posts`
     FOREIGN KEY (threadID) REFERENCES threads (threadID)
         ON DELETE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS posts_threadID
+    ON posts(threadID, postID);
 
 
 

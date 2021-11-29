@@ -15,9 +15,8 @@ type logoutData struct {
 
 func (env Logout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := logoutData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		return
-	}
+	data.InitData(env.Env, r)
+
 	if data.User.UserID == 0 { // access denied unless logged in
 		http.Redirect(w, r, "/board", http.StatusTemporaryRedirect)
 		return

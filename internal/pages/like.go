@@ -23,10 +23,7 @@ func (env Like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := forumEnv.GenericData{}
-	if err := data.InitData(env.Env, r); err != nil {
-		sendErr(fmt.Errorf(`like: %w`, err), w, http.StatusInternalServerError)
-		return
-	}
+	data.InitData(env.Env, r)
 
 	err := checkUser(data, r.RemoteAddr)
 	if err != nil {

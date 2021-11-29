@@ -1,7 +1,7 @@
 {{- /*gotype: forum/internal/pages.boardData*/ -}}
 {{ define "boardList" }}
     <input id="group-boards" class="group-toggle" type="checkbox">
-    <label class="flex-row group-header" for="group-boards">Boards</label>
+    <label class="flex-row group-header" for="group-boards"><span>Boards</span></label>
     <div class="group-content">
         {{ range .ChildBoards }}
             {{ if .IsGroup }}

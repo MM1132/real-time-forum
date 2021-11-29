@@ -1,30 +1,49 @@
-{{- /*gotype: board/forumEnv.GenericData*/ -}} {{ define "header" }}
-<header id="header">
-    <div id="header-logo">
-        <a href="/">
-            <img src="/img/logo.png" alt="Home">
-            <img src="/img/logo-hover.png" alt="Home" style="display: none;">
-        </a>
-    </div>
+{{- /*gotype: board/forumEnv.GenericData*/ -}}
+{{ define "header" }}
+    <header id="header">
+        <div id="header-left">
+            <div id="header-logo" class="link-overlay">
+                <a href="/"></a>
+                <img src="/img/logo.png" alt="Home">
+                <img src="/img/logo-hover.png" alt="Home" style="display: none;">
+                <h1 id="site-name">{{ .SiteName }}</h1>
+            </div>
+            {{/*<nav class="header-nav">
+            <a href="/page1">Page 1</a>
+            <a href="/page2">Page 2</a>
+            <a href="/page3">Page 3</a>
+            </nav>*/}}
+        </div>
 
-    <nav class="header-nav">
-        <a href="https://www.google.com/">Page 1</a>
-        <a href="https://www.wikipedia.org">Page 2</a>
-        <a href="https://www.powerhub.com">Page 3</a>
-    </nav>
+        <div id="header-center">
+            <form id="search-form" class="grow" method="POST" action="/search">
+                {{/*<select name="type" id="search-type">
+                <option value="post">Post</option>
+                <option value="thread">Thread</option>
+                </select>*/}}
+                <input id="search-bar" placeholder="Search..." type="text" name="search" value="{{ .SearchValue }}"
+                       required>
+            </form>
+        </div>
 
-    <div class="grow"></div>
-    {{ if eq .GenericData.User.UserID 0 }}
-    <nav class="header-nav">
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-    </nav>
-    {{ else }}
-    <span>Welcome, <a href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
-    <img class="header-user-image" src="/profile-pictures/{{ .GenericData.User.Image }}" alt="ERROR: Image file does not exist">
-    <nav class="header-nav">
-        <a href="/logout">Logout</a>
-    </nav>
-    {{ end }}
-</header>
+        <div id="header-right">
+            {{ if eq .GenericData.User.UserID 0 }}
+                <nav class="header-nav">
+                    <a href="/login">Login</a>
+                    <a href="/register">Register</a>
+                </nav>
+            {{ else }}
+                <span>Welcome, <a
+                            href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
+                <div class="header-user-image link-overlay">
+                    <a href="/user?id={{ .GenericData.User.UserID }}"></a>
+                    <img src="/profile-pictures/{{ .GenericData.User.Image }}"
+                         alt="ERROR: Image file does not exist">
+                </div>
+                <nav class="header-nav">
+                    <a href="/logout">Logout</a>
+                </nav>
+            {{ end }}
+        </div>
+    </header>
 {{ end }}

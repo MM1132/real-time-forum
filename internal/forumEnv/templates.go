@@ -50,5 +50,8 @@ func getFuncMap() template.FuncMap {
 		"itoa": func(num int) string {
 			return strconv.Itoa(num)
 		},
+		"divide": func(a, b int) int {
+			return a / b
+		},
 	}
 }

@@ -3,27 +3,32 @@ package forumEnv
 import (
 	"fmt"
 	"forum/internal/forumDB"
+	"html/template"
 	"net/http"
 	"net/url"
 )
 
 type GenericData struct {
-	Title   string
-	Session forumDB.Session
-	User    forumDB.User
+	SiteName string
+	Title    string
+	Session  forumDB.Session
+	User     forumDB.User
 
-	CurrentURL url.URL
+	CurrentURL  url.URL
+	SearchValue string
 
 	Theme string
 }
 
-func (data *GenericData) InitData(env Env, r *http.Request) error {
+func (data *GenericData) InitData(env Env, r *http.Request) {
+	data.SiteName = env.SiteName
 	data.Title = env.SiteName
 	data.CurrentURL = *r.URL
+	data.SearchValue = r.FormValue("search")
 
 	data.parseSessionCookie(env, r)
 
-	return nil
+	return
 }
 
 func (data *GenericData) AddTitle(title string) {
@@ -52,4 +57,22 @@ func (data *GenericData) parseSessionCookie(env Env, r *http.Request) {
 		data.Session = session
 		return
 	}
+}
+
+// Query returns the current URI, except with new key/value pairs added. Setting an already existing key will replace its value.
+// This function is meant to be used in templates for hrefs.
+func (data GenericData) Query(kvp ...string) (template.URL, error) {
+	if len(kvp)%2 == 1 {
+		return "", fmt.Errorf(`need an even number of args`)
+	}
+
+	currentURL := data.CurrentURL
+
+	query := currentURL.Query()
+	for i := 0; i < len(kvp); i += 2 {
+		query.Set(kvp[i], kvp[i+1])
+	}
+
+	currentURL.RawQuery = query.Encode()
+	return template.URL(currentURL.RequestURI()), nil
 }

@@ -1,0 +1,63 @@
+{{- /*gotype: forum/internal/search.ThreadSearch*/ -}}
+{{ define "threads" }}
+    {{ template "pageNav" . }}
+    {{ template "threadColumnHeaders" . }}
+    {{ range .Results }}
+        {{ template "thread" . }}
+    {{ end }}
+    {{ template "pageNav" . }}
+{{ end }}
+
+{{ define "thread" }}
+    <div class="flex-row thread">
+        <div class="flex-cell thread-base grow">
+            <div><a class="thread-title" href="/thread?id={{ .ThreadID }}">{{ .Title }}</a>
+                {{- range .Tags }}
+                    <a href="/search?type=thread&tag={{ . }}" class="thread-tag">#{{ . }}</a>
+                {{- end -}}
+            </div>
+            <span class="thread-author">
+                Started by
+                {{ with .Extras }}<a href="/user?id={{ .OldestAuthorID }}">{{ .OldestAuthor }}</a>{{ end }}
+            </span>
+        </div>
+        {{ if .Extras }}
+            <div class="flex-cell thread-counts">
+                <span>{{ .Extras.CountPosts }} posts</span>
+                <span>{{ .Extras.CountUsers }} users</span>
+            </div>
+            <div class="flex-cell thread-latest-post">
+                <span class="latest-date">
+                    <a title="{{ .Title }}"
+                       href="/thread?id={{ .ThreadID }}&post={{ .Extras.LatestID }}#{{ .Extras.LatestID }}">
+                        {{ .Extras.LatestDate.Format "2 Jan 2006, 15:04" }}
+                    </a>
+                </span>
+                <span class="latest-author">by
+                    <a href="/user?id={{ .Extras.LatestAuthorID }}">
+                    {{ .Extras.LatestAuthor }}
+                </a></span>
+            </div>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ define "threadColumnHeaders" }}
+    <div class="flex-row thread-columns">
+        <div class="flex-cell thread-base grow">
+            <span><a {{ .ThreadColumnAttributes "name" }}>
+                        Subject
+                </a></span>
+        </div>
+        <div class="flex-cell thread-counts">
+            <span><a {{ .ThreadColumnAttributes "replies" }}>
+                    Replies
+                </a></span>
+        </div>
+        <div class="flex-cell thread-latest-post">
+            <span><a {{ .ThreadColumnAttributes "date" }}>
+                    Last post
+                </a></span>
+        </div>
+    </div>
+{{ end }}

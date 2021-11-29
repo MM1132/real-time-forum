@@ -90,7 +90,7 @@ func (s *PostSearch) DoSearch(env forumEnv.Env) error {
 	}
 
 	var err error
-	s.Results, err = env.Posts.Search(s.OrderSqlKey, params)
+	s.Results, err = env.Posts.Search(env.Users, s.OrderSqlKey, params)
 	if err != nil {
 		return err
 	}

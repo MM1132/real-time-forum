@@ -49,8 +49,6 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
-
-	log.Printf("Served %v to %v\n", data.Title, r.RemoteAddr)
 }
 
 func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { // creates a new session for specified user, only usable in POST request. Returns pointer to user if successful, if not returns nil.

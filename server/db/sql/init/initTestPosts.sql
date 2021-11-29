@@ -11733,7 +11733,7 @@ Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibu
            * Sorting threads by different columns
 * Changing your profile''s picture and description
 * You can see any user''s recent posts, likes and dislikes on their profile page
-* You can click on a tag in the thread listing to show all threads with that tag', '2021-11-29 14:41:01.5549802+02:00'),
+* You can click on a tag in the thread listing to show all threads with that tag', '2021-11-29 14:41:01'),
        (3002, 251, 103,
         'Also, all the other posts are very important, so please read them carefully before you proceed.',
-        '2021-11-29 14:50:57.2829142+02:00');
+        '2021-11-29 14:50:57');

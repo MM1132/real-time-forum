@@ -107,7 +107,7 @@ type SearchPost struct {
 }
 
 // Make a search based on parameters set in the PostSearch struct
-func (m PostModel) Search(orderKey string, params map[string]interface{}) ([]SearchPost, error) {
+func (m PostModel) Search(userModel UserModel, orderKey string, params map[string]interface{}) ([]SearchPost, error) {
 	key := "SearchPosts-" + orderKey
 	stmt, ok := m.statements[key]
 	if !ok {
@@ -165,6 +165,9 @@ func (m PostModel) Search(orderKey string, params map[string]interface{}) ([]Sea
 		}
 
 		post.User.Extras = &UserExtras{}
+		if err := userModel.SetExtras(&post.User); err != nil {
+			return nil, err
+		}
 
 		posts = append(posts, post)
 	}

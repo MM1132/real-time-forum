@@ -7,7 +7,11 @@ import (
 
 func Log(in http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request for %v from %v\n", r.URL.RequestURI(), r.RemoteAddr)
+		client := r.Header.Get("X-Forwarded-For")
+		if client == "" {
+			client = r.RemoteAddr
+		}
+		log.Printf("Request for %v from %v\n", r.URL.RequestURI(), client)
 		in.ServeHTTP(w, r)
 	})
 }

@@ -1,8 +1,18 @@
-Hello, welcome to our forum! What you are about to witness is the single most spetacular thing in this entire world. 
+## Authors
+>Olaroll - Olari Tsernobrovkin
+>
+>Kanguste - Robert Reimann
+>
+>Urist - Urmas Rist
+>
+>Kris - Kris Uibopuu
+
+
+### **Hello, welcome to our forum! What you are about to witness is the single most spetacular thing in this entire world.**
 
 By auditing, we grow. This forum is nothing short of a redefining reintegration of non-dual spacetime. Auditor, look within and change yourself. It can be difficult to know where to begin. Although you may not realize it, you are spiritual. The forum is buzzing with supercharged electrons. The forum is born in the gap where non-locality has been excluded. Soon there will be a maturing of potential the likes of which no auditor has ever seen. The uprising of forums is now happening worldwide. We are being called to explore the forum itself as an interface between intention and life-force. Life-force requires forum exploration. We exist as morphic resonance. We vibrate, we exist, we do audits. Auditors have nothing to lose. The time has come to take auditing to the next level. We must learn how to lead transformative lives in the face of illusion. It is in auditing that we are aligned. 
 
-If you have prepared yourself mentally and physically, use either Docker or just `go run .`. Alternatively, you can go to `http://forum.olari.ee` to access the project. 
+If you have prepared yourself mentally and physically, use either Docker or just `go run .` Alternatively, you can go to `http://forum.olari.ee` to access the project. 
 
 # How to run with docker
 0. Make sure docker is installed and running

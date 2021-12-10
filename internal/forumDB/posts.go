@@ -2,9 +2,7 @@ package forumDB
 
 import (
 	"database/sql"
-	"html"
 	"html/template"
-	"strings"
 	"time"
 )
 
@@ -140,7 +138,7 @@ func (m PostModel) GetByUserID(userID int) ([]Post, error) {
 }
 
 func (p Post) GetContent() template.HTML {
-	escapedContent := html.EscapeString(p.Content)
-	escapedContent = strings.ReplaceAll(strings.ReplaceAll(escapedContent, "\r\n", "\n"), "\n", "<br>")
-	return template.HTML(escapedContent)
+	// escapedContent := html.EscapeString(p.Content)
+	// escapedContent = strings.ReplaceAll(strings.ReplaceAll(escapedContent, "\r\n", "\n"), "\n", "<br>")
+	return template.HTML(p.Content)
 }

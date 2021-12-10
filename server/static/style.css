@@ -726,7 +726,8 @@ textarea {
 }
 
 #new-reply > form {
-    max-width: 1000px;
+    /* max-width: 1000px; */
+    min-height: 400px;
     flex-grow: 1;
 }
 
@@ -754,6 +755,11 @@ td {
 
 
 /* Displaying posts in threads */
+
+/* Resetting margins. Very needed */
+p, h1, h2, h3 {
+    margin: 0;
+}
 
 .post {
     margin: 10px 0;
@@ -855,20 +861,13 @@ td {
 
 /* New Post */
 
-.new-post-textarea {
+.ck.ck.ck.ck {
     background-color: var(--color-primary-dark-5);
-    outline: none;
-    border-radius: 5px;
     border: none;
-    resize: none;
-    overflow-y: auto;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 5px;
+    outline: none;
     color: var(--color-text);
-    font-size: 16px;
+    max-width: 100%;
 }
-
 
 /* {{ GENERAL BUTTON STYLES {{ */
 

@@ -13,3 +13,7 @@ If you have prepared yourself mentally and physically, use either Docker or just
 
 ## Quote from our famous Docker expert: 
 >"Ma tegin mõned Docker shell scriptid, mis automeerivad lihtsalt buildimist ja vb ka kustutamist, jaaaa sellised." - Urmas "the U-rist" Rist
+
+## Used third party software
+- Text editor: [CKEditor5](https://ckeditor.com/ckeditor-5/) - [GPLv2+](https://ckeditor.com/legal/ckeditor-oss-license/)
+- Svg icons: [Material Design Icons](https://materialdesignicons.com/) - [Various licenses](https://github.com/Templarian/MaterialDesign/blob/master/LICENSE)

@@ -34,7 +34,7 @@
                     </div>
                 {{ end }}
                 <div class="post-content-date">{{ .Date.Format "2 Jan 2006, 15:04" }}</div>
-                <p class="post-content">{{ .GetContent }}</p>
+                <div class="post-content">{{ .GetContent }}</div>
                 <div class="like-dislike-container">
                     {{ template "svg-like" . }}
                     <div class="post-like-count" id="likes-{{ .PostID }}">

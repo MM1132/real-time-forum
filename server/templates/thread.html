@@ -18,12 +18,18 @@
                     <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
                 {{ else }}
                     <form method="POST">
-                        <textarea name="post" id="" cols="30" rows="10" class="new-post-textarea"
-                                  placeholder="Write Some Bullshit..." required></textarea>
+                        <textarea name="post" id="new-post-textarea"></textarea>
                         <button type="submit" class="button-submit-post button">Submit</button>
                     </form>
                 {{ end }}
             </div>
         </div>
     </div>
+
+    <script src="/js/ckeditor.js"></script>
+    <script>
+        ClassicEditor.create(document.querySelector("#new-post-textarea")).catch(error => {
+            console.error(error);
+        });
+    </script>
 {{ end }}

@@ -82,8 +82,8 @@ func (s *PostSearch) DoSearch(env forumEnv.Env) error {
 	params["dislikedBy"] = s.DislikedBy
 	params["dislikedByID"] = s.DislikedByID
 	params["content"] = s.Content
-	params["After"] = s.After
-	params["Before"] = s.Before
+	params["after"] = s.After
+	params["before"] = s.Before
 
 	if s.Page <= 0 {
 		params["page"] = 1

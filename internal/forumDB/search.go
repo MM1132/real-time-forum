@@ -130,8 +130,8 @@ func (m PostModel) Search(userModel UserModel, orderKey string, params map[strin
 		params["dislikedBy"],
 		params["dislikedByID"],
 		params["content"],
-		params["After"],
-		params["Before"],
+		params["after"],
+		params["before"],
 	)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err

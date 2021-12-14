@@ -46,10 +46,12 @@ WITH opt AS
                     ? as authorID,
                     ? as boardID,
                     ? as boardName,
+
                     ? as likedBy,
                     ? as likedByID,
                     ? as dislikedBy,
                     ? as dislikedByID,
+
                     ? as content,
 
                     ? as after,
@@ -59,9 +61,10 @@ WITH opt AS
 -- THIS SELECT
 SELECT p.*,
        u.*,
-       (SELECT IFNULL(SUM(value), 0)
-        FROM likes
-        WHERE postID = p.postID
+       (
+           SELECT IFNULL(SUM(value), 0)
+           FROM likes
+           WHERE postID = p.postID
        )                  AS likes,
        IFNULL(l.value, 0) AS myLikes,
        th.title,

@@ -87,4 +87,4 @@ CREATE TABLE IF NOT EXISTS `tags`
         ON CONFLICT IGNORE
 );
 
-CREATE INDEX tag_index ON tags (name, threadID);
+CREATE INDEX IF NOT EXISTS tag_index ON tags (name, threadID);

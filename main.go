@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -43,7 +44,8 @@ func main() {
 	// Start the server
 	host := ":" + getPort()
 	log.Printf("Listening on %v\n", host)
-	log.Fatal(http.ListenAndServe(host, forumEnv.Log(mux)))
+	server := HTTPServerMux(mux, host)
+	log.Fatal(server.ListenAndServe())
 }
 
 func getPort() string {
@@ -52,4 +54,14 @@ func getPort() string {
 		port = os.Args[1]
 	}
 	return port
+}
+
+func HTTPServerMux(mux *http.ServeMux, addr string) *http.Server {
+	return &http.Server{
+		Addr:         addr,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  120 * time.Second,
+		Handler:      forumEnv.Log(mux),
+	}
 }

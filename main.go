@@ -1,21 +1,50 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	fdb "forum/internal/forumDB"
 	"forum/internal/forumEnv"
 	"forum/internal/pages"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
+func HTTPServerMux(mux *http.ServeMux, addr string) *http.Server {
+	return &http.Server{
+		Addr:         addr,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  120 * time.Second,
+		Handler:      forumEnv.Log(mux),
+	}
+}
+
+type Flags struct {
+	Port   string
+	Domain string
+}
+
+func GetFlags() Flags {
+	port := flag.String("p", "8080", "Port number to use for server")
+	dom := flag.String("d", "", "Domain name to create HTTPS certificate for")
+	flag.Parse()
+	return Flags{
+		Port:   *port,
+		Domain: *dom,
+	}
+}
+
 func main() {
 	// Initialize sql.DB struct
 	db := fdb.OpenDB("server/db/forum.db")
 	defer db.Close()
+
+	flags := GetFlags()
+	fmt.Println(flags)
 
 	// Create a custom mux
 	mux := http.NewServeMux()
@@ -42,26 +71,8 @@ func main() {
 	mux.Handle("/", forumEnv.RedirectEmpty("/board", staticFS))
 
 	// Start the server
-	host := ":" + getPort()
+	host := ":" + flags.Port
 	log.Printf("Listening on %v\n", host)
 	server := HTTPServerMux(mux, host)
 	log.Fatal(server.ListenAndServe())
-}
-
-func getPort() string {
-	port := "8080"
-	if len(os.Args) > 1 {
-		port = os.Args[1]
-	}
-	return port
-}
-
-func HTTPServerMux(mux *http.ServeMux, addr string) *http.Server {
-	return &http.Server{
-		Addr:         addr,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 5 * time.Second,
-		IdleTimeout:  120 * time.Second,
-		Handler:      forumEnv.Log(mux),
-	}
 }

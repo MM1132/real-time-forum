@@ -149,7 +149,7 @@ func (env Board) postThread(w http.ResponseWriter, r *http.Request, data boardDa
 		return 0, err
 	}
 
-	err = writePost(r.FormValue("content"), data.Session.UserID, threadID, Thread(env))
+	_, err = writePost(r.FormValue("content"), data.Session.UserID, threadID, Thread(env))
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return 0, err

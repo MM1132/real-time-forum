@@ -7,6 +7,14 @@ SELECT *
 FROM threads
 WHERE threadID = ?;
 
+-- Func: GetOP
+SELECT *
+FROM posts p
+         JOIN users u ON p.userID = u.userID
+WHERE threadID = ?
+ORDER BY postID
+LIMIT 1;
+
 -- Func: ByBoard
 SELECT *
 FROM threads

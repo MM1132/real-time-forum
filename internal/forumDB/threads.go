@@ -84,6 +84,32 @@ func (m ThreadModel) Get(threadID int) (Thread, error) {
 	return thread, nil
 }
 
+// GetOP returns the original post of a given thread
+func (m ThreadModel) GetOP(threadID int) (Post, error) {
+	stmt := m.statements["GetOP"]
+
+	row := stmt.QueryRow(threadID)
+	post := Post{}
+	if err := row.Scan(
+		&post.PostID,
+		&post.ThreadID,
+		&post.UserID,
+		&post.Content,
+		&post.Date,
+		&post.User.UserID,
+		&post.User.Name,
+		&post.User.Email,
+		&post.User.Password,
+		&post.User.Image,
+		&post.User.Description,
+		&post.User.Creation,
+	); err != nil {
+		return Post{}, err
+	}
+
+	return post, nil
+}
+
 func (m ThreadModel) ByBoard(boardID int) ([]Thread, error) {
 	stmt := m.statements["ByBoard"]
 	rows, err := stmt.Query(boardID)

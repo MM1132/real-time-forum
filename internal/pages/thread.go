@@ -30,20 +30,6 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	data.HighlightPost, _ = GetQueryInt("post", r)
 
-	// If there's a POST request for this thread, let another function handle it.
-	if r.Method == "POST" {
-		err := env.post(w, r, data)
-		if err != nil {
-			log.Printf("error inserting post: %v", err)
-			return
-		}
-		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
-		return
-	} else if r.Method != "GET" { // If it's neither GET or POST, don't allow it
-		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Get the id of the thread we return to the client
 	threadIdInt, err := GetQueryInt("id", r)
 	if err != nil && threadIdInt != 0 {
@@ -61,6 +47,20 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Set the thread of the empty date struct
 	data.Thread = thread
 	data.AddTitle(thread.Title)
+
+	// If there's a POST request for this thread, let another function handle it.
+	if r.Method == "POST" {
+		err := env.post(w, r, data)
+		if err != nil {
+			log.Printf("error inserting post: %v", err)
+			return
+		}
+		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		return
+	} else if r.Method != "GET" { // If it's neither GET or POST, don't allow it
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
 
 	// Get a list of threads in this board
 	postSearch := search.NewPostSearch(env.Env, data.CurrentURL, data.User.UserID)
@@ -93,16 +93,11 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Thread) post(w http.ResponseWriter, r *http.Request, data ThreadData) error {
-	// Don't allow unathorized users to post
+	// Don't allow unauthorized users to post
 
-	threadID, err := GetQueryInt("id", r)
-	// Whatever the error, this is most definitely the fault of the client
-	if err != nil {
-		sendErr(err, w, http.StatusBadRequest)
-		return err
-	}
+	threadID := data.Thread.ThreadID
 
-	err = checkUser(data.GenericData, r.RemoteAddr)
+	err := checkUser(data.GenericData, r.RemoteAddr)
 	if err != nil {
 		sendErr(err, w, http.StatusForbidden)
 		return err
@@ -115,11 +110,30 @@ func (env Thread) post(w http.ResponseWriter, r *http.Request, data ThreadData) 
 		return err
 	}
 
-	err = writePost(r.FormValue("post"), data.User.UserID, threadID, env)
+	id, err := writePost(r.FormValue("post"), data.User.UserID, threadID, env)
 
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return err
+	}
+
+	// Notify OP author of a new reply
+	op, err := env.Threads.GetOP(threadID)
+	if err != nil {
+		sendErr(err, w, http.StatusInternalServerError)
+		return err
+	}
+
+	// Don't notify when replying to own thread
+	if op.User.UserID != data.User.UserID {
+		_, err = env.Pings.Send(
+			op.User.UserID,
+			fmt.Sprintf(`%v has replied to your thread "%v"`, data.User.Name, data.Thread.Title),
+			fmt.Sprintf("/thread?id=%[1]v&post=%[2]v#%[2]v", threadID, id),
+		)
+		if err != nil {
+			log.Printf(`failed to make reply notification to %v from %v: %v`, op.User.UserID, data.User.UserID, err)
+		}
 	}
 
 	return nil

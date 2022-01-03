@@ -51,18 +51,18 @@ func checkUser(data forumEnv.GenericData, addr string) error {
 	return nil
 }
 
-func writePost(content string, userID int, threadID int, env Thread) error {
+func writePost(content string, userID int, threadID int, env Thread) (int, error) {
 	newPost := forumDB.Post{
 		Content:  content,
 		UserID:   userID,
 		ThreadID: threadID,
 	}
 
-	_, err := env.Posts.Insert(newPost)
+	id, err := env.Posts.Insert(newPost)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 // Used to turn passwords into hashes

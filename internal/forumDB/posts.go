@@ -2,7 +2,9 @@ package forumDB
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
+	"net/url"
 	"time"
 )
 
@@ -15,6 +17,11 @@ type Post struct {
 	User     User
 	Likes    int
 	MyLike   int
+}
+
+func (p Post) GetLink() *url.URL {
+	u, _ := url.Parse(fmt.Sprintf("/thread?id=%v", p.PostID))
+	return u
 }
 
 type PostModel struct {

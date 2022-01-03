@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `threads`
 );
 
 CREATE INDEX IF NOT EXISTS threads_boardID
-    ON threads(boardID, threadID);
+    ON threads (boardID, threadID);
 
 CREATE TABLE IF NOT EXISTS `posts`
 (
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `posts`
 );
 
 CREATE INDEX IF NOT EXISTS posts_threadID
-    ON posts(threadID, postID);
+    ON posts (threadID, postID);
 
 
 
@@ -64,18 +64,18 @@ CREATE TABLE IF NOT EXISTS `boards`
 
 CREATE TABLE IF NOT EXISTS `likes`
 (
-    `postID`    INTEGER NOT NULL,
-    `userID`    INTEGER NOT NULL,
-    `value`     INTEGER NOT NULL,
-    `date`      DATE NOT NULL,
+    `postID` INTEGER NOT NULL,
+    `userID` INTEGER NOT NULL,
+    `value`  INTEGER NOT NULL,
+    `date`   DATE    NOT NULL,
     FOREIGN KEY (postID) REFERENCES posts (postID),
     FOREIGN KEY (userID) REFERENCES users (userID),
     CONSTRAINT uniq UNIQUE (postID, userID)
-    ON CONFLICT REPLACE
+        ON CONFLICT REPLACE
 );
 
 CREATE INDEX IF NOT EXISTS likes_userID
-ON likes(userID, value);
+    ON likes (userID, value);
 
 CREATE TABLE IF NOT EXISTS `tags`
 (
@@ -88,3 +88,13 @@ CREATE TABLE IF NOT EXISTS `tags`
 );
 
 CREATE INDEX IF NOT EXISTS tag_index ON tags (name, threadID);
+
+CREATE TABLE IF NOT EXISTS `pings`
+(
+    `pingID`  INTEGER PRIMARY KEY AUTOINCREMENT,
+    `userID`  INTEGER NOT NULL,
+    `content` TEXT    NOT NULL,
+    `link`    TEXT    NOT NULL,
+    `date`    DATE    NOT NULL,
+    FOREIGN KEY (userID) REFERENCES users (userID)
+);

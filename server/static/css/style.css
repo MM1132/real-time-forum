@@ -1041,6 +1041,14 @@ p, h1, h2, h3 {
     transform: rotate(-30deg);
 }
 
+#open-chat:hover>.button-icon {
+    transform: rotate(-30deg);
+}
+
+#close-chat:hover>.button-icon {
+    transform: rotate(-30deg);
+}
+
 
 /* Settings */
 
@@ -1078,4 +1086,51 @@ p, h1, h2, h3 {
 .highlight-post {
     background-color: var(--color-lighten-10);
     box-shadow: 0 0 10px var(--color-border-light) inset;
+}
+
+
+/* CHAT */
+.chat-button {
+    font-size: 16px;
+    margin-right: 12px;
+}
+
+.fixed-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-lighten-20);
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    max-height: 1200px;
+    margin: auto;
+    
+    background: var(--color-primary-dark-5);
+    border-radius: 5px;
+    margin-top: 83px;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.close-button {
+    cursor: pointer;
+}
+
+.close-button:hover .svg-close {
+    color: red;
+}
+
+.svg-close {
+    color: #7b0000;
+    height: 30px;
+    transition: 0.2s;
 }

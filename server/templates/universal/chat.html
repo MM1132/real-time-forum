@@ -1,0 +1,22 @@
+{{ define "chat" }}
+    <div id="chat" class="fixed-container" hidden>
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-title">
+                    CHAT
+                </div>
+                <div id="close-chat" class="close-button">
+                    {{ template "svg-close" . }}
+                </div>
+            </div>
+            <div class="chat-body">
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. A fuga ab eligendi tempore quis architecto ut dolorum inventore? Quisquam alias esse autem magni corrupti? Sunt quidem magnam libero quaerat omnis?
+            </div>
+            <div class="chat-footer">
+                <div class="chat-version">
+                    v0.1
+                </div>
+            </div>
+        </div>
+    </div>
+{{ end }}

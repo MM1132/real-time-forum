@@ -2,9 +2,11 @@
 <div class="top-bar">
     <div class="top-bar-title">{{.User.Name}}</div>
     {{ if eq .GenericData.User.UserID .User.UserID }}
+    <a href="/settings">
     <div id="settings-href" class="button">
-        {{ template "svg-settings" . }} Edit Profile
-    </div>
+            {{ template "svg-settings" . }} Edit Profile
+        </div>
+    </a>
     {{ end }}
 </div>
 <div class="profile-container">

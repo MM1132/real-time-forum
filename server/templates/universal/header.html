@@ -33,6 +33,9 @@
                     <a href="/register">Register</a>
                 </nav>
             {{ else }}
+                <div id="open-chat" class="button chat-button">
+                    {{ template "svg-chat" . }} Chat
+                </div>
                 <span>Welcome, <a
                             href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
                 <div class="header-user-image link-overlay">

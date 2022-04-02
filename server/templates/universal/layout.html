@@ -23,12 +23,16 @@
 
     <body class="texture-light">
     <script src="/js/jquery-3.6.0.min.js"></script>
+    {{ if ne .GenericData.User.UserID 0 }}
+        {{ template "chat" . }}
+    {{ end }}
     {{ template "header" . }}
     <div class="wrapper" id="content">
         {{ template "content" . }}
     </div>
     {{ template "footer" . }}
     <script src="/js/like-dislike.js"></script>
+    <script src="/js/chat.js"></script>
     </body>
     </html>
 {{ end }}

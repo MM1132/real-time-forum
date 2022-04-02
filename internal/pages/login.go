@@ -53,8 +53,12 @@ func (env Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { // creates a new session for specified user, only usable in POST request. Returns pointer to user if successful, if not returns nil.
 	// username is always capitalized, lowercase
-	user, _ := env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
-
+	user := forumDB.User{}
+	if strings.Contains(strings.ToLower(r.FormValue("username")), "@") {
+		user, _ = env.Users.GetByEmail(strings.ToLower(r.FormValue("username")))
+	} else {
+		user, _ = env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
+	}
 	token, err := env.Sessions.Insert(user.UserID)
 	if err != nil {
 		log.Panic()
@@ -78,7 +82,13 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { /
 
 func (env Login) validate(r *http.Request, data loginData) bool {
 	// Get the user information
-	user, err := env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
+	user := forumDB.User{}
+	var err error
+	if strings.Contains(strings.ToLower(r.FormValue("username")), "@") {
+		user, err = env.Users.GetByEmail(strings.ToLower(r.FormValue("username")))
+	} else {
+		user, err = env.Users.GetByName(strings.Title(strings.ToLower(r.FormValue("username"))))
+	}
 	if err != nil {
 		data.Errors["Error"] = "Incorrect username or password."
 	}

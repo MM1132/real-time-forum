@@ -8,7 +8,11 @@ import (
 
 type User struct {
 	UserID      int
-	Name        string
+	NickName    string
+	FirstName   string
+	LastName    string
+	Age         time.Time
+	Gender      string
 	Email       string
 	Password    string
 	Image       string
@@ -38,7 +42,7 @@ func NewUserModel(db *sql.DB) UserModel {
 // Insert a user into db, returns the UID of the newly inserted user
 func (m UserModel) Insert(newUser User) (int, error) {
 	stmt := m.statements["Insert"]
-	res, err := stmt.Exec(newUser.Name, newUser.Email, newUser.Password, time.Now())
+	res, err := stmt.Exec(newUser.NickName, newUser.FirstName, newUser.LastName, newUser.Age, newUser.Gender, newUser.Email, newUser.Password, time.Now())
 	if err != nil {
 		return 0, err
 	}
@@ -56,7 +60,7 @@ func (m UserModel) Get(UID int) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
+		&user.UserID, &user.NickName, &user.FirstName, &user.LastName, &user.Age, &user.Gender, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -70,7 +74,7 @@ func (m UserModel) GetByName(name string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
+		&user.UserID, &user.NickName, &user.FirstName, &user.LastName, &user.Age, &user.Gender, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}
@@ -84,7 +88,7 @@ func (m UserModel) GetByEmail(email string) (User, error) {
 
 	user := User{}
 	if err := row.Scan(
-		&user.UserID, &user.Name, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
+		&user.UserID, &user.NickName, &user.FirstName, &user.LastName, &user.Age, &user.Gender, &user.Email, &user.Password, &user.Image, &user.Description, &user.Creation,
 	); err != nil {
 		return User{}, err
 	}

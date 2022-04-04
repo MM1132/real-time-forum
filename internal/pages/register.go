@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type Register struct {
@@ -57,19 +58,24 @@ func (env Register) register(w http.ResponseWriter, r *http.Request) { // Create
 		sendErr(err, w, http.StatusInternalServerError)
 		return
 	}
+	age, _ := time.Parse("2006-01-02", r.FormValue("date-of-birth"))
 
 	// username always capitalized, lowercase. Email always lowercase.
 	newUser := forumDB.User{
-		Name:     strings.Title(strings.ToLower(r.FormValue("username"))),
-		Email:    strings.ToLower(r.FormValue("email")),
-		Password: passwordHash,
+		NickName:  strings.Title(strings.ToLower(r.FormValue("username"))),
+		FirstName: strings.Title(strings.ToLower(r.FormValue("first-name"))),
+		LastName:  strings.Title(strings.ToLower(r.FormValue("last-name"))),
+		Age:       age,
+		Gender:    strings.ToLower(r.FormValue("gender")),
+		Email:     strings.ToLower(r.FormValue("email")),
+		Password:  passwordHash,
 	}
 
 	_, err = env.Users.Insert(newUser)
 	if err != nil {
 		log.Println(err)
 	}
-	log.Printf("New user registered: %s\n", newUser.Name)
+	log.Printf("New user registered: %s\n", newUser.NickName)
 	http.Redirect(w, r, "/login", http.StatusFound)
 }
 
@@ -77,6 +83,7 @@ func (env Register) validate(r *http.Request, data registerData) bool { // Check
 	usernameFormat := regexp.MustCompile(`^[a-zA-Z0-9]*$`) // alphanumerical only
 	emailFormat := regexp.MustCompile(`.+@+.+\..+`)        // x@x.x format
 
+	// username Checks
 	if len(r.FormValue("username")) < 4 || len(r.FormValue("username")) > 12 { // checks if length is between 4 and 12 characters.
 		if len(r.FormValue("username")) == 0 { // checks for empty username
 			data.Errors["Username"] = "Username can't be empty."
@@ -87,6 +94,22 @@ func (env Register) validate(r *http.Request, data registerData) bool { // Check
 		data.Errors["Username"] = "Username can contain only alphanumerical characters. Please enter a valid username."
 	} else if _, err := env.Users.GetByName(r.FormValue("username")); err == nil { // checks if username is already taken
 		data.Errors["Username"] = "This username has already been taken. Please choose another username and try again."
+	}
+
+	// First & last name, dob and gender checks
+
+	if len(r.FormValue("first-name")) < 1 {
+		data.Errors["Firstname"] = "First name can't be empty."
+	}
+
+	if len(r.FormValue("last-name")) < 1 {
+		data.Errors["Lastname"] = "Last name can't be empty."
+	}
+	if r.FormValue("gender") == "" {
+		data.Errors["Gender"] = "Gender must be selected."
+	}
+	if r.FormValue("date-of-birth") == "" {
+		data.Errors["Gender"] = "Date must be selected."
 	}
 
 	// password errors

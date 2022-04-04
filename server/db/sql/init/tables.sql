@@ -1,7 +1,11 @@
 CREATE TABLE IF NOT EXISTS `users`
 (
     `userID`      INTEGER PRIMARY KEY AUTOINCREMENT,
-    `name`        TEXT UNIQUE NOT NULL,
+    `nickname`        TEXT UNIQUE NOT NULL,
+    `firstname`   TEXT NOT NULL DEFAULT 'Robert',
+    `lastname`   TEXT NOT NULL DEFAULT 'Reimann',
+    `age`   DATE NOT NULL DEFAULT '0001-01-01',
+    `gender`   TEXT NOT NULL DEFAULT 'Female',
     `email`       TEXT UNIQUE NOT NULL,
     `password`    TEXT        NOT NULL,
     `image`       TEXT        NOT NULL DEFAULT '0-0.png',

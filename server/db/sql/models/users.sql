@@ -1,6 +1,6 @@
 -- Func: Insert
-INSERT INTO users(name, email, password, created)
-values (?, ?, ?, ?);
+INSERT INTO users(nickname, firstname, lastname, age, gender, email, password, created)
+values (?, ?, ?, ?, ?, ?, ?, ?);
 
 -- Func: Get
 SELECT *
@@ -10,7 +10,7 @@ WHERE userID = ?;
 -- Func: GetByName
 SELECT *
 FROM users
-WHERE name = ?;
+WHERE nickname = ?;
 
 -- Func: GetByEmail
 SELECT *

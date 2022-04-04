@@ -13,7 +13,7 @@
         <div id="{{ .PostID }}" class="post {{ if eq (itoa .PostID) ($.CurrentURL.Query.Get "post") }}highlight-post{{ end }}">
             <!-- The user -->
             <div class="post-user">
-                <div class="post-user-name"><a href="/user?id={{ .User.UserID }}">{{ .User.Name }}</a></div>
+                <div class="post-user-name"><a href="/user?id={{ .User.UserID }}">{{ .User.NickName }}</a></div>
                 <img class="post-user-image" src="/profile-pictures/{{ .User.Image }}"
                      alt="ERROR: Image file does not exist">
                 <div>Join Date:<br>{{ .User.Creation.Format "2 Jan 2006" }}</div>

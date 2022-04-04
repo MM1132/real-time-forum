@@ -83,12 +83,12 @@ SELECT t.*,
 
        latestID,
        ul.userID AS latestAuthorID,
-       ul.name   AS latestAuthor,
+       ul.nickname   AS latestAuthor,
        pl.date   AS latestDate,
 
        oldestID,
        uf.userID AS oldestAuthorID,
-       uf.name   AS oldestAuthor,
+       uf.nickname   AS oldestAuthor,
        pf.date   AS oldestDate
 -- UNTIL FROM
 FROM filterThreads t
@@ -106,7 +106,7 @@ WHERE ((select latestAfter from opt) IS NULL OR (select latestAfter from opt) < 
   AND ((select latestBefore from opt) IS NULL OR (select latestBefore from opt) > pl.date)
   AND ((select oldestAfter from opt) IS NULL OR (select oldestAfter from opt) < pf.date)
   AND ((select oldestBefore from opt) IS NULL OR (select oldestBefore from opt) > pf.date)
-  AND ((select author from opt) IS NULL OR (select author from opt) = uf.name)
+  AND ((select author from opt) IS NULL OR (select author from opt) = uf.nickname)
 
 ORDER BY
 --START

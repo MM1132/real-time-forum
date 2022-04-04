@@ -37,7 +37,7 @@
                     {{ template "svg-chat" . }} Chat
                 </div>
                 <span>Welcome, <a
-                            href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.Name }}</a>!</span>
+                            href="/user?id={{ .GenericData.User.UserID }}">{{ .GenericData.User.NickName }}</a>!</span>
                 <div class="header-user-image link-overlay">
                     <a href="/user?id={{ .GenericData.User.UserID }}"></a>
                     <img src="/profile-pictures/{{ .GenericData.User.Image }}"

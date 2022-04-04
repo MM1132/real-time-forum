@@ -86,15 +86,15 @@ FROM posts p
      likes l2 on p.postID = l2.postID
 
 WHERE ((select threadID from opt) IS NULL OR (select threadID from opt) = p.threadID)
-  AND ((select author from opt) IS NULL OR (select author from opt) == u.name)
+  AND ((select author from opt) IS NULL OR (select author from opt) == nickname)
   AND ((select authorID from opt) IS NULL OR (select authorID from opt) == u.userID)
   AND ((select content from opt) IS NULL OR p.content LIKE '%' || (select content from opt) || '%')
 
   AND ((select boardID from opt) IS NULL OR (select boardID from opt) = th.boardID)
   AND ((select boardName from opt) IS NULL OR (select boardName from opt) = b.name)
-  AND ((select likedBy from opt) IS NULL OR ((select u.userID from opt JOIN users u WHERE u.name = opt.likedBy LIMIT 1) = l2.userID AND l2.value = 1))
+  AND ((select likedBy from opt) IS NULL OR ((select u.userID from opt JOIN users u WHERE u.nickname = opt.likedBy LIMIT 1) = l2.userID AND l2.value = 1))
   AND ((select likedByID from opt) IS NULL OR ((select likedByID from opt) = l2.userID AND l2.value = 1))
-  AND ((select dislikedBy from opt) IS NULL OR ((select u.userID from opt JOIN users u WHERE u.name = opt.dislikedBy LIMIT 1) = l2.userID AND l2.value = -1))
+  AND ((select dislikedBy from opt) IS NULL OR ((select u.userID from opt JOIN users u WHERE u.nickname = opt.dislikedBy LIMIT 1) = l2.userID AND l2.value = -1))
   AND ((select dislikedByID from opt) IS NULL OR ((select dislikedByID from opt) = l2.userID AND l2.value = -1))
   AND ((select threadTitle from opt) IS NULL OR th.title LIKE '%' || (select threadTitle from opt) || '%')
   AND ((select tagName from opt) IS NULL OR (select tagName from opt) = ta.name)

@@ -111,7 +111,6 @@ func (env Thread) post(w http.ResponseWriter, r *http.Request, data ThreadData) 
 	}
 
 	id, err := writePost(r.FormValue("post"), data.User.UserID, threadID, env)
-
 	if err != nil {
 		sendErr(err, w, http.StatusInternalServerError)
 		return err
@@ -128,7 +127,7 @@ func (env Thread) post(w http.ResponseWriter, r *http.Request, data ThreadData) 
 	if op.User.UserID != data.User.UserID {
 		_, err = env.Pings.Send(
 			op.User.UserID,
-			fmt.Sprintf(`%v has replied to your thread "%v"`, data.User.Name, data.Thread.Title),
+			fmt.Sprintf(`%v has replied to your thread "%v"`, data.User.NickName, data.Thread.Title),
 			fmt.Sprintf("/thread?id=%[1]v&post=%[2]v#%[2]v", threadID, id),
 		)
 		if err != nil {

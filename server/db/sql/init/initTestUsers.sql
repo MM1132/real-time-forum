@@ -1,4 +1,4 @@
-insert into users (userID, name, email, password, created)
+insert into users (userID, nickname, email, password, created)
 values (1, 'Dummy', 'Dummy0@gmail.com', '1234', '2021-10-03 08:33:44'),
        (2, 'Olari', 'olaroll@sus.com', 'olari1234', '2021-03-18 00:17:52'),
        (3, 'Kris', 'kurisu@goo.ne.jp', 'kris1234', '2021-01-25 05:44:56'),

@@ -1,6 +1,6 @@
 {{- /*gotype: forum/internal/pages.UserData*/ -}} {{ define "content" }}
 <div class="top-bar">
-    <div class="top-bar-title">{{.User.Name}}</div>
+    <div class="top-bar-title">{{.User.NickName}}</div>
     {{ if eq .GenericData.User.UserID .User.UserID }}
     <a href="/settings">
     <div id="settings-href" class="button">

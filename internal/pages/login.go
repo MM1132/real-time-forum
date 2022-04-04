@@ -74,7 +74,7 @@ func (env Login) login(w http.ResponseWriter, r *http.Request) *forumDB.User { /
 
 	w.Header().Add("Set-Cookie", cookie.String())
 
-	log.Printf("%v has logged in.\n", user.Name)
+	log.Printf("%v has logged in.\n", user.NickName)
 	http.Redirect(w, r, "/board", http.StatusFound)
 
 	return &user

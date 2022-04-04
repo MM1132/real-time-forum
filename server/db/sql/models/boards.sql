@@ -58,7 +58,7 @@ SELECT a.threadCount,
 
        p.postID   AS latestID,
        p.userID   AS latestAuthorID,
-       u.name     AS latestAuthor,
+       u.nickname     AS latestAuthor,
        p.date     AS latestDate,
 
        t.threadID AS threadID,

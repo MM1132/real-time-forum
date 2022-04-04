@@ -707,6 +707,7 @@ a:hover, .link:hover {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="date"],
 textarea {
     padding: 6px 8px;
     border-radius: var(--radius);

@@ -125,7 +125,7 @@ func (m LikeModel) GetLikedPosts(userID int) ([]LikedPost, error) {
 			&likedPost.Post.Content,
 			&likedPost.Post.Date,
 			&likedPost.Author.UserID,
-			&likedPost.Author.Name,
+			&likedPost.Author.NickName,
 			&likedPost.Author.Email,
 			&likedPost.Author.Password,
 			&likedPost.Author.Image,

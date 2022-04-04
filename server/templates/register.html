@@ -5,7 +5,7 @@
     <table class="register-form">
         <tr>
             <td><label>Username</label>: </td>
-            <td><input name="username" type="text" value="{{ .Inputs.Get "username" }}" /></td>
+            <td><input name="username" type="text" id="username" value="{{ .Inputs.Get "username" }}" /></td>
             {{ if .Errors.Username }}
             <td class="error">{{ .Errors.Username }}</td>
             {{else}}
@@ -14,8 +14,38 @@
         </tr>
 
         <tr>
+            <td><label>First name</label>: </td>
+            <td><input name="first-name" type="text" id="first-name" /></td>
+            <td class="error">{{ if .Errors.Firstname }}{{ .Errors.Firstname }}{{ end }}</td>
+        </tr>
+
+        <tr>
+            <td><label>Last name</label>: </td>
+            <td><input name="last-name" type="text" id="last-name" /></td>
+            <td class="error">{{ if .Errors.Lastname }}{{ .Errors.Lastname }}{{ end }}</td>
+        </tr>
+
+        <tr>
+            <td><label>Date of Birth</label>: </td>
+            <td><input name="date-of-birth" type="date" id="date-of-birth" /></td>
+            <td class="error">{{ if .Errors.Age }}{{ .Errors.Age }}{{ end }}</td>
+        </tr>
+
+        <tr>           
+            <td><label>Gender</label>:</td> <td>
+                
+                <input name="gender" id="male" type="radio" value="Male">
+                <label for="male">Male</label><br>
+                <input name="gender" id="female" type="radio" value="Female">
+                <label for="female">Female</label><br>
+
+            </td>
+            <td class="error">{{ if .Errors.Gender }}{{ .Errors.Gender }}{{ end }}</td>
+        </tr>
+
+        <tr>
             <td><label>Password</label>: </td>
-            <td><input name="password" type="password" /></td>
+            <td><input name="password" type="password", id="password"/></td>
             {{ if .Errors.Password }}
             <td class="error"> {{ .Errors.Password }}</td>
             {{else}}

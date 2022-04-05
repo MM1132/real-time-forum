@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    $("#close-chat").click(function() {
+    $("#chat-close-button").click(function() {
         $('#chat').hide("slow", "swing");
     });
     $("#open-chat").click(function() {

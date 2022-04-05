@@ -18,7 +18,9 @@
                     <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
                 {{ else }}
                     <form method="POST">
-                        <textarea name="post" id="new-post-textarea"></textarea>
+                        <div class="trumbowyg-dark">
+                            <textarea name="post" id="editor"></textarea>
+                        </div>
                         <button type="submit" class="button-submit-post button">Submit</button>
                     </form>
                 {{ end }}
@@ -26,10 +28,38 @@
         </div>
     </div>
 
-    <script src="/js/ckeditor.js"></script>
+    <script src="/js/trumbowyg.min.js"></script>
+    <!-- <script src="/js/trumbowyg.upload.min.js"></script> -->
+    <link rel="stylesheet" href="/css/trumbowyg.min.css">
     <script>
-        ClassicEditor.create(document.querySelector("#new-post-textarea")).catch(error => {
-            console.error(error);
+        $('#editor').trumbowyg({
+            btns: [ /* 'upload' */ ],
+            /* plugins: {
+                upload: {
+                    serverPath: '/upload',
+                    fileFieldName: 'upload',
+                    error: function(error) {
+                        console.log(error.responseText)
+                    }
+                }
+            } */
         });
+        /* $('#editor').trumbowyg({
+            btns: [ 'upload' ],
+            plugins: {
+                upload: {
+                    serverPath: 'https://api.imgur.com/3/image',
+                    fileFIeldnName: 'image',
+                    headers: {
+                        'Authorization': 'Client-ID 2e28237c9c2da1a'
+                    },
+                    urlPropertyName: 'data.link',
+                    error: function(error) {
+                        console.log(error.responseText)
+                    }
+                }
+            }
+        }); */
     </script>
+
 {{ end }}

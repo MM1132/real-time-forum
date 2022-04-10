@@ -14,69 +14,29 @@
             <div class="chat-body">
                 <!-- Sidebar -->
                 <div class="chat-sidebar">
-                    <div class="chat-recent-messages-container">
+                    <div>
                         <div class="chat-sidebar-header-container">
                             <h2 class="chat-sidebar-header">Recent Messages</h2>
                         </div>
-                        <ul class="chat-sidebar-user-list">
-                            <li><div class="chat-user">
-                                <img class="chat-user-image" src="/profile-pictures/105-1.png">
-                                <div class="chat-user-name">Anna-Maria</div>
-                            </div></li>
-                            <li><div class="chat-user">
-                                <img class="chat-user-image" src="/profile-pictures/0-0.png">
-                                <div class="chat-user-name">Olaroll</div>
-                            </div></li>
-                            <li><div class="chat-user">
-                                <img class="chat-user-image" src="/profile-pictures/0-0.png">
-                                <div class="chat-user-name">Kris</div>
-                            </div></li>
-                        </ul>
+                        <ul class="chat-sidebar-user-list" id="chat-recent-users"></ul>
                     </div>
-                    <div class="chat-online-users-container">
+                    <div>
                         <div class="chat-sidebar-header-container">
                             <h2 class="chat-sidebar-header">Online Users</h2>
                         </div>
-                        <ul class="chat-sidebar-user-list">
-                            <li><div class="chat-user">
-                                <img class="chat-user-image" src="/profile-pictures/104-4.png">
-                                <div class="chat-user-name">Kanguste</div>
-                            </div></li>
-                        </ul>
+                        <ul class="chat-sidebar-user-list" id="chat-online-users"></ul>
                     </div>
                 </div>
                 <!-- Messager -->
                 <div class="chat-messanger-container">
-                    <div class="open-chat-user chat-user">
-                        <img class="chat-user-image" src="/profile-pictures/105-1.png">
-                        <div class="chat-user-name">Anna-Maria</div>
+                    <div class="chat-user open-chat-user">
+                        <img class="chat-user-image" src="/profile-pictures/0-0.png" id="open-chat-user-image">
+                        <div class="chat-user-name" id="open-chat-user-name">No chat open...</div>
                     </div>
                     <!-- Messages -->
-                    <div class="chat-messages">
-                        <div class="chat-message chat-message-from">
-                            <div class="chat-message-header">
-                                <img class="chat-message-author-image" src="/profile-pictures/105-1.png">
-                                <div class="chat-message-time">02:45</div>
-                            </div>
-                            <div class="chat-message-text">What the hell is going on Robert! Hey hey hey! I am sending you lots of words and a lot of wisdom, as I know you need it for completing this task. And you know what... I will make this message even longer, to help you. Just so that you could see whether it cuts to the next line or not. Hopefully it doesn't because that would mean that the system you have created so far does not work. Yep. You heard me right. DOES NOT WORK!!!!</div>
-                        </div>
-                        <div class="chat-message chat-message-to">
-                            <div class="chat-message-header">
-                                <img class="chat-message-author-image" src="/profile-pictures/104-4.png">
-                                <div class="chat-message-time">03:11</div>
-                            </div>
-                            <div class="chat-message-text">Excuse me, madam, but.. do I know you? Maybe we used to work together years ago, you know there was once a company called Hbenasy, or if not, perhaps you have heard of it. Was quite of a nice experience, though my colllegues sucked a lot, not literally of course. An alien, that's what the tablets I took told me to create... so I did. Fuck me man it sounded just right when you said it to me. As if the time had changed. Back in the day I didn't really know the difference, jsut the gaze upon the wonders we created, and no other being would have been more luxurious or incredibilistic that that. Oh yeah, and did I mention, you shouldn't actually be reading this, because I know who you are, and I also know that this won't end good for you. This text is here just for the testing anyway. </div>
-                        </div>
-                        <div class="chat-message chat-message-from">
-                            <div class="chat-message-header">
-                                <img class="chat-message-author-image" src="/profile-pictures/105-1.png">
-                                <div class="chat-message-time">03:14</div>
-                            </div>
-                            <div class="chat-message-text">You do you, Robert. But I warn you. Putting too many orbits in your mouth the same time is dangerous. </div>
-                        </div>
-                    </div>
+                    <div id="chat-messages"></div>
                     <div class="chat-message-form-container">
-                        <form action="">
+                        <form action="" id="chat-form">
                             <input id="chat-message-input" type="text" placeholder="Message..." required autocomplete="off">
                         </form>
                     </div>

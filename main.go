@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/websocket"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -37,6 +39,8 @@ func GetFlags() Flags {
 		Domain: *dom,
 	}
 }
+
+var upgrader = websocket.Upgrader{}
 
 func main() {
 	// Initialize sql.DB struct

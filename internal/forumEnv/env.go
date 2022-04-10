@@ -21,6 +21,7 @@ type Env struct {
 	Sessions forumDB.SessionModel
 	Likes    forumDB.LikeModel
 	Pings    forumDB.PingModel
+	Message  forumDB.MessageModel
 }
 
 // NewEnv creates a new Env for use in http handlers
@@ -36,5 +37,6 @@ func NewEnv(db *sql.DB, templates map[string]*template.Template) Env {
 		Sessions: forumDB.NewSessionModel(db),
 		Likes:    forumDB.NewLikeModel(db),
 		Pings:    forumDB.NewPingModel(db),
+		Message:  forumDB.NewMessageModel(db),
 	}
 }

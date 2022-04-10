@@ -102,3 +102,14 @@ CREATE TABLE IF NOT EXISTS `pings`
     `date`    DATE    NOT NULL,
     FOREIGN KEY (userID) REFERENCES users (userID)
 );
+
+
+CREATE TABLE IF NOT EXISTS `messages`
+(
+    `messageID` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `fromID`    INTEGER    NOT NULL,
+    `toID`  INTEGER   NOT NULL,
+    `body`  TEXT    NOT NULL,
+    `date`  DATE    NOT NULL,
+
+);

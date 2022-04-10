@@ -110,6 +110,6 @@ CREATE TABLE IF NOT EXISTS `messages`
     `fromID`    INTEGER    NOT NULL,
     `toID`  INTEGER   NOT NULL,
     `body`  TEXT    NOT NULL,
-    `date`  DATE    NOT NULL,
+    `date`  DATE    NOT NULL
 
 );

@@ -17,11 +17,11 @@
                 {{ if eq .GenericData.User.UserID 0 }}
                     <p>Please <a href="/login">Login</a> or <a href="/register">Register</a> to post</p>
                 {{ else }}
-                    <form method="POST">
+                    <form method="POST" action="/thread?id={{ .Thread.ThreadID }}">
                         <div class="trumbowyg-dark">
                             <textarea name="post" id="editor"></textarea>
                         </div>
-                        <button type="submit" class="button-submit-post button">Submit</button>
+                        <input class="button" type="submit" value="Submit"/>
                     </form>
                 {{ end }}
             </div>

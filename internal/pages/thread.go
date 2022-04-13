@@ -55,7 +55,7 @@ func (env Thread) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Printf("error inserting post: %v", err)
 			return
 		}
-		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		http.Redirect(w, r, r.RequestURI, http.StatusFound)
 		return
 	} else if r.Method != "GET" { // If it's neither GET or POST, don't allow it
 		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)

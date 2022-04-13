@@ -1,6 +1,6 @@
 {{- /*gotype: forum/internal/pages.boardData*/ -}} {{ define "newThread" }}
 <div id="new-thread" class="group-content">
-    <form id="new-thread-form" method="POST">
+    <form id="new-thread-form" method="POST" action="/board?id={{ .BoardID }}">
         <input id="new-thread-title" placeholder="Title" type="text" name="title" required>
         <textarea id="new-thread-content" placeholder="Write something..." name="content" required></textarea>
         <div>

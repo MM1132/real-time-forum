@@ -4,7 +4,7 @@
 <form method="POST" action="/register" class="register-form" novalidate>
     <table class="register-form">
         <tr>
-            <td><label>Username</label>: </td>
+            <td><label>Nickname</label>: </td>
             <td><input name="username" type="text" id="username" value="{{ .Inputs.Get "username" }}" /></td>
             {{ if .Errors.Username }}
             <td class="error">{{ .Errors.Username }}</td>

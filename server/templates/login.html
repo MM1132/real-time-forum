@@ -2,13 +2,13 @@
 {{ define "content" }}
 <h3> Login </h3>
 
-{{ if .Errors.Error }}<span class="error"> {{.Errors.Error}} </span> {{else}} <span>Enter username and password.</span> {{end}}
+{{ if .Errors.Error }}<span class="error"> {{.Errors.Error}} </span> {{else}} <span>Enter nickname/email and password.</span> {{end}}
 <br><br>
 
 <form method="POST" action="/login" class="login-form">
     <table class="login-form">
         <tr>
-            <td><label>Username</label>: </td>
+            <td><label>Nickname or Email</label>: </td>
             <td> <input name="username" type="text" value="{{ .Inputs.Get "username" }}"/></td>
         </tr>
 

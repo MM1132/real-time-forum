@@ -70,7 +70,7 @@ func main() {
 	mux.Handle("/like", pages.Like{env})
 	mux.Handle("/dislike", pages.Like{env})
 	mux.Handle("/search", pages.Search{env})
-	mux.Handle("/chat", pages.Chat{env})
+	mux.Handle("/chat", pages.Chat{env, &pages.OnlineUsers{}})
 
 	staticFS := http.FileServer(http.Dir("./server/static"))
 	mux.Handle("/", forumEnv.RedirectEmpty("/board", staticFS))

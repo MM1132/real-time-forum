@@ -1,4 +1,9 @@
 $(document).ready(function() {
+    let usernameElement = document.querySelector('#header-right > span > a')
+    if(!usernameElement) {
+        return
+    }
+
     var chat = new Chat(new WebSocket('ws://localhost:8080/chat'))
 
     document.querySelector('#chat-form').addEventListener('submit', event => {
@@ -6,11 +11,11 @@ $(document).ready(function() {
 
         let chatInput = document.querySelector('#chat-message-input')
 
-        //! Sending the message to the server
-        //! this.chat.sendMessage(chatInput)
+        // Sending the message to the server
+        chat.sendMessage(chatInput.value)
 
         //* Testing adding messages
-        chat.addMessageBottom(chatInput.value, '19:38', true)
+        //chat.addMessageBottom(chatInput.value, '19:38', true)
 
         // Empty the input field
         chatInput.value = ''

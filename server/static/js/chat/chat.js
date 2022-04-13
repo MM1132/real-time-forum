@@ -1,7 +1,7 @@
 class Chat {
     static CreateUserElement = (userObj) => {
         return createElementOfString(`<div class="chat-user">
-            <img class="chat-user-image" src="${userObj.image}">
+            <img class="chat-user-image" src="/profile-pictures/${userObj.image}">
             <div class="chat-user-name">${userObj.nickname}</div>
             </div>
         `)
@@ -10,7 +10,7 @@ class Chat {
     static CreateMessageElement = (body, image, time, me) => {
         return createElementOfString(`<div class="chat-message ${me ? 'chat-message-me' : ''}">
             <div class="chat-message-header">
-                <img class="chat-message-image" src=${image}>
+                <img class="chat-message-image" src=/profile-pictures/${image}>
                 <div class="chat-message-time">${time}</div>
             </div>
             <div class="chat-message-text">${body}</div>
@@ -21,13 +21,49 @@ class Chat {
         return document.querySelector('#open-chat-user-name').textContent
     }
 
-    static SetHeader(nickname) {
+    static SetHeader(nickname, image) {
         document.querySelector('#open-chat-user-name').textContent = nickname
+        document.querySelector('#open-chat-user-image').src = `/profile-pictures/${image}`
     }
 
     static Clear() {
         document.querySelector('#chat-messages').innerHTML = ''
     }
+
+    static formatDate(date) {
+        return moment(date).format('DD. MMM, YYYY<br/>HH:mm:ss')
+    }
+
+    static GetMessageCount() {
+        return document.querySelectorAll('.chat-message').length
+    }
+
+    /* static SortOnlineList() {
+        let users = document.querySelectorAll('#chat-recent-users li')
+
+        // Loop through everything
+        for(let i = 0; i < users.length; i++) {
+            // Get the current text
+            let firstUserText = users[i].textContent.toLowerCase().trim()
+
+            let smallestIndex = i
+            
+            // Loop through everything else from the point of i
+            for(let j = i; j < users.length; j++) {
+                // Second text
+                let secondUserText = users[j].textContent.toLowerCase().trim()
+
+                // If second one is ahead in the alphabet
+                if(secondUserText < firstUserText) {
+                    // Switch the users
+                    //users[j].parentNode.insertBefore(users[j], users[i])
+                    smallestIndex = j
+                }
+            }
+
+            users[i].parentNode.insertBefore(users[smallestIndex], users[i])
+        }
+    } */
     
     constructor(socket) {
         this.socket = socket
@@ -36,21 +72,8 @@ class Chat {
         // This is essential for displaying and accessing them
         this.userManager = new UserManager()
 
-        // The user of the client
+        // The user of the client, will be defined later
         this.clientUser = undefined
-
-        window.onkeydown = e => {
-            if(e.code == 'KeyW') {
-                this.socket.dispatchEvent(new Event('message', {
-                    code: 100,
-                    data: {
-                        body: 'This is a message added from the "message" listener',
-                        from: 3,
-                        to: 1
-                    }
-                }))
-            }
-        }
 
         this.socket.addEventListener('open', _ => {
             // OPEN & CLOSE the chat
@@ -62,60 +85,57 @@ class Chat {
                 $('#chat').show("slow", "swing")
             })
 
-            // Socket stuff
-            this.socket.addEventListener('message', event => {
-                event = {
-                    code: 100,
-                    data: {
-                        body: 'This is a message added from the "message" listener',
-                        time: '19:27',
-                        from: 0,
-                        to: 3
-                    }
+            // Logging out
+            this.loggedOut = false
+            let logoutButton = document.querySelector('#logout-button')
+            logoutButton.addEventListener('click', event => {
+                if(!this.loggedOut) {
+                    event.preventDefault()
                 }
 
-                switch(event.code) {
-                    case 100: // Receiving a message to the bottom
+                this.socket.send(JSON.stringify({ messageType: 'logout' }))
+                this.loggedOut = true
+                logoutButton.click()
+            })
+
+            // Socket stuff
+            this.socket.addEventListener('message', event => {
+                
+                // Convert the string data into a javascript object
+                let data = JSON.parse(event.data)
+                
+                switch(data.messageType) {
+                    case 'message-server-client': // Receiving a message to the bottom
                         // If the message is sent in the active chat or not
                         switch(this.userManager.getUserByNickname(Chat.GetHeader())?.id) {
-                            case event.data.from:
-                            case event.data.to:
-                                // If the message is sent by us sent by them
-                                // Add the message element HTML
-                                if(event.data.from == this.userManager.getClientUser().id) {
-                                    this.addMessageBottom(event.data.body, event.data.time, true)
-                                } else {
-                                    this.addMessageBottom(event.data.body, event.data.time)
-                                }
+                            case data.content.from:
+                            case data.content.to:
+                                this.addMessageBottom(data.content.body, data.content.date, data.content.from)
                                 break
                             default:
                                 // Make sure we are not receiving the message from ourselves
                                 // (this could easily happen due to some server-side delays)
                                 // (for example when the user switches tabs really quickly)
-                                if(event.data.from != this.userManager.getClientUser().id) {
+                                if(data.content.from != this.userManager.getClientUser().id) {
                                     // Send a notification
                                     alert(`THIS IS A NOTIFICATION! \nYou have received a message from a user named ${
-                                        this.userManager.getUserById(event.data.from).nickname
+                                        this.userManager.getUserById(data.content.from).nickname
                                     }! `)
                                 }
                                 break
                         }
                         break
-                    case 101: // Receiving a message to the top. 
-                        // Make sure that the message is being sent to the chat we are currently in
-                        switch(this.userManager.getUserByNickname(Chat.GetHeader())?.id) {
-                            case event.data.from: // These two cases say that the message has to be
-                            case event.data.to:   // sent in the currently active chat window
-                                // If the message is sent by us or by them. The `fromClient` flag changes
-                                if(event.data.from == this.userManager.getClientUser().id) {
-                                    this.addMessageTop(event.data.body, event.data.time, true)
-                                } else {
-                                    this.addMessageTop(event.data.body, event.data.time)
-                                }
+                    case 'history': // Receiving a message to the top. 
+                        // Make sure that there are messages, that the array is not empty
+                        if(data.content) {
+                            this.addMessagesTop(data.content)
                         }
                         break
-                    case 102: // Updating the user lists
-                        this.updateUserList(event.data.recent, event.data.online)
+                    case 'update-user-list': // Updating the user lists
+                        data.content.online.sort((a, b) => {
+                            return a.nickname.toLowerCase() < b.nickname.toLowerCase() ? -1 : 1
+                        })
+                        this.updateUserList(data.content.recent, data.content.online)
                         break
                 }
             })
@@ -125,39 +145,16 @@ class Chat {
             chatMessages.addEventListener('scroll', event => {
                 // Once we have reached the top
                 if(chatMessages.scrollTop == 0) {
-                    // How many messages we currently have showing in the chat
-                    let messageCount = document.querySelectorAll('.chat-message').length
-
-                    // Send the request to the server to get the ten messages
-                    this.socket.send({ code: 102, index: messageCount })
-
-                    //! Debugging: Insert ten messages to the top automatically
-                    let messages = [
-                        { body: 'hi', time: '03:26' },
-                        { body: 'Hey!', time: '03:26', fromClient: true },
-                        { body: 'so whats up', time: '03:27' },
-                        { body: 'Not much honestly. Yourself?', time: '03:27', fromClient: true },
-                        { body: 'the same. bored.', time: '03:27' },
-                        { body: 'Why?', time: '03:28', fromClient: true },
-                        { body: 'well theres this program i need to finish but i do not want to so', time: '03:28' },
-                        { body: 'Is it really that bad?', time: '03:28', fromClient: true },
-                        { body: 'yes man', time: '03:28' },
-                        { body: 'Okay, bye then. ', time: '03:29', fromClient: true }
-                    ]
-                    for(let i = messages.length - 1; i > -1; i--) {
-                        this.addMessageTop(messages[i].body, messages[i].time, messages[i].fromClient)
+                    // Get the id of the currently open chat
+                    let user = this.userManager.getUserByNickname(Chat.GetHeader())
+                    if(!user) {
+                        return
                     }
+
+                    // Request message history
+                    this.socket.send(JSON.stringify({ messageType: 'request-history', content: { id: user.id, index: Chat.GetMessageCount() } }))
                 }
             })
-
-            //! Debugging initialization
-            this.updateUserList([
-                { id: 0, nickname: 'Laura-Eliise', image: '/profile-pictures/0-0.png' },
-                { id: 1, nickname: 'Olari', image: '/profile-pictures/0-0.png' }
-            ], [
-                { id: 2, nickname: 'Kris', image: '/profile-pictures/0-0.png' },
-                { id: 3, nickname: 'Kanguste', image: '/profile-pictures/0-0.png' }
-            ])
         })
     }
 
@@ -181,14 +178,13 @@ class Chat {
             // Open the chat with that user
             userElement.addEventListener('mousedown', event => {
                 // Change the header username
-                Chat.SetHeader(user.nickname)
+                Chat.SetHeader(user.nickname, user.image)
 
                 // Clear the messages
                 Chat.Clear()
 
-                //! Getting the last 10 messages from the server
-                //! this.socket.send({code: 102, index: '0'})
-                console.log('Requesting last ten messages...')
+                //! Request last 10 messages (THIS IS RECENT)
+                this.socket.send(JSON.stringify({ messageType: 'request-history', content: { id: user.id, index: Chat.GetMessageCount() } }))
             })
         })
 
@@ -213,20 +209,26 @@ class Chat {
             // And add an event listener to the user button
             userElement.addEventListener('mousedown', event => {
                 // Change the header username
-                Chat.SetHeader(user.nickname)
+                Chat.SetHeader(user.nickname, user.image)
 
                 // Clear the messages
                 Chat.Clear()
+
+                //! Request 10 last messages, even though we shouldn't
+                this.socket.send(JSON.stringify({ messageType: 'request-history', content: { id: user.id, index: Chat.GetMessageCount() } }))
             })
         })
     }
 
     // To the bottom, with scrolling down
-    addMessageBottom(body, time, fromClient = false) {
+    addMessageBottom(body, date, from) {
         // Get the active chat user
-        let user = this.userManager.getClientUser()
+        let user = this.userManager.getUserById(from)
 
-        let messageElement = Chat.CreateMessageElement(body, user.image, time, fromClient)
+        // Determine whether the message was sent by us or not
+        let fromClient = from == this.userManager.getClientUser().id ? true : false
+
+        let messageElement = Chat.CreateMessageElement(body, user.image, Chat.formatDate(date), fromClient)
         let chatMessages = document.querySelector('#chat-messages')
         chatMessages.appendChild(messageElement)
 
@@ -235,23 +237,43 @@ class Chat {
     }
 
     // To the top, without scrolling to the top automatically, just adding the messages
-    addMessageTop(body, time, fromClient = false) {
-        let user = this.userManager.getClientUser()
-
-        let messageElement = Chat.CreateMessageElement(body, user.image, time, fromClient)
+    addMessagesTop(messages) {
         let chatMessages = document.querySelector('#chat-messages')
-        let previousScrollHeight = chatMessages.scrollHeight
-        chatMessages.insertBefore(messageElement, chatMessages.firstChild)
+        let lastHeight = chatMessages.scrollHeight
+
+        messages.forEach(message => {
+            // Make sure the message is sent either by us or by them, otherwise don't add anything
+            if(message.from != this.userManager.getUserByNickname(Chat.GetHeader()).id &&
+               message.to != this.userManager.getUserByNickname(Chat.GetHeader()).id) {
+                return
+            }
+
+            let user = this.userManager.getUserById(message.from)
+
+            // Determine whether the message was sent by us or not
+            let fromClient = message.from == this.userManager.getClientUser().id ? true : false
+
+            // Create the message element
+            let messageElement = Chat.CreateMessageElement(message.body, user.image, Chat.formatDate(message.date), fromClient)
+            
+            // Append the message element to the chat
+            chatMessages.insertBefore(messageElement, chatMessages.firstChild)
+        })
 
         // Make sure the scrolling comes with the addition of the new message
-        chatMessages.scrollTop += chatMessages.scrollHeight - previousScrollHeight
+        //chatMessages.pageYOffset += chatMessages.scrollHeight - previousScrollHeight
+        chatMessages.scrollTop += chatMessages.scrollHeight - lastHeight
     }
 
     sendMessage(body) {
         // The ID of the user that we are sending the message to
-        let toID = this.userManager.getUserByNickname(Chat.GetHeader()).id
+        let user = this.userManager.getUserByNickname(Chat.GetHeader())
+        if(!user) {
+            return
+        }
 
         // Send the message to the user through the socket connection
-        this.socket.send({ code: 103, body: body, to: toID })
+        let message = JSON.stringify({ messageType: "message-client-server", content: { body: body, to: user.id } })
+        this.socket.send(message)
      }
 }

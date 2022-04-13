@@ -1279,6 +1279,7 @@ p, h1, h2, h3 {
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    text-align: center;
 }
 
 .chat-message-time {

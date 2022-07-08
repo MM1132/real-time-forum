@@ -1,4 +1,4 @@
-docker image build -f Dockerfile -t forum .
+docker image build -f Dockerfile -t real-time-forum .
 if [ $? -ne 0 ]; then
     echo "Image build failed, try again"
     exit 1;

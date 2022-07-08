@@ -1,2 +1,2 @@
-docker stop forum
-docker rm forum
+docker stop real-time-forum
+docker rm real-time-forum

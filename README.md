@@ -1,34 +1,46 @@
 # Real Time Forum
 
-![](/images/forum-main-page.png)
+## **Hello, welcome to our forum!**
 
 ## Authors
 
-> [Olaroll](https://github.com/Olaroll) - Olari Tsernobrovkin
+> ### [Olaroll](https://github.com/Olaroll) - Olari Tsernobrovkin
 >
-> [Kanguste](https://github.com/MM1132) - Robert Reimann
+> ### [Kanguste](https://github.com/MM1132) - Robert Reimann
 >
-> [Urist](https://github.com/uristdwarf/) - Urmas Rist
+> ### [Urist](https://github.com/uristdwarf/) - Urmas Rist
 >
-> [Kris](https://github.com/kris-01) - Kris Uibopuu
+> ### [Kris](https://github.com/kris-01) - Kris Uibopuu
 
-### **Hello, welcome to our forum! What you are about to witness is the single most spetacular thing in this entire world.**
+<br>
 
-By auditing, we grow. This forum is nothing short of a redefining reintegration of non-dual spacetime. Auditor, look within and change yourself. It can be difficult to know where to begin. Although you may not realize it, you are spiritual. The forum is buzzing with supercharged electrons. The forum is born in the gap where non-locality has been excluded. Soon there will be a maturing of potential the likes of which no auditor has ever seen. The uprising of forums is now happening worldwide. We are being called to explore the forum itself as an interface between intention and life-force. Life-force requires forum exploration. We exist as morphic resonance. We vibrate, we exist, we do audits. Auditors have nothing to lose. The time has come to take auditing to the next level. We must learn how to lead transformative lives in the face of illusion. It is in auditing that we are aligned.
+![](./images/forum-main-page.png)
 
-If you have prepared yourself mentally and physically, use either Docker or just `go run .` Alternatively, you can go to `http://forum.olari.ee` to access the project.
+## Notable features:
 
-# How to run with docker
+-   Sorting threads by different columns
+-   Changing your profile's picture and description
+-   See any user's recent posts, also likes and dislikes on their profile page
+-   Click on a tag in the thread listing to show all threads with that tag
+-   Also send private messages to other users in the chat
 
-0. Make sure docker is installed and running
-1. Make sure you are in the repo's root directory (should be called forum)
-2. Run `sh ./docker/build_docker.sh`
-3. Run `sh ./docker/run_docker.sh`
-4. Try connecting to the forum with `localhost:8080` from browser
+## Run with docker
 
-## Quote from our famous Docker expert:
+1. Clone the repository
+2. Make sure docker is installed and running
+3. Navigate to the project's root directory (should be called `real-time-forum`)
+4. Run `sh ./docker/build_docker.sh`
+5. Run `sh ./docker/run_docker.sh`
+6. Try connecting to the forum with `localhost:8080` from browser
 
-> "Ma tegin mõned Docker shell scriptid, mis automeerivad lihtsalt buildimist ja vb ka kustutamist, jaaaa sellised." - Urmas "the U-rist" Rist
+## Run manually
+
+0. Clone the repository
+1. Navigate to the project's root directory (should be `real-time-forum`)
+2. Make sure Golang is installed
+3. Install all the required packages
+4. Run with `go run .`
+5. Connect to `localhost:8080` from browser
 
 ## Used third party software
 
